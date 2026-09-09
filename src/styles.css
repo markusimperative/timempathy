@@ -361,7 +361,7 @@
   }
   .weight-heading {
     text-align: center;
-    margin: 45px auto 22px;
+    margin: 34px auto 12px;
   }
   .weight-heading h2 {
     font-size: clamp(44px, 5vw, 66px);
@@ -377,7 +377,7 @@
   }
   .shared-year {
     width: 242px;
-    margin: 24px auto 0;
+    margin: 0 auto;
     text-align: center;
   }
   .shared-year figcaption {
@@ -417,20 +417,62 @@
     font-size: 10px;
   }
   .clocks {
-    max-width: 760px;
+    max-width: 800px;
     margin: 0 auto;
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 66px;
+    grid-template-columns: minmax(0, 1fr) 108px minmax(0, 1fr);
+    grid-template-rows: auto auto;
+    column-gap: 16px;
+    align-items: start;
   }
   .clock {
+    display: grid;
+    grid-row: 1 / 3;
+    grid-template-rows: subgrid;
     min-width: 0;
     text-align: center;
   }
+  .clock-reference {
+    grid-column: 1;
+  }
+  .clock-borrowed {
+    grid-column: 3;
+  }
+  .dial-illustration {
+    position: relative;
+    width: 100%;
+    max-width: 310px;
+    margin: 0 auto;
+    container-type: inline-size;
+  }
   .year-dial {
     width: 100%;
-    max-width: 335px;
-    margin: 0 auto -10px;
+  }
+  .dial-copy {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    pointer-events: none;
+  }
+  .clock-connection {
+    grid-column: 2;
+    grid-row: 1;
+    align-self: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    line-height: 1.3;
+    color: #c8cebf;
+    text-align: center;
+  }
+  .clock-connection svg {
+    color: #edb28a;
   }
   .dial-inner-thread {
     stroke: #acbd9e;
@@ -464,17 +506,19 @@
     stroke-width: 1.5;
   }
   .dial-age {
-    font: 85px var(--serif);
-    fill: #f1f0dd;
-    letter-spacing: -3px;
+    font-family: var(--serif);
+    font-size: 25cqi;
+    line-height: 0.85;
+    color: #f1f0dd;
   }
   .dial-label {
-    font:
-      18px 'DM Sans',
-      sans-serif;
-    fill: #c8cebf;
+    font-family: 'DM Sans', sans-serif;
+    font-size: clamp(10px, 5.4cqi, 18px);
+    line-height: 1.5;
+    color: #c8cebf;
   }
   .year-share {
+    margin-top: -8px;
     font-family: var(--serif);
     font-size: 29px;
     line-height: 1.3;
@@ -489,7 +533,7 @@
     align-items: center;
     flex-direction: column;
     max-width: 700px;
-    margin: 29px auto 0;
+    margin: 24px auto 0;
   }
   .button.clock-play {
     position: relative;
@@ -558,7 +602,7 @@
   #play-description {
     font-size: 12px;
     color: #c8cebf;
-    margin: 13px 0 22px;
+    margin: 0 0 12px;
     text-align: center;
   }
   .year-scrubber {
@@ -586,13 +630,28 @@
     text-align: center;
     color: #e6e7d7;
     min-height: 33px;
-    margin: 16px auto 0;
+    margin: 19px auto 0;
   }
-  .age-exploration {
-    max-width: 620px;
-    margin: 25px auto 0;
-    padding-top: 23px;
+  .clock-controls {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+    gap: 44px;
+    align-items: center;
+    max-width: 880px;
+    margin: 22px auto 0;
+    padding-top: 22px;
     border-top: 1px solid #607561;
+  }
+  .age-exploration,
+  .year-exploration {
+    min-width: 0;
+  }
+  .year-exploration {
+    display: grid;
+    justify-items: center;
+    gap: 16px;
+    padding-left: 34px;
+    border-left: 1px solid #607561;
   }
   .age-exploration > p {
     text-align: center;
@@ -602,8 +661,8 @@
   .age-controls {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 45px;
-    margin-top: 19px;
+    gap: 24px;
+    margin-top: 12px;
   }
   .range-label {
     display: flex;
@@ -623,8 +682,9 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 17px;
-    margin: 18px auto 0;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin: 12px auto 0;
     font-size: 12px;
     color: #c8cebf;
   }
@@ -651,7 +711,7 @@
     display: flex;
     gap: 17px;
     max-width: 880px;
-    margin: 42px auto 0;
+    margin: 24px auto 0;
     align-items: flex-start;
   }
   .note-mark {
@@ -1314,20 +1374,29 @@
     }
     .shared-year {
       width: 210px;
-      margin-top: 21px;
     }
     .shared-year figcaption {
       font-size: 25px;
     }
     .clocks {
-      gap: 12px;
+      grid-template-columns: minmax(0, 1fr) 58px minmax(0, 1fr);
+      column-gap: 4px;
       margin-top: 14px;
     }
-    .year-dial {
-      margin-bottom: 0;
+    .dial-copy {
+      gap: 4px;
+    }
+    .clock-connection {
+      font-size: 10px;
+      gap: 5px;
+    }
+    .clock-connection svg {
+      width: 32px;
+      height: 28px;
     }
     .year-share {
-      font-size: 23px;
+      margin-top: 0;
+      font-size: clamp(19px, 5.5vw, 23px);
     }
     .passage-controls {
       margin-top: 26px;
@@ -1353,26 +1422,56 @@
       min-height: 60px;
       margin-top: 17px;
     }
-    .age-exploration {
-      margin-top: 17px;
+    .clock-controls {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px 22px;
+      margin-top: 15px;
       padding-top: 19px;
+      max-width: 440px;
+    }
+    .age-exploration {
+      display: contents;
+    }
+    .age-exploration > p,
+    .age-controls {
+      grid-column: 1 / -1;
+    }
+    .year-exploration {
+      padding-left: 0;
+      border-left: 0;
+      gap: 10px;
+    }
+    .year-exploration .shared-year {
+      width: 100%;
+    }
+    .shared-year figcaption span {
+      font-size: 11px;
+      margin-bottom: 8px;
+    }
+    .year-scrubber label {
+      flex-direction: column;
+      gap: 2px;
     }
     .age-exploration > p {
       font-size: 12px;
     }
     .age-controls {
       gap: 24px;
-      margin-top: 14px;
+      margin-top: -6px;
     }
     .range-label {
       font-size: 12px;
     }
     .borrow-presets {
+      align-self: start;
       flex-direction: column;
-      gap: 9px;
+      gap: 12px;
+      margin: 0;
     }
     .borrow-presets > div {
-      gap: 8px;
+      display: grid;
+      grid-template-columns: repeat(3, 38px);
+      gap: 8px 6px;
     }
     .borrow-presets button {
       width: 38px;
@@ -1649,7 +1748,7 @@
   }
   @media (max-width: 760px) {
     .dial-label {
-      font-size: 23px;
+      font-size: clamp(10px, 6.2cqi, 18px);
     }
     .form-meta {
       flex-wrap: wrap;

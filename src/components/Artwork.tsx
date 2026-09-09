@@ -116,70 +116,76 @@ export function YearDial({ age, progress }: { age: number; progress: MotionValue
   )
   const pointOpacity = useTransform(progress, (value) => (value > 0 && value < 1 ? 1 : 0))
   return (
-    <svg
-      className="year-dial"
-      viewBox="0 0 360 360"
-      role="img"
-      aria-label={`${age} ${age === 1 ? 'year' : 'years'} lived. Each segment is one year. The copper segment is ${age === 1 ? 'the whole circle' : `one of ${age} years`}, ${(share * 100).toFixed(1)} percent of life so far.`}
-    >
-      <circle className="dial-inner-thread" cx="180" cy="180" r="99" fill="none" />
-      <circle className="dial-outer-thread" cx="180" cy="180" r="153" fill="none" />
-      <g className="dial-segments" fill="none" strokeWidth="34">
-        {Array.from({ length: age }, (_, i) => (
-          <circle
-            className={`dial-segment ${i === 0 ? 'is-one-year' : ''}`}
-            key={i}
-            cx="180"
-            cy="180"
-            r="128"
-            pathLength="1"
-            strokeDasharray={`${share} 1`}
-            transform={`rotate(${-90 + i * share * 360} 180 180)`}
-          />
-        ))}
-      </g>
-      <motion.circle
-        className="dial-year"
-        cx="180"
-        cy="180"
-        r="128"
-        fill="none"
-        strokeWidth="34"
-        pathLength="1"
-        strokeDasharray={dash}
-        transform="rotate(-90 180 180)"
-      />
-      <g className="dial-divisions">
-        {age > 1 &&
-          Array.from({ length: age }, (_, i) => (
-            <line
+    <div className="dial-illustration">
+      <svg
+        className="year-dial"
+        viewBox="0 0 360 360"
+        role="img"
+        aria-label={`${age} ${age === 1 ? 'year' : 'years'} lived. Each segment is one year. The copper segment is ${age === 1 ? 'the whole circle' : `one of ${age} years`}, ${(share * 100).toFixed(1)} percent of life so far.`}
+      >
+        <circle className="dial-inner-thread" cx="180" cy="180" r="99" fill="none" />
+        <circle className="dial-outer-thread" cx="180" cy="180" r="153" fill="none" />
+        <g className="dial-segments" fill="none" strokeWidth="34">
+          {Array.from({ length: age }, (_, i) => (
+            <circle
+              className={`dial-segment ${i === 0 ? 'is-one-year' : ''}`}
               key={i}
-              x1="180"
-              y1="68"
-              x2="180"
-              y2="35"
-              transform={`rotate(${i * share * 360} 180 180)`}
+              cx="180"
+              cy="180"
+              r="128"
+              pathLength="1"
+              strokeDasharray={`${share} 1`}
+              transform={`rotate(${-90 + i * share * 360} 180 180)`}
             />
           ))}
-      </g>
-      <circle
-        className="dial-year-outline"
-        cx="180"
-        cy="180"
-        r="145"
-        fill="none"
-        strokeWidth="1.5"
-        pathLength="1"
-        strokeDasharray={`${share} 1`}
-        transform="rotate(-90 180 180)"
-      />
-      <motion.circle className="dial-point" cx={x} cy={y} r="4" style={{ opacity: pointOpacity }} />
-      <text className="dial-age" x="180" y="182" textAnchor="middle">
-        {age}
-      </text>
-      <text className="dial-label" x="180" y="213" textAnchor="middle">
-        {age === 1 ? 'year lived' : 'years lived'}
-      </text>
-    </svg>
+        </g>
+        <motion.circle
+          className="dial-year"
+          cx="180"
+          cy="180"
+          r="128"
+          fill="none"
+          strokeWidth="34"
+          pathLength="1"
+          strokeDasharray={dash}
+          transform="rotate(-90 180 180)"
+        />
+        <g className="dial-divisions">
+          {age > 1 &&
+            Array.from({ length: age }, (_, i) => (
+              <line
+                key={i}
+                x1="180"
+                y1="68"
+                x2="180"
+                y2="35"
+                transform={`rotate(${i * share * 360} 180 180)`}
+              />
+            ))}
+        </g>
+        <circle
+          className="dial-year-outline"
+          cx="180"
+          cy="180"
+          r="145"
+          fill="none"
+          strokeWidth="1.5"
+          pathLength="1"
+          strokeDasharray={`${share} 1`}
+          transform="rotate(-90 180 180)"
+        />
+        <motion.circle
+          className="dial-point"
+          cx={x}
+          cy={y}
+          r="4"
+          style={{ opacity: pointOpacity }}
+        />
+      </svg>
+      <div className="dial-copy" aria-hidden="true">
+        <span className="dial-age">{age}</span>
+        <span className="dial-label">{age === 1 ? 'year lived' : 'years lived'}</span>
+      </div>
+    </div>
   )
 }

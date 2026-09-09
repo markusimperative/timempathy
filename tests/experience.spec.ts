@@ -408,7 +408,7 @@ test('each life has one segment per year and the same months fill both', async (
   )
 })
 
-test('the play invitation draws attention once and precedes age controls', async ({ page }) => {
+test('the final play invitation draws attention once', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'no-preference' })
   await page.addInitScript(() => {
     document.addEventListener('animationstart', (event) => {
@@ -429,10 +429,7 @@ test('the play invitation draws attention once and precedes age controls', async
   expect(
     await play.evaluate(
       (el) =>
-        !!(
-          el.compareDocumentPosition(document.querySelector('#reference-age')!) &
-          Node.DOCUMENT_POSITION_FOLLOWING
-        ),
+        [...document.querySelectorAll('#weight button, #weight a, #weight input')].at(-1) === el,
     ),
   ).toBe(true)
   await expect(play).not.toHaveClass(/has-cue/)
