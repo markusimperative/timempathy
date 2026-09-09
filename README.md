@@ -8,13 +8,13 @@ A contemplative, interactive journey through the weight of a year, the texture o
 
 The memory chapter is an illustrated paper week. Pull the copper thread between **As it happens** and **Looking back** to fold familiar mornings together. Selecting any day reopens its scene, reveals a small detail, and places a related drawing beside the tomorrow prompt. The choice lasts for the visit and can be released; it never fills in the reflection or gets stored with it.
 
-Native range and button controls support keyboard input. On narrow screens the week can be swiped or moved with arrow buttons. Reduced motion preserves the same choices without timed transitions. The clocks and imagined wall retain their behavior, with shared Motion values driving the year traces and a drawn connection joining each wall echo.
+Native range and button controls support keyboard input. On narrow screens the week can be swiped or moved with arrow buttons. Reduced motion preserves the same choices without timed transitions. The clocks use shared Motion values for smooth year traces. The imagined wall retains its original note-card presentation and adjacent echo pairs.
 
 [Selected memory scene](docs/screenshots/desktop-memory-held.png) · [A moment beside tomorrow on mobile](docs/screenshots/mobile-tomorrow-companion.png)
 
-## Visual refinement
+## Current visual direction
 
-A contextual [Taste Skill review](docs/TASTE_REVIEW.md) refines the existing storybook direction: a compact opening, quieter chapter headings, a continuous paper palette, and ages placed prominently beside each hope. The original illustrations, paper-fold interaction, and carried moment remain. Local font preloads improve the opening load; native button labels keep the visible and spoken actions aligned.
+The original paper / forest / copper design is restored following creator review. The [Taste Skill experiment](docs/TASTE_REVIEW.md) remains in Git history; its shared clock animation, local font preloads, native accessible button names, and improved placeholder contrast are retained. The illustrated cards now resize continuously, so choosing or switching a moment keeps the artwork in proportion instead of stretching it while its crop jumps.
 
 ## Run
 

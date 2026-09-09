@@ -58,6 +58,15 @@ export function TimeSculpture({ still }: { still: boolean }) {
             />
           ))}
         </g>
+        <path d="M413 139L474 84H547" stroke="#9c9c89" strokeWidth=".7" />
+        <circle cx="413" cy="139" r="7" fill="#b66441" stroke="#f5f2e9" strokeWidth="3" />
+        <text x="481" y="72" className="svg-note">
+          one shared moment
+        </text>
+        <path d="M91 426H135L176 387" stroke="#9c9c89" strokeWidth=".7" />
+        <text x="67" y="448" className="svg-note">
+          many ways to feel it
+        </text>
       </svg>
     </div>
   )

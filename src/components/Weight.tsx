@@ -76,14 +76,25 @@ export default function Weight({ still }: { still: boolean }) {
     setPlaying(true)
   }
   return (
-    <section id="weight" className="weight-section" aria-labelledby="weight-title" ref={sectionRef}>
+    <section
+      id="weight"
+      className="weight-section dark-section"
+      aria-labelledby="weight-title"
+      ref={sectionRef}
+    >
+      <div className="section-head">
+        <span className="eyebrow">01 / THE WEIGHT OF A YEAR</span>
+        <span className="section-aside">SAME DURATION. DIFFERENT PROPORTIONS.</span>
+      </div>
       <div className="weight-heading">
         <h2 id="weight-title">{copy.weight.title}</h2>
         <p>{copy.weight.intro}</p>
       </div>
       <div className="clocks">
         <div className="clock clock-reference">
-          <p className="clock-kicker">A clock to begin with</p>
+          <p className="clock-kicker">
+            <span className="color-dot sage-dot" />A clock to begin with
+          </p>
           <YearDial age={referenceAge} progress={progress} variant="sage" />
           <p className="fraction">
             One year. <em>1/{referenceAge}</em> of a life so far.
@@ -107,7 +118,10 @@ export default function Weight({ still }: { still: boolean }) {
           <span>in both lives</span>
         </div>
         <div className="clock clock-borrowed">
-          <p className="clock-kicker">The clock you’re borrowing</p>
+          <p className="clock-kicker">
+            <span className="color-dot copper-dot" />
+            The clock you’re borrowing
+          </p>
           <YearDial age={borrowedAge} progress={progress} variant="copper" />
           <p className="fraction">
             One year. <em>1/{borrowedAge}</em> of a life so far.
@@ -177,6 +191,7 @@ export default function Weight({ still }: { still: boolean }) {
             : 'The year is paused. Move through it at your own pace.'}
       </p>
       <div className="model-note">
+        <span className="note-mark">↳</span>
         <p>
           {copy.weight.caveat} <a href="#about">About this lens</a>
         </p>

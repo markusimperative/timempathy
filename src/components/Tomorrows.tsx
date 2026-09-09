@@ -138,6 +138,10 @@ export default function Tomorrows({
   return (
     <>
       <section id="tomorrow" className="tomorrow-section" aria-labelledby="tomorrow-title">
+        <span className="eyebrow">03 / REMEMBERING TOMORROW</span>
+        <div className="tomorrow-flower" aria-hidden="true">
+          ✳
+        </div>
         <h2 id="tomorrow-title" tabIndex={-1}>
           {copy.tomorrow.title[0]}
           <br />
@@ -231,7 +235,7 @@ export default function Tomorrows({
                 max="120"
                 step="1"
                 value={age}
-                placeholder=""
+                placeholder="—"
                 onChange={(e) => setAge(e.target.value)}
                 aria-invalid={!!ageError}
                 aria-describedby={ageError ? 'age-error' : undefined}
@@ -273,6 +277,10 @@ export default function Tomorrows({
         </a>
       </section>
       <section id="wall" className="wall-section" aria-labelledby="wall-title">
+        <div className="section-head">
+          <span className="eyebrow">04 / A SHARED HORIZON</span>
+          <span className="section-aside">DIFFERENT AGES. FAMILIAR HOPES.</span>
+        </div>
         <div className="wall-heading">
           <h2 id="wall-title">
             The Wall of <em>Tomorrows.</em>
@@ -284,7 +292,8 @@ export default function Tomorrows({
           </p>
         </div>
         <p className="sample-notice">
-          An imagined wall. These are written examples, not real submissions.
+          <span className="color-dot" />
+          An imagined wall — these are written examples, not real submissions.
         </p>
         {saved && (
           <div id="your-thought" className="private-thought">
@@ -330,7 +339,8 @@ export default function Tomorrows({
               key={hope.id}
               className={`hope-note note-${hopes.indexOf(hope) % 4} ${activePair?.some((id) => id === hope.id) ? 'is-echo' : ''}`}
             >
-              <blockquote>{hope.text}</blockquote>
+              <span className="note-hole" aria-hidden="true" />
+              <blockquote>“{hope.text}”</blockquote>
               <figcaption>
                 <span className="hope-age">{hope.age}</span>
                 <span>years old</span>

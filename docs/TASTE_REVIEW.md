@@ -1,5 +1,7 @@
 # Taste Skill review
 
+Status: the creator preferred the preceding visual design. That design has been restored; the clock animation, local font preloads, and accessibility improvements are retained. The audit below records the earlier experiment and its measurements, not the current visual version. See the latest entry in DECISIONS.md for the card motion fix.
+
 Source: [Taste Skill](https://github.com/Leonxlnx/taste-skill/tree/ccbc15639c97057cbfcf32ecebc38ef716e4bb37), specifically `skills/taste-skill/SKILL.md` and `skills/redesign-skill/SKILL.md`. Read directly at the pinned revision for this work; no global skill installation and no execution of scripts from that repository.
 
 ## Design read

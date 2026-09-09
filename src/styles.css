@@ -693,7 +693,8 @@
     line-height: 1.3;
   }
   .reflection-form textarea::placeholder {
-    color: #8d8d7e;
+    color: #73765f;
+    opacity: 1;
   }
   .form-meta {
     display: flex;

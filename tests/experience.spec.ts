@@ -13,7 +13,7 @@ test('the complete journey renders locally without errors or outside requests', 
   })
   await page.goto('/')
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(
-    'The same clock.A different feeling.',
+    'The same clock. A different feeling.',
   )
   await page.getByRole('link', { name: 'Borrow a clock', exact: true }).click()
   await expect(page).toHaveURL(/#weight$/)
@@ -22,7 +22,7 @@ test('the complete journey renders locally without errors or outside requests', 
     true,
   )
   await expect(
-    page.getByText('An imagined wall. These are written examples, not real submissions.'),
+    page.getByText('An imagined wall — these are written examples, not real submissions.'),
   ).toBeAttached()
   await expect(page.locator('.hope-note')).toHaveCount(12)
   expect(errors).toEqual([])
@@ -318,4 +318,52 @@ test('all seven paper scenes are reachable on a narrow screen', async ({ page })
   await page.getByRole('link', { name: 'Take this into tomorrow' }).click()
   await expect(page.locator('.tomorrow-companion .object-flower')).toBeVisible()
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
+})
+
+test('selecting and switching paper cards keeps the drawings in proportion throughout motion', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'no-preference' })
+  await page.goto('/#memory')
+  await page.evaluate(() => document.fonts.ready)
+  await page.locator('.memory-strip').scrollIntoViewIfNeeded()
+  const result = await page.evaluate(async () => {
+    const cards = Array.from(document.querySelectorAll<HTMLElement>('.memory-page'))
+    const suns = cards
+      .slice(0, 3)
+      .map((card) => card.querySelector<SVGCircleElement>('.scene-cup > circle')!)
+    const widths: number[] = []
+    let maximumDistortion = 0
+    const sample = () => {
+      widths.push(...cards.slice(0, 3).map((card) => card.getBoundingClientRect().width))
+      for (const sun of suns) {
+        const box = sun.getBoundingClientRect()
+        maximumDistortion = Math.max(maximumDistortion, Math.abs(box.width / box.height - 1))
+      }
+    }
+    const observe = (duration: number) =>
+      new Promise<void>((resolve) => {
+        const start = performance.now()
+        const frame = () => {
+          sample()
+          if (performance.now() - start < duration) requestAnimationFrame(frame)
+          else resolve()
+        }
+        requestAnimationFrame(frame)
+      })
+    sample()
+    // Interrupt two transitions with another choice, then release the final card.
+    for (const index of [0, 1, 2, 2]) {
+      cards[index].querySelector('button')!.click()
+      await observe(index === 0 ? 450 : 260)
+    }
+    await observe(900)
+    return {
+      maximumDistortion,
+      distinctWidths: new Set(widths.map((width) => Math.round(width))).size,
+    }
+  })
+  expect(result.maximumDistortion).toBeLessThan(0.01)
+  expect(result.distinctWidths).toBeGreaterThan(3)
+  await expect(page.locator('.memory-moment[aria-pressed="true"]')).toHaveCount(0)
 })

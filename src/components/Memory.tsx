@@ -26,6 +26,10 @@ export default function Memory({
 
   return (
     <section id="memory" className="memory-section" aria-labelledby="memory-title">
+      <div className="section-head">
+        <span className="eyebrow">02 / THE TEXTURE OF MEMORY</span>
+        <span className="section-aside">TIME LEAVES DIFFERENT TRACES.</span>
+      </div>
       <div className="split-heading">
         <h2 id="memory-title">
           {copy.memory.title[0]}
@@ -66,7 +70,7 @@ export default function Memory({
       </div>
       <div className="week-topline">
         <p>
-          An imagined week <span>Choose a day. Let a small detail stay.</span>
+          AN IMAGINED WEEK <span>Choose a day. Let a small detail stay.</span>
         </p>
         <div className="week-navigation">
           <button onClick={() => moveWeek(-1)} aria-label="Earlier in the week">
@@ -77,8 +81,7 @@ export default function Memory({
           </button>
         </div>
       </div>
-      <motion.div
-        layoutScroll
+      <div
         ref={stripRef}
         className={`memory-strip ${remembered ? 'remembered' : ''}`}
         role="group"
@@ -89,19 +92,20 @@ export default function Memory({
           const folded = i < 3 && !selected
           const amount = folded ? fold : 0
           return (
-            <motion.div
+            <div
               key={moment.day}
               className={`memory-page ${selected ? 'selected' : ''}`}
               style={{ flexGrow: selected ? 1.55 : 1 - amount * 0.52 }}
-              layout={!still}
-              transition={transition}
             >
               <button
                 className={`memory-moment ${selected ? 'held' : ''}`}
                 aria-pressed={selected}
                 onClick={() => onHold(selected ? null : i)}
               >
-                <span className="moment-day">{moment.day}</span>
+                <span className="moment-day">
+                  {moment.day}
+                  <span aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+                </span>
                 <motion.span
                   className={`paper-face ${amount > 0.2 ? 'is-folded' : ''}`}
                   initial={false}
@@ -126,13 +130,13 @@ export default function Memory({
                   {selected ? 'Held here' : 'Hold this'}
                 </span>
               </button>
-            </motion.div>
+            </div>
           )
         })}
-      </motion.div>
+      </div>
       <div className="memory-caption" aria-live="polite">
         <span className="small-note">
-          {remembered ? 'A week, remembered' : 'Seven days, as they happen'}
+          {remembered ? 'A WEEK, REMEMBERED' : 'SEVEN DAYS, AS THEY HAPPEN'}
         </span>
         <p>{chosen ? chosen.note : remembered ? copy.memory.remembered : copy.memory.lived}</p>
       </div>
