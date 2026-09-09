@@ -6,6 +6,8 @@ import { copy, hopes } from '../content/en'
 import type { Hope } from '../content/en'
 import { forgetReflection, readReflection, reflectionSchema, saveReflection } from '../lib/model'
 import type { Reflection } from '../lib/model'
+import type { MemoryMoment } from '../content/moments'
+import { MemoryObject } from './MemoryArtwork'
 
 const filters = [
   { id: 'all', label: 'All tomorrows' },
@@ -28,7 +30,15 @@ function initialReflection() {
   }
 }
 
-export default function Tomorrows({ still }: { still: boolean }) {
+export default function Tomorrows({
+  still,
+  moment,
+  onRelease,
+}: {
+  still: boolean
+  moment: MemoryMoment | null
+  onRelease: () => void
+}) {
   const [initial] = useState(initialReflection)
   const [saved, setSaved] = useState<Reflection | null>(initial.value)
   const [persistent, setPersistent] = useState(!!initial.value)
@@ -132,12 +142,40 @@ export default function Tomorrows({ still }: { still: boolean }) {
         <div className="tomorrow-flower" aria-hidden="true">
           ✳
         </div>
-        <h2 id="tomorrow-title">
+        <h2 id="tomorrow-title" tabIndex={-1}>
           {copy.tomorrow.title[0]}
           <br />
           <em>{copy.tomorrow.title[1]}</em>
         </h2>
         <p className="tomorrow-intro">{copy.tomorrow.intro}</p>
+        {moment && (
+          <motion.div
+            key={moment.day}
+            className="tomorrow-companion"
+            initial={still ? false : { opacity: 0, y: 8 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.4 }}
+            transition={{ duration: still ? 0 : 0.65 }}
+          >
+            <div className="companion-object">
+              <MemoryObject kind={moment.kind} />
+            </div>
+            <div>
+              <span className="eyebrow">FROM YOUR WEEK</span>
+              <p>{moment.label}</p>
+              <span>A small thing you chose to hold.</span>
+              <button
+                onClick={() => {
+                  onRelease()
+                  ;(textRef.current ?? successRef.current)?.focus({ preventScroll: true })
+                }}
+                className="release-moment"
+              >
+                Leave this moment here
+              </button>
+            </div>
+          </motion.div>
+        )}
         {saved ? (
           <div className="saved-state" ref={successRef} tabIndex={-1}>
             <span className="saved-icon">

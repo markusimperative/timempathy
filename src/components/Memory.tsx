@@ -1,46 +1,29 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
+import { ArrowDown, ArrowLeft, ArrowRight } from 'lucide-react'
 import { motion } from 'motion/react'
 import { copy } from '../content/en'
-import { MomentArt } from './Artwork'
+import { moments } from '../content/moments'
+import { MemoryObject, MemoryScene } from './MemoryArtwork'
 
-const moments = [
-  {
-    day: 'MON',
-    kind: 'cup',
-    label: 'A familiar cup',
-    note: 'The cup you reach for without thinking.',
-  },
-  { day: 'TUE', kind: 'cup', label: 'The same cup', note: 'That little warmth in your hands.' },
-  {
-    day: 'WED',
-    kind: 'cup',
-    label: 'Morning, again',
-    note: 'A familiar morning can stay with you, too.',
-  },
-  {
-    day: 'THU',
-    kind: 'rain',
-    label: 'A sudden rain',
-    note: 'The sound of the rain through an open window.',
-  },
-  {
-    day: 'FRI',
-    kind: 'table',
-    label: 'A long conversation',
-    note: 'Something someone said across the table.',
-  },
-  { day: 'SAT', kind: 'moon', label: 'An evening walk', note: 'The sky on the way back.' },
-  {
-    day: 'SUN',
-    kind: 'flower',
-    label: 'Something growing',
-    note: 'A new leaf on a plant you’ve had for years.',
-  },
-] as const
+export default function Memory({
+  still,
+  held,
+  onHold,
+}: {
+  still: boolean
+  held: number | null
+  onHold: (day: number | null) => void
+}) {
+  const [fold, setFold] = useState(0)
+  const stripRef = useRef<HTMLDivElement>(null)
+  const remembered = fold >= 0.5
+  const chosen = held === null ? null : moments[held]
+  const transition = { duration: still ? 0 : 0.75, ease: [0.22, 0.7, 0.2, 1] as const }
 
-export default function Memory({ still }: { still: boolean }) {
-  const [remembered, setRemembered] = useState(false)
-  const [held, setHeld] = useState<number | null>(null)
+  function moveWeek(direction: number) {
+    stripRef.current?.scrollBy({ left: direction * 240, behavior: still ? 'instant' : 'smooth' })
+  }
+
   return (
     <section id="memory" className="memory-section" aria-labelledby="memory-title">
       <div className="section-head">
@@ -55,57 +38,148 @@ export default function Memory({ still }: { still: boolean }) {
         </h2>
         <div>
           <p>{copy.memory.intro}</p>
-          <div className="segmented" role="group" aria-label="View the week">
-            <button aria-pressed={!remembered} onClick={() => setRemembered(false)}>
-              As it happens
-            </button>
-            <button aria-pressed={remembered} onClick={() => setRemembered(true)}>
-              Looking back
-            </button>
+          <div className="fold-control">
+            <div className="fold-endpoints" role="group" aria-label="View the week">
+              <button aria-pressed={fold === 0} onClick={() => setFold(0)}>
+                As it happens
+              </button>
+              <button aria-pressed={fold === 1} onClick={() => setFold(1)}>
+                Looking back
+              </button>
+            </div>
+            <input
+              id="memory-fold"
+              type="range"
+              min="0"
+              max="1"
+              step="0.01"
+              value={fold}
+              onChange={(event) => setFold(Number(event.target.value))}
+              aria-label="Fold the week into memory"
+              aria-valuetext={
+                fold === 0
+                  ? 'Seven equal days, as they happen'
+                  : fold === 1
+                    ? 'Looking back, familiar mornings folded together'
+                    : 'Partway between the week and its memory'
+              }
+            />
+            <span className="fold-hint">Pull the thread to fold the week.</span>
           </div>
         </div>
       </div>
-      <p className="memory-instruction">Swipe through the week. Choose a moment to hold.</p>
-      <div
+      <div className="week-topline">
+        <p>
+          AN IMAGINED WEEK <span>Choose a day. Let a small detail stay.</span>
+        </p>
+        <div className="week-navigation">
+          <button onClick={() => moveWeek(-1)} aria-label="Earlier in the week">
+            <ArrowLeft size={17} />
+          </button>
+          <button onClick={() => moveWeek(1)} aria-label="Later in the week">
+            <ArrowRight size={17} />
+          </button>
+        </div>
+      </div>
+      <motion.div
+        layoutScroll
+        ref={stripRef}
         className={`memory-strip ${remembered ? 'remembered' : ''}`}
+        role="group"
         aria-label="An imagined week. Choose a moment you would remember."
       >
-        {moments.map((moment, i) => (
-          <motion.button
-            key={moment.day}
-            className={`memory-moment ${held === i ? 'held' : ''}`}
-            aria-pressed={held === i}
-            aria-label={`${moment.day}: ${moment.label}. ${held === i ? 'Held in memory.' : 'Choose to hold this moment.'}`}
-            animate={{ flexGrow: remembered && i < 3 && held !== i ? 0.42 : held === i ? 1.65 : 1 }}
-            transition={{ duration: still ? 0 : 0.7, ease: [0.2, 0.7, 0.2, 1] }}
-            onClick={() => setHeld(held === i ? null : i)}
-          >
-            <span className="moment-day">{moment.day}</span>
-            <MomentArt kind={moment.kind} />
-            <span className="moment-label">{moment.label}</span>
-            <span className="moment-pin">{held === i ? 'Held here' : '+'}</span>
-          </motion.button>
-        ))}
+        {moments.map((moment, i) => {
+          const selected = held === i
+          const folded = i < 3 && !selected
+          const amount = folded ? fold : 0
+          return (
+            <motion.div
+              key={moment.day}
+              className={`memory-page ${selected ? 'selected' : ''}`}
+              style={{ flexGrow: selected ? 1.55 : 1 - amount * 0.52 }}
+              layout={!still}
+              transition={transition}
+            >
+              <button
+                className={`memory-moment ${selected ? 'held' : ''}`}
+                aria-pressed={selected}
+                aria-label={`${moment.day}: ${moment.label}. ${selected ? 'Held in memory.' : 'Choose to hold this moment.'}`}
+                onClick={() => onHold(selected ? null : i)}
+              >
+                <span className="moment-day">
+                  {moment.day}
+                  <span>{String(i + 1).padStart(2, '0')}</span>
+                </span>
+                <motion.span
+                  className={`paper-face ${amount > 0.2 ? 'is-folded' : ''}`}
+                  initial={false}
+                  animate={{
+                    rotateY: (i % 2 ? -1 : 1) * amount * 34,
+                    y: selected ? -9 : amount * 5,
+                  }}
+                  transition={transition}
+                >
+                  <MemoryScene kind={moment.kind} day={i} active={selected} still={still} />
+                  <motion.span
+                    className="paper-crease"
+                    initial={false}
+                    animate={{ opacity: amount * 0.65 }}
+                    transition={transition}
+                  />
+                  <span className="paper-edge" />
+                </motion.span>
+                <span className="moment-label">{moment.label}</span>
+                <span className="moment-pin">
+                  <span aria-hidden="true">{selected ? '−' : '+'}</span>
+                  {selected ? 'Held here' : 'Hold this'}
+                </span>
+              </button>
+            </motion.div>
+          )
+        })}
+      </motion.div>
+      <div className="memory-caption" aria-live="polite">
+        <span className="small-note">
+          {remembered ? 'A WEEK, REMEMBERED' : 'SEVEN DAYS, AS THEY HAPPEN'}
+        </span>
+        <p>{chosen ? chosen.note : remembered ? copy.memory.remembered : copy.memory.lived}</p>
       </div>
-      <div className="memory-caption">
-        <span className="eyebrow">AN IMAGINED WEEK</span>
-        <p aria-live="polite">
-          {held !== null
-            ? moments[held].note
-            : remembered
-              ? copy.memory.remembered
-              : copy.memory.lived}
-        </p>
-        <span className="small-note">Choose a moment to hold.</span>
+      <div className={`memory-keepsake ${chosen ? 'has-keepsake' : ''}`}>
+        <div className="keepsake-drawing" aria-hidden="true">
+          {chosen ? (
+            <MemoryObject kind={chosen.kind} />
+          ) : (
+            <svg viewBox="0 0 100 100" fill="none">
+              <path
+                d="M8 62C32 22 83 27 75 57S18 90 23 56S91 43 93 68"
+                stroke="currentColor"
+                strokeWidth=".8"
+              />
+              <circle cx="75" cy="57" r="3" fill="currentColor" />
+            </svg>
+          )}
+        </div>
+        <div className="keepsake-copy">
+          <p>{chosen ? chosen.label : 'Some things can come with you.'}</p>
+          <span>
+            {chosen ? chosen.detail : 'Choose any moment above, even one that happened before.'}
+          </span>
+        </div>
+        {chosen ? (
+          <a className="text-link carry-link" href="#tomorrow-title">
+            Take this into tomorrow <ArrowDown size={17} />
+          </a>
+        ) : (
+          <a className="text-link carry-link" href="#tomorrow-title">
+            Continue to tomorrow <ArrowDown size={17} />
+          </a>
+        )}
       </div>
       <div className="memory-closing">
-        <span className="tiny-flower" aria-hidden="true">
-          ✳
-        </span>
         <p>{copy.memory.closing}</p>
         <p>
-          Memory is more than a recording. What stands out may shape the way a stretch of time is
-          remembered. This little scene is an illustration, not a memory test.{' '}
+          This paper week is one imagined recollection. What stays distinct can be different for
+          each of us. It is an illustration, not a memory test.{' '}
           <a href="#research">Read the research notes</a>.
         </p>
       </div>

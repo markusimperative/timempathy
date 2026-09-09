@@ -39,3 +39,17 @@ After the first rendered pass, supporting type was enlarged, wall age labels dar
 The first complete functional browser run passed. Initial axe failures on note metadata were fixed; changed states then passed at desktop and mobile sizes. The final suite covers 28 Chromium cases plus 15 domain/storage cases, and the built production bundle was exercised separately. Firefox was attempted but could not launch: Windows reported a missing mozglue side-by-side assembly. No operating-system security setting was changed. The optional Firefox test target is retained with the environment limitation documented.
 
 No public publishing or remote Git operation is part of this milestone. The next product evidence should come from consenting visitors, particularly across ages and assistive technologies.
+
+## 2026-09-09 — A paper week, and a moment carried into tomorrow
+
+The creator endorsed a tactile illustrated direction, especially interaction with embedded meaning. This milestone explores the memory landscape and continuity into tomorrow. The thread-based clocks and an illustrated relationship between wall notes remain separate proposed experiments.
+
+The week now has seven connected scenes with paper grain, changing light, furniture, and small ordinary details. A native range lets the visitor continuously fold repeated mornings; endpoint buttons give an immediate alternative. Folding changes page width and orientation while labels remain outside the tilted surface. Any selected day reopens, including the familiar cups. This is an authored metaphor for recollection, not a prediction of how visitors remember their own lives.
+
+Choosing a moment reveals a brief description of its detail and carries its object into the next chapter. Shared React state connects the scenes; no identifier or extra storage was introduced. Changing or releasing the choice leaves the visitor's words untouched. Reloading clears the object even when the visitor separately opted to store a written reflection. Native fragment navigation moves focus to the tomorrow heading.
+
+Original SVG scenes replace the earlier isolated outline icons. Motion handles page layout and small selected-state changes: a curtain shifts, a second cup becomes distinct, a chair draws closer, or a leaf turns. Native horizontal scrolling and arrow buttons expose the entire week on a phone. Reduced motion retains the folded composition and every interaction with zero-duration transitions. There are no required hover gestures or timed tasks, and no new dependencies.
+
+Rendered inspection caught nested-SVG sizing and stale styling from the old memory strip. Both were removed. Browser checks also caught the initial anchor-focus race and selected-state text contrast; both were corrected. The 34 desktop/mobile Chromium cases are passing after targeted reruns of the fixes, alongside 15 unit cases, type checking, and the production build. Fold movement was inspected in the real browser at intermediate and settled states. Representative desktop and mobile captures are in docs/screenshots.
+
+Remaining creative limitation: the mornings fold according to one authored recollection, and a carried drawing remains an illustration rather than a personal memory artifact. Whether this feels tender and meaningful still needs direct visitor feedback. The existing Firefox startup limitation is unchanged.

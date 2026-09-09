@@ -20,6 +20,13 @@ try {
   await page
     .locator('#memory')
     .screenshot({ path: '.local/screenshots/desktop-memory-remembered.png' })
+  await page.getByRole('button', { name: /WED: Morning, again/ }).click()
+  await page.mouse.move(0, 0)
+  await page.locator('#memory').screenshot({ path: '.local/screenshots/desktop-memory-held.png' })
+  await page.getByRole('link', { name: 'Take this into tomorrow' }).click()
+  await page
+    .locator('#tomorrow')
+    .screenshot({ path: '.local/screenshots/desktop-tomorrow-companion.png' })
   await page.getByRole('button', { name: 'Find an echo', exact: true }).click()
   await page.locator('#wall').screenshot({ path: '.local/screenshots/desktop-wall-echo.png' })
   await page.setViewportSize({ width: 390, height: 844 })
@@ -30,6 +37,11 @@ try {
       .locator(`#${section}`)
       .screenshot({ path: `.local/screenshots/mobile-${section}.png` })
   }
+  await page.getByRole('button', { name: /MON: A familiar cup/ }).click()
+  await page.getByRole('link', { name: 'Take this into tomorrow' }).click()
+  await page
+    .locator('#tomorrow')
+    .screenshot({ path: '.local/screenshots/mobile-tomorrow-companion.png' })
   console.log('Rendered desktop and mobile screenshots saved to .local/screenshots.')
 } finally {
   await browser.close()

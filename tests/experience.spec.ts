@@ -235,3 +235,87 @@ test('a complete year stops at twelve months for both lives', async ({ page }) =
     '3.1% of one circle and 20.0% of the other',
   )
 })
+
+test('a chosen illustration accompanies tomorrow without changing the visitor’s words', async ({
+  page,
+}) => {
+  await page.goto('/#tomorrow')
+  await page
+    .getByRole('textbox', { name: 'I’d like to remember…' })
+    .fill('Something entirely my own.')
+  await page.getByRole('button', { name: 'Looking back', exact: true }).click()
+  const ordinary = page.getByRole('button', { name: /WED: Morning, again/ })
+  await ordinary.focus()
+  await page.keyboard.press('Enter')
+  await expect(ordinary).toHaveAttribute('aria-pressed', 'true')
+  await expect(page.locator('.memory-keepsake')).toContainText('Another cup across the table.')
+  await page.getByRole('link', { name: 'Take this into tomorrow' }).click()
+  await expect(page).toHaveURL(/#tomorrow-title$/)
+  await expect(page.locator('#tomorrow-title')).toBeFocused()
+  await expect(page.locator('.tomorrow-companion')).toContainText('Morning, again')
+  await expect(page.locator('.tomorrow-companion .object-cup')).toBeVisible()
+  await expect(page.getByRole('textbox', { name: 'I’d like to remember…' })).toHaveValue(
+    'Something entirely my own.',
+  )
+  expect(await page.evaluate(() => localStorage.length)).toBe(0)
+  await page.getByRole('button', { name: 'Leave this moment here' }).click()
+  await expect(page.getByRole('textbox', { name: 'I’d like to remember…' })).toBeFocused()
+  await expect(page.locator('.tomorrow-companion')).toHaveCount(0)
+  await expect(ordinary).toHaveAttribute('aria-pressed', 'false')
+  await expect(page.getByRole('textbox', { name: 'I’d like to remember…' })).toHaveValue(
+    'Something entirely my own.',
+  )
+})
+
+test('the paper folds at the visitor’s pace and any day can reopen in still mode', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await page.goto('/#memory')
+  const thread = page.getByRole('slider', { name: 'Fold the week into memory' })
+  await thread.focus()
+  await page.keyboard.press('End')
+  await expect(thread).toHaveValue('1')
+  await expect(thread).toHaveAttribute(
+    'aria-valuetext',
+    'Looking back, familiar mornings folded together',
+  )
+  const pageWidth = () =>
+    page
+      .locator('.memory-page')
+      .first()
+      .evaluate((el) => el.getBoundingClientRect().width)
+  const foldedWidth = await pageWidth()
+  await page.getByRole('button', { name: /MON: A familiar cup/ }).click()
+  await expect.poll(pageWidth).toBeGreaterThan(foldedWidth + 20)
+  await page.getByRole('button', { name: /SAT: An evening walk/ }).click()
+  await expect(page.locator('.tomorrow-companion .object-moon')).toBeAttached()
+  await expect(page.locator('.memory-moment[aria-pressed="true"]')).toHaveCount(1)
+  await page.getByRole('button', { name: 'As it happens', exact: true }).click()
+  await expect(thread).toHaveValue('0')
+  const accessibility = await new AxeBuilder({ page })
+    .include('#memory')
+    .include('#tomorrow')
+    .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])
+    .analyze()
+  expect(
+    accessibility.violations.map((v) => ({ id: v.id, nodes: v.nodes.map((n) => n.target) })),
+  ).toEqual([])
+  await page.reload()
+  await expect(page.locator('.tomorrow-companion')).toHaveCount(0)
+})
+
+test('all seven paper scenes are reachable on a narrow screen', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.goto('/#memory')
+  const strip = page.locator('.memory-strip')
+  for (let i = 0; i < 6; i++) await page.getByRole('button', { name: 'Later in the week' }).click()
+  expect(await strip.evaluate((el) => el.scrollLeft)).toBeGreaterThan(500)
+  const sunday = page.getByRole('button', { name: /SUN: Something growing/ })
+  await sunday.click()
+  await expect(sunday).toHaveAttribute('aria-pressed', 'true')
+  await page.getByRole('link', { name: 'Take this into tomorrow' }).click()
+  await expect(page.locator('.tomorrow-companion .object-flower')).toBeVisible()
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
+})

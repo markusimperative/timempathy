@@ -1,0 +1,446 @@
+@layer components {
+  .fold-control {
+    margin-top: 24px;
+  }
+  .fold-endpoints {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .fold-endpoints button {
+    padding: 7px 0;
+    font-size: 13px;
+    color: #4f5e48;
+    min-height: 40px;
+  }
+  .fold-endpoints button[aria-pressed='true'] {
+    color: var(--ink);
+    text-decoration: underline;
+    text-decoration-color: var(--copper);
+    text-underline-offset: 7px;
+  }
+  .fold-control input[type='range'] {
+    appearance: none;
+    display: block;
+    margin: 0;
+    height: 34px;
+    background: transparent;
+  }
+  .fold-control input::-webkit-slider-runnable-track {
+    height: 1px;
+    background: #ac805d;
+  }
+  .fold-control input::-moz-range-track {
+    height: 1px;
+    background: #ac805d;
+  }
+  .fold-control input::-webkit-slider-thumb {
+    appearance: none;
+    margin-top: -8px;
+    width: 17px;
+    height: 17px;
+    background: var(--copper);
+    border: 4px solid var(--paper);
+    border-radius: 50%;
+    box-shadow: 0 0 0 1px #a8553480;
+  }
+  .fold-control input::-moz-range-thumb {
+    width: 9px;
+    height: 9px;
+    background: var(--copper);
+    border: 4px solid var(--paper);
+    border-radius: 50%;
+    box-shadow: 0 0 0 1px #a8553480;
+  }
+  .fold-hint {
+    font-size: 12px;
+    color: #687065;
+  }
+  .week-topline {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-top: 46px;
+  }
+  .week-topline p {
+    font-size: 10px;
+    letter-spacing: 0.13em;
+  }
+  .week-topline p span {
+    margin-left: 20px;
+    letter-spacing: 0;
+    font-size: 12px;
+    color: #687065;
+  }
+  .week-navigation {
+    display: none;
+    gap: 8px;
+  }
+  .week-navigation button {
+    border: 1px solid #bfc4b4;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: grid;
+    place-items: center;
+  }
+  .memory-strip {
+    display: flex;
+    gap: 2px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 26px 9px 12px;
+    margin: 0 -9px;
+    scrollbar-width: thin;
+    scrollbar-color: #a9ad96 transparent;
+  }
+  .memory-page {
+    flex-basis: 0;
+    min-width: 76px;
+    perspective: 1000px;
+  }
+  .memory-moment {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    border: 0;
+    padding: 0;
+    text-align: left;
+    background: transparent;
+  }
+  .moment-day {
+    display: flex;
+    justify-content: space-between;
+    gap: 6px;
+    width: 100%;
+    padding: 0 10px 16px;
+    font-size: 10px;
+    letter-spacing: 0.13em;
+    color: #4f5e48;
+  }
+  .moment-day > span {
+    font-family: var(--serif);
+    font-size: 16px;
+    letter-spacing: 0;
+    line-height: 1;
+  }
+  .paper-face {
+    display: block;
+    position: relative;
+    width: 100%;
+    height: 260px;
+    transform-style: preserve-3d;
+    transform-origin: center;
+    border: 1px solid #4e5c3c1f;
+    box-shadow: 0 5px 6px -5px #36422e4a;
+    background: #eee5cf;
+  }
+  .memory-scene {
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+  .paper-face.is-folded {
+    box-shadow: 7px 5px 10px -6px #36422e70;
+  }
+  .paper-crease {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, #35432c38, transparent 35%, #fff7e92b 65%, #35432c24);
+    pointer-events: none;
+  }
+  .memory-page:nth-child(even) .paper-crease {
+    transform: scaleX(-1);
+  }
+  .paper-edge {
+    position: absolute;
+    inset: 0;
+    border-left: 1px solid #fff9e88c;
+    border-right: 1px solid #63715336;
+    pointer-events: none;
+  }
+  .memory-moment.held .paper-face {
+    outline: 1px solid var(--copper);
+    outline-offset: 4px;
+  }
+  .memory-moment:hover .moment-label,
+  .memory-moment:focus-visible .moment-label {
+    color: var(--copper);
+  }
+  .moment-label {
+    padding: 17px 10px 0;
+    font-family: var(--serif);
+    font-size: clamp(19px, 1.7vw, 25px);
+    line-height: 1.12;
+    min-height: 73px;
+  }
+  .moment-pin {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 10px 0;
+    font-size: 11px;
+    color: #4f5e48;
+  }
+  .moment-pin > span {
+    color: var(--copper);
+    font-size: 17px;
+    line-height: 1;
+  }
+  .held .moment-pin,
+  .held .moment-label {
+    color: #954729;
+  }
+  .memory-caption {
+    display: grid;
+    grid-template-columns: 230px 1fr;
+    align-items: baseline;
+    gap: 24px;
+    margin-top: 23px;
+  }
+  .memory-caption > span {
+    font-size: 10px;
+    letter-spacing: 0.12em;
+  }
+  .memory-caption p {
+    font-size: 13px;
+    color: #4f5e48;
+    max-width: 630px;
+    min-height: 48px;
+  }
+  .memory-keepsake {
+    display: grid;
+    grid-template-columns: 90px 1fr auto;
+    align-items: center;
+    gap: 25px;
+    padding: 23px 27px;
+    margin-top: 20px;
+    border-top: 1px solid #d0cfbb;
+    border-bottom: 1px solid #d0cfbb;
+    background: #ebe7d730;
+  }
+  .memory-keepsake.has-keepsake {
+    background: #ece5d35e;
+  }
+  .keepsake-drawing {
+    color: #a17851;
+  }
+  .keepsake-drawing > svg {
+    width: 84px;
+    height: 84px;
+  }
+  .memory-object {
+    width: 100%;
+    height: 100%;
+    stroke: #796144;
+    stroke-width: 1.25;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .keepsake-copy p {
+    font-family: var(--serif);
+    font-size: 29px;
+    line-height: 1.15;
+    margin-bottom: 8px;
+  }
+  .keepsake-copy > span {
+    display: block;
+    font-size: 13px;
+    color: #4f5e48;
+  }
+  .carry-link {
+    font-size: 13px;
+    color: #954729;
+    gap: 12px;
+  }
+  .memory-closing {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: 70px;
+    margin-top: 36px;
+  }
+  .memory-closing p:first-child {
+    font-family: var(--serif);
+    font-size: 31px;
+    line-height: 1.15;
+    max-width: 335px;
+  }
+  .memory-closing p:last-child {
+    font-size: 12px;
+    color: #687065;
+    line-height: 1.8;
+    max-width: 480px;
+  }
+  .tomorrow-companion {
+    max-width: 460px;
+    display: grid;
+    grid-template-columns: 100px 1fr;
+    align-items: center;
+    gap: 23px;
+    margin: 30px auto 0;
+    padding: 18px 20px;
+    text-align: left;
+    border-top: 1px solid #c5bda8;
+    border-bottom: 1px solid #c5bda8;
+  }
+  .companion-object {
+    width: 100px;
+    height: 100px;
+  }
+  .tomorrow-companion .eyebrow {
+    font-size: 9px;
+    color: #4f5e48;
+  }
+  .tomorrow-companion p {
+    font-family: var(--serif);
+    font-size: 27px;
+    line-height: 1.2;
+    margin: 4px 0;
+  }
+  .tomorrow-companion div > span:last-of-type {
+    font-size: 12px;
+    color: #4f5e48;
+  }
+  .release-moment {
+    display: block;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    font-size: 11px;
+    color: #874329;
+    padding: 10px 0 4px;
+    min-height: 36px;
+  }
+}
+
+@layer responsive {
+  @media (max-width: 1050px) {
+    .memory-page {
+      min-width: 100px;
+    }
+    .paper-face {
+      height: 220px;
+    }
+    .moment-label {
+      font-size: 20px;
+    }
+    .memory-keepsake {
+      grid-template-columns: 70px 1fr;
+      gap: 14px 24px;
+    }
+    .keepsake-drawing {
+      grid-row: 1 / 3;
+    }
+    .keepsake-drawing > svg {
+      width: 70px;
+      height: 70px;
+    }
+    .carry-link {
+      grid-column: 2;
+      justify-self: start;
+    }
+  }
+  @media (max-width: 760px) {
+    .fold-control {
+      margin-top: 20px;
+    }
+    .week-topline {
+      margin-top: 27px;
+    }
+    .week-topline p span {
+      display: block;
+      margin-left: 0;
+      margin-top: 5px;
+      font-size: 11px;
+    }
+    .week-navigation {
+      display: flex;
+      flex-shrink: 0;
+    }
+    .memory-strip {
+      margin-right: -6.82%;
+      padding-right: 24px;
+      padding-top: 24px;
+      scroll-snap-type: x proximity;
+    }
+    .memory-page {
+      flex-basis: 178px;
+      flex-shrink: 0;
+      min-width: 0;
+      scroll-snap-align: start;
+    }
+    .remembered .memory-page:nth-child(-n + 3) {
+      flex-basis: 106px;
+    }
+    .remembered .memory-page.selected,
+    .memory-page.selected {
+      flex-basis: 220px;
+    }
+    .paper-face {
+      height: 260px;
+    }
+    .moment-label {
+      min-height: 62px;
+      font-size: 23px;
+    }
+    .moment-day {
+      font-size: 10px;
+    }
+    .moment-pin {
+      padding-top: 4px;
+    }
+    .memory-caption {
+      grid-template-columns: 1fr;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .memory-caption p {
+      min-height: 66px;
+      font-size: 13px;
+    }
+    .memory-keepsake {
+      padding: 16px 12px;
+      grid-template-columns: 63px 1fr;
+      gap: 12px 16px;
+      margin-top: 13px;
+    }
+    .keepsake-drawing > svg {
+      width: 63px;
+      height: 63px;
+    }
+    .keepsake-copy p {
+      font-size: 26px;
+    }
+    .keepsake-copy > span {
+      font-size: 12px;
+    }
+    .carry-link {
+      font-size: 12px;
+      gap: 7px;
+    }
+    .memory-closing {
+      grid-template-columns: 1fr;
+      gap: 20px;
+      margin-top: 29px;
+    }
+    .memory-closing p:first-child {
+      font-size: 32px;
+      max-width: 300px;
+    }
+    .memory-closing p:last-child {
+      font-size: 12px;
+    }
+    .tomorrow-companion {
+      grid-template-columns: 73px 1fr;
+      padding: 16px 8px;
+      gap: 14px;
+      max-width: 365px;
+    }
+    .companion-object {
+      width: 73px;
+      height: 80px;
+    }
+  }
+}

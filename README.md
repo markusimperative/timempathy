@@ -4,6 +4,14 @@
 
 A contemplative, interactive journey through the weight of a year, the texture of memory, and the ordinary hopes that connect people across ages. This first version is a working **local prototype**, with clearly labeled fictional wall contributions and a private reflection that is never sent to a server.
 
+## Current interaction experiment
+
+The memory chapter is an illustrated paper week. Pull the copper thread between **As it happens** and **Looking back** to fold familiar mornings together. Selecting any day reopens its scene, reveals a small detail, and places a related drawing beside the tomorrow prompt. The choice lasts for the visit and can be released; it never fills in the reflection or gets stored with it.
+
+Native range and button controls support keyboard input. On narrow screens the week can be swiped or moved with arrow buttons. Reduced motion preserves the same choices without timed transitions. The clocks and imagined wall retain their earlier behavior.
+
+[Selected memory scene](docs/screenshots/desktop-memory-held.png) · [A moment beside tomorrow on mobile](docs/screenshots/mobile-tomorrow-companion.png)
+
 ## Run
 
 Requires Node.js 22.12+ (tested on 24.19.0) and pnpm 11.19.0.
@@ -45,15 +53,17 @@ Firefox is an optional additional target: install it with `pnpm exec playwright 
 
 Static React + TypeScript application, built with Vite. Component state handles interaction; fragment links handle navigation. No backend or service worker. Assets and fonts are hosted with the app. Production runtime makes no external requests until a visitor deliberately opens one of the research links.
 
-| Location                       | Responsibility                                                                |
-| ------------------------------ | ----------------------------------------------------------------------------- |
-| `src/components/Artwork.tsx`   | Original SVG contour sculpture, proportional year traces, illustrated moments |
-| `src/components/Weight.tsx`    | Shared playback, age controls, scrubbing and pause behavior                   |
-| `src/components/Memory.tsx`    | Authored memory transformation and visitor-selected moment                    |
-| `src/components/Tomorrows.tsx` | Private reflection, wall, themes, cross-age echoes                            |
-| `src/content/en.ts`            | Narrative copy and explicitly fictional hopes                                 |
-| `src/lib/model.ts`             | Proportions, validation, and one private storage record                       |
-| `tests/experience.spec.ts`     | Browser journeys, accessibility, privacy boundaries, responsive checks        |
+| Location                           | Responsibility                                                         |
+| ---------------------------------- | ---------------------------------------------------------------------- |
+| `src/components/Artwork.tsx`       | Original SVG contour sculpture and proportional year traces            |
+| `src/components/Weight.tsx`        | Shared playback, age controls, scrubbing and pause behavior            |
+| `src/components/MemoryArtwork.tsx` | Original layered SVG scenes and portable object drawings               |
+| `src/content/moments.ts`           | Authored week and accessible descriptions of its details               |
+| `src/components/Memory.tsx`        | Authored memory transformation and visitor-selected moment             |
+| `src/components/Tomorrows.tsx`     | Private reflection, wall, themes, cross-age echoes                     |
+| `src/content/en.ts`                | Narrative copy and explicitly fictional hopes                          |
+| `src/lib/model.ts`                 | Proportions, validation, and one private storage record                |
+| `tests/experience.spec.ts`         | Browser journeys, accessibility, privacy boundaries, responsive checks |
 
 The application separates the central narrative from presentation. A full localization pass should extract remaining interface labels and dynamic sentences, introduce locale-aware number formatting, and test longer strings and RTL. English is the only implemented language.
 

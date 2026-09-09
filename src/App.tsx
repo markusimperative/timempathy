@@ -6,10 +6,12 @@ import { Mark, TimeSculpture } from './components/Artwork'
 import Weight from './components/Weight'
 import Memory from './components/Memory'
 import Tomorrows from './components/Tomorrows'
+import { moments } from './content/moments'
 
 export default function App() {
   const reducedMotion = useReducedMotion()
   const [paused, setPaused] = useState(false)
+  const [heldMoment, setHeldMoment] = useState<number | null>(null)
   const still = !!reducedMotion || paused
   return (
     <MotionConfig reducedMotion={still ? 'always' : 'user'}>
@@ -74,8 +76,12 @@ export default function App() {
             </div>
           </section>
           <Weight still={still} />
-          <Memory still={still} />
-          <Tomorrows still={still} />
+          <Memory still={still} held={heldMoment} onHold={setHeldMoment} />
+          <Tomorrows
+            still={still}
+            moment={heldMoment === null ? null : moments[heldMoment]}
+            onRelease={() => setHeldMoment(null)}
+          />
           <section className="about-section" id="about" aria-labelledby="about-title">
             <span className="eyebrow">A NOTE ON TIME</span>
             <h2 id="about-title">
