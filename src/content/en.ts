@@ -3,24 +3,30 @@ export const copy = {
   hero: {
     eyebrow: 'AN EXPLORATION OF HUMAN TIME',
     title: ['The same clock.', 'A different', 'feeling.'],
-    intro: 'We share the hours. But a year, a day, a moment can hold something different for each of us.',
+    intro:
+      'We share the hours. But a year, a day, a moment can hold something different for each of us.',
     invitation: 'Step into someone else’s sense of time.',
   },
   weight: {
     title: 'Borrow another clock.',
-    intro: 'Imagine holding all the years you’ve lived in a single circle. How much room would one year take?',
-    caveat: 'A lens, not a law. These circles show one year as a fraction of an age. They do not measure how time feels. Attention, emotion, memory, and circumstance matter, too.',
+    intro:
+      'Imagine holding all the years you’ve lived in a single circle. How much room would one year take?',
+    caveat:
+      'A lens, not a law. These circles show one year as a fraction of an age. They do not measure how time feels. Attention, emotion, memory, and circumstance matter, too.',
   },
   memory: {
     title: ['A day passes.', 'What stays?'],
     intro: 'A week can be seven equal days on a calendar, and something quite different in memory.',
-    lived: 'Seven days, each with the same space. A familiar cup, a different sky, a conversation at the table.',
-    remembered: 'Here, familiar cups fold together, while other moments stay distinct. This is one imagined memory. Yours might hold the cups most clearly.',
+    lived:
+      'Seven days, each with the same space. A familiar cup, a different sky, a conversation at the table.',
+    remembered:
+      'Here, familiar cups fold together, while other moments stay distinct. This is one imagined memory. Yours might hold the cups most clearly.',
     closing: 'The familiar can be what we treasure most.',
   },
   tomorrow: {
     title: ['How would you like', 'to remember tomorrow?'],
-    intro: 'Imagine tomorrow is already a memory. Something small is enough. An ordinary, peaceful day is enough.',
+    intro:
+      'Imagine tomorrow is already a memory. Something small is enough. An ordinary, peaceful day is enough.',
   },
 } as const
 
@@ -29,7 +35,12 @@ export type Hope = { id: string; age: number; text: string; thread: 'company' | 
 // Authored examples, never represented as real visitor submissions.
 export const hopes: Hope[] = [
   { id: 's1', age: 17, text: 'Having dinner with someone I love.', thread: 'company' },
-  { id: 's2', age: 79, text: 'A long dinner. Nobody needing to leave just yet.', thread: 'company' },
+  {
+    id: 's2',
+    age: 79,
+    text: 'A long dinner. Nobody needing to leave just yet.',
+    thread: 'company',
+  },
   { id: 's3', age: 34, text: 'Sitting outside with my tea before it gets cold.', thread: 'quiet' },
   { id: 's4', age: 68, text: 'Getting the bread just right.', thread: 'small' },
   { id: 's5', age: 23, text: 'A day when I feel a little more at home.', thread: 'quiet' },
@@ -39,5 +50,10 @@ export const hopes: Hope[] = [
   { id: 's9', age: 19, text: 'The smell of rain through the window.', thread: 'small' },
   { id: 's10', age: 73, text: 'A quiet afternoon with nothing much to tell.', thread: 'quiet' },
   { id: 's11', age: 29, text: 'Making something nice for lunch.', thread: 'small' },
-  { id: 's12', age: 60, text: 'Someone asking how I am and having time to listen.', thread: 'company' },
+  {
+    id: 's12',
+    age: 60,
+    text: 'Someone asking how I am and having time to listen.',
+    thread: 'company',
+  },
 ]

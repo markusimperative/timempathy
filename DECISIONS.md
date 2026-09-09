@@ -31,3 +31,11 @@ No image generation, Three.js/WebGL, charting framework, database, routing frame
 ### First rendered review
 
 The first desktop and mobile captures show a coherent paper / forest / copper visual system and a readable central hierarchy. All model and persistence tests passed; the first browser pass verified all functional journeys. Automated contrast checks caught insufficient contrast on the ages printed on wall notes. Visual inspection also showed that some secondary copy was too small, and fading unrelated notes would compromise legibility. These are refinement work before the review milestone, not accepted limitations.
+
+## 2026-09-09 — Readability and review refinement
+
+After the first rendered pass, supporting type was enlarged, wall age labels darkened, and opacity-based fading removed from both the wall and memory scene. An echo is now an outline plus a label; paired notes move adjacent in reading order, so the encounter remains visible on mobile. A global pause also stops active playback without restarting it on resume. The hidden skip link was strengthened after full-section screenshots revealed its offscreen box could appear in extended captures.
+
+The first complete functional browser run passed. Initial axe failures on note metadata were fixed; changed states then passed at desktop and mobile sizes. The final suite covers 28 Chromium cases plus 15 domain/storage cases, and the built production bundle was exercised separately. Firefox was attempted but could not launch: Windows reported a missing mozglue side-by-side assembly. No operating-system security setting was changed. The optional Firefox test target is retained with the environment limitation documented.
+
+No public publishing or remote Git operation is part of this milestone. The next product evidence should come from consenting visitors, particularly across ages and assistive technologies.
