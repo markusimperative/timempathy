@@ -1,4 +1,6 @@
-import { arcPoint, yearShare } from '../lib/model'
+import { yearShare } from '../lib/model'
+import { motion, useTransform } from 'motion/react'
+import type { MotionValue } from 'motion/react'
 
 export function Mark() {
   return (
@@ -56,15 +58,6 @@ export function TimeSculpture({ still }: { still: boolean }) {
             />
           ))}
         </g>
-        <path d="M413 139L474 84H547" stroke="#9c9c89" strokeWidth=".7" />
-        <circle cx="413" cy="139" r="7" fill="#b66441" stroke="#f5f2e9" strokeWidth="3" />
-        <text x="481" y="72" className="svg-note">
-          one shared moment
-        </text>
-        <path d="M91 426H135L176 387" stroke="#9c9c89" strokeWidth=".7" />
-        <text x="67" y="448" className="svg-note">
-          many ways to feel it
-        </text>
       </svg>
     </div>
   )
@@ -76,11 +69,19 @@ export function YearDial({
   variant,
 }: {
   age: number
-  progress: number
+  progress: MotionValue<number>
   variant: 'copper' | 'sage'
 }) {
   const share = yearShare(age)
-  const point = arcPoint(age, progress)
+  const dash = useTransform(progress, (value) => `${share * value} 1`)
+  const x = useTransform(
+    progress,
+    (value) => 180 + 132 * Math.cos(value * share * Math.PI * 2 - Math.PI / 2),
+  )
+  const y = useTransform(
+    progress,
+    (value) => 180 + 132 * Math.sin(value * share * Math.PI * 2 - Math.PI / 2),
+  )
   return (
     <svg
       className={`year-dial ${variant}`}
@@ -117,7 +118,7 @@ export function YearDial({
         strokeDasharray={`${share} 1`}
         transform="rotate(-90 180 180)"
       />
-      <circle
+      <motion.circle
         className="dial-year"
         cx="180"
         cy="180"
@@ -125,10 +126,10 @@ export function YearDial({
         fill="none"
         strokeWidth="8"
         pathLength="1"
-        strokeDasharray={`${share * progress} 1`}
+        strokeDasharray={dash}
         transform="rotate(-90 180 180)"
       />
-      <circle className="dial-point" cx={point.x} cy={point.y} r="6" />
+      <motion.circle className="dial-point" cx={x} cy={y} r="6" />
       <text className="dial-age" x="180" y="185" textAnchor="middle">
         {age}
       </text>

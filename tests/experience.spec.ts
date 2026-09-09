@@ -13,7 +13,7 @@ test('the complete journey renders locally without errors or outside requests', 
   })
   await page.goto('/')
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(
-    'The same clock.A differentfeeling.',
+    'The same clock.A different feeling.',
   )
   await page.getByRole('link', { name: 'Borrow a clock', exact: true }).click()
   await expect(page).toHaveURL(/#weight$/)
@@ -22,7 +22,7 @@ test('the complete journey renders locally without errors or outside requests', 
     true,
   )
   await expect(
-    page.getByText('An imagined wall — these are written examples, not real submissions.'),
+    page.getByText('An imagined wall. These are written examples, not real submissions.'),
   ).toBeAttached()
   await expect(page.locator('.hope-note')).toHaveCount(12)
   expect(errors).toEqual([])
@@ -61,7 +61,7 @@ test('memory gives an ordinary repeated moment equal permission to stay', async 
   await page.goto('/#memory')
   await page.getByRole('button', { name: 'Looking back', exact: true }).click()
   await expect(page.getByText(/Here, familiar cups fold together/)).toBeVisible()
-  const ordinary = page.getByRole('button', { name: /WED: Morning, again/ })
+  const ordinary = page.getByRole('button', { name: /WED Morning, again/ })
   await ordinary.click()
   await expect(ordinary).toHaveAttribute('aria-pressed', 'true')
   await expect(page.getByText('A familiar morning can stay with you, too.')).toBeVisible()
@@ -154,7 +154,7 @@ test('key states pass automated accessibility checks', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' })
   await page.goto('/')
   const initial = await new AxeBuilder({ page })
-    .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])
+    .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
     .analyze()
   expect(
     initial.violations.map((v) => ({
@@ -165,7 +165,7 @@ test('key states pass automated accessibility checks', async ({ page }) => {
   await page.getByRole('button', { name: 'Looking back', exact: true }).click()
   await page.getByRole('button', { name: 'Find an echo', exact: true }).click()
   const changed = await new AxeBuilder({ page })
-    .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])
+    .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
     .analyze()
   expect(
     changed.violations.map((v) => ({
@@ -244,7 +244,7 @@ test('a chosen illustration accompanies tomorrow without changing the visitor’
     .getByRole('textbox', { name: 'I’d like to remember…' })
     .fill('Something entirely my own.')
   await page.getByRole('button', { name: 'Looking back', exact: true }).click()
-  const ordinary = page.getByRole('button', { name: /WED: Morning, again/ })
+  const ordinary = page.getByRole('button', { name: /WED Morning, again/ })
   await ordinary.focus()
   await page.keyboard.press('Enter')
   await expect(ordinary).toHaveAttribute('aria-pressed', 'true')
@@ -286,9 +286,9 @@ test('the paper folds at the visitor’s pace and any day can reopen in still mo
       .first()
       .evaluate((el) => el.getBoundingClientRect().width)
   const foldedWidth = await pageWidth()
-  await page.getByRole('button', { name: /MON: A familiar cup/ }).click()
+  await page.getByRole('button', { name: /MON A familiar cup/ }).click()
   await expect.poll(pageWidth).toBeGreaterThan(foldedWidth + 20)
-  await page.getByRole('button', { name: /SAT: An evening walk/ }).click()
+  await page.getByRole('button', { name: /SAT An evening walk/ }).click()
   await expect(page.locator('.tomorrow-companion .object-moon')).toBeAttached()
   await expect(page.locator('.memory-moment[aria-pressed="true"]')).toHaveCount(1)
   await page.getByRole('button', { name: 'As it happens', exact: true }).click()
@@ -296,7 +296,7 @@ test('the paper folds at the visitor’s pace and any day can reopen in still mo
   const accessibility = await new AxeBuilder({ page })
     .include('#memory')
     .include('#tomorrow')
-    .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])
+    .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
     .analyze()
   expect(
     accessibility.violations.map((v) => ({ id: v.id, nodes: v.nodes.map((n) => n.target) })),
@@ -312,7 +312,7 @@ test('all seven paper scenes are reachable on a narrow screen', async ({ page })
   const strip = page.locator('.memory-strip')
   for (let i = 0; i < 6; i++) await page.getByRole('button', { name: 'Later in the week' }).click()
   expect(await strip.evaluate((el) => el.scrollLeft)).toBeGreaterThan(500)
-  const sunday = page.getByRole('button', { name: /SUN: Something growing/ })
+  const sunday = page.getByRole('button', { name: /SUN Something growing/ })
   await sunday.click()
   await expect(sunday).toHaveAttribute('aria-pressed', 'true')
   await page.getByRole('link', { name: 'Take this into tomorrow' }).click()

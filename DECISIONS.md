@@ -53,3 +53,13 @@ Original SVG scenes replace the earlier isolated outline icons. Motion handles p
 Rendered inspection caught nested-SVG sizing and stale styling from the old memory strip. Both were removed. Browser checks also caught the initial anchor-focus race and selected-state text contrast; both were corrected. The 34 desktop/mobile Chromium cases are passing after targeted reruns of the fixes, alongside 15 unit cases, type checking, and the production build. Fold movement was inspected in the real browser at intermediate and settled states. Representative desktop and mobile captures are in docs/screenshots.
 
 Remaining creative limitation: the mornings fold according to one authored recollection, and a carried drawing remains an illustration rather than a personal memory artifact. Whether this feels tender and meaningful still needs direct visitor feedback. The existing Firefox startup limitation is unchanged.
+
+## 2026-09-09 — A contextual Taste Skill refinement
+
+The creator requested the Taste Skill repository. Both its main and redesign guides were read at a pinned revision, with the interpretation recorded in docs/TASTE_REVIEW.md. The working dials are layout variance 6, motion intensity 4, and visual density 3. The existing storybook identity and original SVG illustrations take priority over generic photographic, marketing, and framework prescriptions. The skill's print-emulating exception fits the light paper theme.
+
+The opening now has a compact two-line title and fewer competing invitations. Chapter headings stand without numbered banners. A continuous paper palette connects the chapters. On the wall, larger ages share space with each hope; a restrained copper line connects the adjacent echo pair. Pressed feedback and supporting contrast were refined without changing the visitor journey or data behavior.
+
+Both year dials now subscribe to one Motion value. The native scrubber synchronizes directly with that value, so continuous playback does not rerender the whole clock scene every frame. React state only tracks discrete playback phases and user choices. The synchronized eight-second passage and 1/age geometry are unchanged.
+
+A production Lighthouse audit surfaced mismatched visible and accessible labels on the memory buttons. Removing their redundant aria-label lets the actual day, caption, and hold action supply the name. The browser accessibility suite now includes WCAG 2.1 A. Three above-the-fold font preloads shorten the local loading chain. Final validation and remaining audit observations are recorded in docs/TASTE_REVIEW.md.

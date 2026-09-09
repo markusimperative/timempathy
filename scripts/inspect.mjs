@@ -20,7 +20,7 @@ try {
   await page
     .locator('#memory')
     .screenshot({ path: '.local/screenshots/desktop-memory-remembered.png' })
-  await page.getByRole('button', { name: /WED: Morning, again/ }).click()
+  await page.getByRole('button', { name: /WED Morning, again/ }).click()
   await page.mouse.move(0, 0)
   await page.locator('#memory').screenshot({ path: '.local/screenshots/desktop-memory-held.png' })
   await page.getByRole('link', { name: 'Take this into tomorrow' }).click()
@@ -37,7 +37,7 @@ try {
       .locator(`#${section}`)
       .screenshot({ path: `.local/screenshots/mobile-${section}.png` })
   }
-  await page.getByRole('button', { name: /MON: A familiar cup/ }).click()
+  await page.getByRole('button', { name: /MON A familiar cup/ }).click()
   await page.getByRole('link', { name: 'Take this into tomorrow' }).click()
   await page
     .locator('#tomorrow')

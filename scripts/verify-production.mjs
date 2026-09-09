@@ -46,7 +46,7 @@ try {
   await page.getByRole('button', { name: '85', exact: true }).click()
   await expect(page.getByRole('slider', { name: 'Borrowed age', exact: true })).toHaveValue('85')
   await page.getByRole('button', { name: 'Looking back', exact: true }).click()
-  await page.getByRole('button', { name: /WED: Morning, again/ }).click()
+  await page.getByRole('button', { name: /WED Morning, again/ }).click()
   await page.getByRole('link', { name: 'Take this into tomorrow' }).click()
   await expect(page.locator('#tomorrow-title')).toBeFocused()
   await expect(page.locator('.tomorrow-companion')).toContainText('Morning, again')

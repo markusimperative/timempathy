@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { MotionConfig, useReducedMotion } from 'motion/react'
-import { ArrowDown, ArrowUpRight, Pause, Play } from 'lucide-react'
+import { ArrowUpRight, Pause, Play } from 'lucide-react'
 import { copy } from './content/en'
 import { Mark, TimeSculpture } from './components/Artwork'
 import Weight from './components/Weight'
@@ -53,27 +53,18 @@ export default function App() {
         <main id="main">
           <section className="hero" id="top" aria-labelledby="hero-title">
             <div className="hero-copy">
-              <p className="eyebrow">{copy.hero.eyebrow}</p>
               <h1 id="hero-title">
-                {copy.hero.title[0]}
-                <br />
-                {copy.hero.title[1]}
-                <br />
-                <em>{copy.hero.title[2]}</em>
+                <span>{copy.hero.title[0]}</span>
+                <span>
+                  {copy.hero.title[1]} <em>{copy.hero.title[2]}</em>
+                </span>
               </h1>
               <p className="hero-intro">{copy.hero.intro}</p>
               <a className="button button-dark hero-cta" href="#weight">
                 Borrow a clock <ArrowUpRight size={18} />
               </a>
-              <p className="unhurried">A few moments. At your own pace.</p>
             </div>
             <TimeSculpture still={still} />
-            <div className="hero-foot">
-              <span>{copy.hero.invitation}</span>
-              <a href="#weight">
-                SCROLL TO EXPLORE <ArrowDown size={16} />
-              </a>
-            </div>
           </section>
           <Weight still={still} />
           <Memory still={still} held={heldMoment} onHold={setHeldMoment} />
@@ -83,7 +74,6 @@ export default function App() {
             onRelease={() => setHeldMoment(null)}
           />
           <section className="about-section" id="about" aria-labelledby="about-title">
-            <span className="eyebrow">A NOTE ON TIME</span>
             <h2 id="about-title">
               An invitation to notice.
               <br />

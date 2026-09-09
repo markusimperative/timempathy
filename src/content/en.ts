@@ -3,8 +3,7 @@ export const copy = {
   hero: {
     eyebrow: 'AN EXPLORATION OF HUMAN TIME',
     title: ['The same clock.', 'A different', 'feeling.'],
-    intro:
-      'We share the hours. But a year, a day, a moment can hold something different for each of us.',
+    intro: 'A year, a day, a moment. The same time can hold something different for each of us.',
     invitation: 'Step into someone else’s sense of time.',
   },
   weight: {
