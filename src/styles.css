@@ -351,39 +351,6 @@
   .dark-section .section-head {
     color: #c1c9b9;
   }
-  .weight-heading {
-    text-align: center;
-    margin: 61px auto 17px;
-  }
-  .weight-heading h2 {
-    font-size: clamp(44px, 5vw, 66px);
-  }
-  .weight-heading > p {
-    max-width: 445px;
-    margin: 21px auto 0;
-    font-size: 15px;
-    color: #c8cebf;
-    line-height: 1.8;
-  }
-  .clocks {
-    max-width: 940px;
-    margin: auto;
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) 115px minmax(0, 1fr);
-    align-items: center;
-  }
-  .clock {
-    min-width: 0;
-    text-align: center;
-  }
-  .clock-kicker {
-    font-size: 13px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    margin-top: 28px;
-  }
   .color-dot {
     width: 6px;
     height: 6px;
@@ -392,125 +359,272 @@
     border-radius: 50%;
     flex-shrink: 0;
   }
-  .sage-dot {
-    background: #c1d3a4;
+  .weight-heading {
+    text-align: center;
+    margin: 45px auto 22px;
   }
-  .copper-dot {
-    background: #dfa277;
+  .weight-heading h2 {
+    font-size: clamp(44px, 5vw, 66px);
+    line-height: 1.08;
+    text-wrap: balance;
+  }
+  .weight-heading > p {
+    max-width: 485px;
+    margin: 18px auto 0;
+    font-size: 15px;
+    color: #c8cebf;
+    line-height: 1.7;
+  }
+  .shared-year {
+    width: 242px;
+    margin: 24px auto 0;
+    text-align: center;
+  }
+  .shared-year figcaption {
+    font-family: var(--serif);
+    font-size: 27px;
+    color: #edb28a;
+    line-height: 1.25;
+  }
+  .shared-year figcaption span {
+    display: block;
+    margin: 4px 0 11px;
+    font-family: 'DM Sans', sans-serif;
+    color: #c8cebf;
+    font-size: 12px;
+  }
+  .shared-year svg {
+    width: 100%;
+  }
+  .year-strip-outline {
+    fill: #725440;
+    stroke: #edb28a;
+    stroke-width: 1;
+  }
+  .year-strip-fill {
+    fill: #e3a47a;
+  }
+  .year-strip-month {
+    stroke: var(--forest);
+    stroke-width: 1;
+    opacity: 0.55;
+  }
+  .year-bookends {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 4px;
+    color: #c8cebf;
+    font-size: 10px;
+  }
+  .clocks {
+    max-width: 760px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 66px;
+  }
+  .clock {
+    min-width: 0;
+    text-align: center;
   }
   .year-dial {
     width: 100%;
-    max-width: 350px;
-    margin: 8px auto -10px;
+    max-width: 335px;
+    margin: 0 auto -10px;
   }
-  .dial-threads {
-    stroke: #b4c3a7;
-    stroke-width: 0.65;
-    opacity: 0.19;
+  .dial-inner-thread {
+    stroke: #acbd9e;
+    stroke-width: 0.7;
+    opacity: 0.3;
   }
-  .dial-ticks {
-    stroke: #b6c3ac;
-    stroke-width: 1;
-    opacity: 0.5;
+  .dial-outer-thread {
+    stroke: #acbd9e;
+    stroke-width: 0.7;
+    opacity: 0.4;
   }
-  .dial-track {
-    stroke: #54705e;
-    opacity: 0.55;
+  .dial-segment {
+    stroke: #8c9e7d;
   }
-  .sage {
-    --dial-accent: #c7d8aa;
-  }
-  .copper {
-    --dial-accent: #e3a47a;
-  }
-  .dial-potential {
-    stroke: var(--dial-accent);
-    opacity: 0.28;
+  .dial-segment.is-one-year {
+    stroke: #725440;
   }
   .dial-year {
-    stroke: var(--dial-accent);
+    stroke: #e3a47a;
+  }
+  .dial-divisions {
+    stroke: var(--forest);
+    stroke-width: 2.5;
+  }
+  .dial-year-outline {
+    stroke: #edb28a;
   }
   .dial-point {
-    fill: var(--dial-accent);
+    fill: var(--paper);
     stroke: var(--forest);
-    stroke-width: 2;
+    stroke-width: 1.5;
   }
   .dial-age {
     font: 85px var(--serif);
     fill: #f1f0dd;
-    letter-spacing: -4px;
+    letter-spacing: -3px;
   }
   .dial-label {
-    font-family: 'DM Sans', sans-serif;
-    font-size: 10px;
-    fill: #c4cbb7;
-    letter-spacing: 2px;
+    font:
+      18px 'DM Sans',
+      sans-serif;
+    fill: #c8cebf;
   }
-  .fraction {
+  .year-share {
+    font-family: var(--serif);
+    font-size: 29px;
+    line-height: 1.3;
+    color: #f1f0dd;
+  }
+  .year-share em {
+    font-style: normal;
+    color: #edb28a;
+  }
+  .passage-controls {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    max-width: 700px;
+    margin: 29px auto 0;
+  }
+  .button.clock-play {
+    position: relative;
+    min-height: 64px;
+    min-width: 316px;
+    justify-content: flex-start;
+    padding: 12px 25px 12px 15px;
+    gap: 17px;
+    background: #e3a47a;
+    color: #20392f;
+    font-size: 15px;
+    font-weight: 600;
+    border: 1px solid #f0bd98;
+    border-radius: 4px;
+    box-shadow:
+      0 4px 0 #172e25,
+      inset 0 1px 0 #f4c3a099;
+    transition:
+      background 180ms,
+      transform 180ms,
+      box-shadow 180ms;
+  }
+  .clock-play:hover {
+    background: #efb48c;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 0 #172e25;
+  }
+  .clock-play:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px 0 #172e25;
+  }
+  .play-symbol {
+    width: 38px;
+    height: 38px;
+    display: grid;
+    place-items: center;
+    border: 1px solid #20392f66;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .play-symbol .lucide-play {
+    fill: currentColor;
+  }
+  .clock-play.has-cue::after {
+    content: '';
+    position: absolute;
+    inset: -5px;
+    border: 1px solid #edb28a;
+    border-radius: 7px;
+    pointer-events: none;
+    animation: invite-year 1.6s 450ms ease-out both;
+  }
+  @keyframes invite-year {
+    0% {
+      opacity: 0;
+      transform: scale(1);
+    }
+    20% {
+      opacity: 0.75;
+    }
+    100% {
+      opacity: 0;
+      transform: scale(1.09, 1.38);
+    }
+  }
+  #play-description {
+    font-size: 12px;
+    color: #c8cebf;
+    margin: 13px 0 22px;
+    text-align: center;
+  }
+  .year-scrubber {
+    width: 100%;
+    max-width: 390px;
+  }
+  .year-scrubber label {
+    font-size: 12px;
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+  }
+  .year-scrubber output {
+    color: #c8cebf;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+  .year-scrubber input {
+    margin: 6px 0 0;
+  }
+  .clock-summary {
+    font-family: var(--serif);
+    font-size: 25px;
+    line-height: 1.3;
+    text-align: center;
+    color: #e6e7d7;
+    min-height: 33px;
+    margin: 16px auto 0;
+  }
+  .age-exploration {
+    max-width: 620px;
+    margin: 25px auto 0;
+    padding-top: 23px;
+    border-top: 1px solid #607561;
+  }
+  .age-exploration > p {
+    text-align: center;
     font-size: 13px;
     color: #c8cebf;
   }
-  .fraction em {
-    color: #f0f0dd;
-    font-style: normal;
+  .age-controls {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 45px;
+    margin-top: 19px;
   }
   .range-label {
     display: flex;
+    align-items: center;
     justify-content: space-between;
-    width: 73%;
-    margin: 20px auto 0;
-    font-size: 12px;
+    gap: 10px;
+    font-size: 13px;
     color: #c8cebf;
   }
   .range-label output {
-    color: #f0f0dd;
-  }
-  .clock input[type='range'] {
-    width: 75%;
-    margin-top: 2px;
-  }
-  .clock-reference input {
-    accent-color: #c7d8aa;
-  }
-  .clock-connection {
-    text-align: center;
-    align-self: center;
-    margin-top: -34px;
-    font-size: 12px;
-    color: #c1c9b9;
     font-family: var(--serif);
-    font-style: italic;
-    font-size: 16px;
-  }
-  .clock-connection i {
-    height: 1px;
-    width: 86px;
-    margin: 11px auto;
-    display: block;
-    background: linear-gradient(90deg, #c7d8aa60, #dfa27790);
-    position: relative;
-  }
-  .clock-connection i::before,
-  .clock-connection i::after {
-    content: '';
-    display: block;
-    width: 4px;
-    height: 4px;
-    border-radius: 50%;
-    background: #c7d8aa;
-    position: absolute;
-    top: -1px;
-  }
-  .clock-connection i::after {
-    right: 0;
-    background: #dfa277;
+    font-size: 25px;
+    color: #f0f0dd;
+    line-height: 1.3;
   }
   .borrow-presets {
     display: flex;
-    gap: 17px;
     align-items: center;
     justify-content: center;
-    margin: 34px auto 28px;
+    gap: 17px;
+    margin: 18px auto 0;
     font-size: 12px;
     color: #c8cebf;
   }
@@ -526,49 +640,12 @@
     font-size: 13px;
   }
   .borrow-presets button[aria-pressed='true'] {
-    background: #dca27b;
+    background: #e3a47a;
     color: #20392f;
-    border-color: #dca27b;
+    border-color: #e3a47a;
   }
   .borrow-presets button:hover {
     border-color: #f0f0dd;
-  }
-  .passage-controls {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 35px;
-    max-width: 700px;
-    margin: 0 auto;
-    padding: 23px 0;
-    border-top: 1px solid #607561;
-  }
-  .passage-controls .button {
-    gap: 10px;
-    min-width: 180px;
-  }
-  .year-scrubber {
-    flex: 1;
-    max-width: 390px;
-  }
-  .year-scrubber label {
-    font-size: 12px;
-    display: flex;
-    justify-content: space-between;
-    gap: 15px;
-  }
-  .year-scrubber output {
-    color: #c8cebf;
-    white-space: nowrap;
-  }
-  .year-scrubber input {
-    margin: 6px 0 0;
-  }
-  .clock-summary {
-    font-size: 13px;
-    text-align: center;
-    color: #c8cebf;
-    min-height: 20px;
   }
   .model-note {
     display: flex;
@@ -1136,12 +1213,6 @@
     .hero-intro {
       max-width: 320px;
     }
-    .clocks {
-      grid-template-columns: minmax(0, 1fr) 80px minmax(0, 1fr);
-    }
-    .clock-connection i {
-      width: 60px;
-    }
     .hope-note {
       padding: 30px 22px 20px;
     }
@@ -1231,72 +1302,81 @@
       font-size: 11px;
     }
     .weight-heading {
-      margin-top: 40px;
+      margin-top: 34px;
     }
     .weight-heading h2 {
-      font-size: 47px;
+      font-size: 43px;
     }
     .weight-heading > p {
       max-width: 350px;
       font-size: 14px;
+      margin-top: 17px;
+    }
+    .shared-year {
+      width: 210px;
+      margin-top: 21px;
+    }
+    .shared-year figcaption {
+      font-size: 25px;
     }
     .clocks {
-      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
       gap: 12px;
-    }
-    .clock-connection {
-      display: none;
-    }
-    .clock-kicker {
-      font-size: 11px;
-      gap: 6px;
-      min-height: 30px;
-      line-height: 1.3;
+      margin-top: 14px;
     }
     .year-dial {
-      margin-top: 0;
+      margin-bottom: 0;
     }
-    .fraction {
-      font-size: 11px;
-      max-width: 150px;
-      margin: 10px auto 0;
-    }
-    .range-label {
-      width: 90%;
-      margin-top: 15px;
-      font-size: 11px;
-    }
-    .clock input[type='range'] {
-      width: 93%;
-    }
-    .borrow-presets {
-      margin-top: 30px;
-      font-size: 11px;
-      gap: 12px;
-    }
-    .borrow-presets > div {
-      gap: 5px;
-    }
-    .borrow-presets button {
-      width: 35px;
-      height: 35px;
+    .year-share {
+      font-size: 23px;
     }
     .passage-controls {
-      gap: 20px;
-      flex-direction: column;
+      margin-top: 26px;
     }
-    .passage-controls .button {
+    .button.clock-play {
+      min-width: 0;
       width: 100%;
       max-width: 335px;
+      padding-right: 12px;
+      gap: 12px;
+      font-size: 14px;
     }
     .year-scrubber {
-      width: 100%;
       max-width: 335px;
     }
+    .year-scrubber label {
+      font-size: 11px;
+      gap: 7px;
+    }
     .clock-summary {
-      font-size: 12px;
+      font-size: 23px;
       max-width: 320px;
-      margin: auto;
+      min-height: 60px;
+      margin-top: 17px;
+    }
+    .age-exploration {
+      margin-top: 17px;
+      padding-top: 19px;
+    }
+    .age-exploration > p {
+      font-size: 12px;
+    }
+    .age-controls {
+      gap: 24px;
+      margin-top: 14px;
+    }
+    .range-label {
+      font-size: 12px;
+    }
+    .borrow-presets {
+      flex-direction: column;
+      gap: 9px;
+    }
+    .borrow-presets > div {
+      gap: 8px;
+    }
+    .borrow-presets button {
+      width: 38px;
+      height: 38px;
     }
     .model-note {
       margin-top: 28px;
@@ -1569,10 +1649,7 @@
   }
   @media (max-width: 760px) {
     .dial-label {
-      display: none;
-    }
-    .clock-kicker {
-      min-height: 36px;
+      font-size: 23px;
     }
     .form-meta {
       flex-wrap: wrap;

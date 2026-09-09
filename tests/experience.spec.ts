@@ -17,7 +17,7 @@ test('the complete journey renders locally without errors or outside requests', 
   )
   await page.getByRole('link', { name: 'Borrow a clock', exact: true }).click()
   await expect(page).toHaveURL(/#weight$/)
-  await expect(page.getByRole('heading', { name: 'Borrow another clock.' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'One year, inside two lives.' })).toBeVisible()
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(
     true,
   )
@@ -38,13 +38,13 @@ test('clocks support keyboard ages, synchronized playback, pause and scrubbing',
   const start = page.getByRole('slider', { name: 'Starting age', exact: true })
   await start.focus()
   await page.keyboard.press('ArrowRight')
-  await expect(start).toHaveValue('33')
-  await page.getByRole('button', { name: 'Let a year pass' }).click()
-  await expect(page.getByRole('button', { name: 'Pause the year' })).toBeVisible()
+  await expect(start).toHaveValue('6')
+  await page.getByRole('button', { name: 'Watch the same year pass' }).click()
+  await expect(page.getByRole('button', { name: 'Pause', exact: true })).toBeVisible()
   await expect
     .poll(async () => Number(await page.locator('#year-progress').inputValue()))
     .toBeGreaterThan(0)
-  await page.getByRole('button', { name: 'Pause the year' }).click()
+  await page.getByRole('button', { name: 'Pause', exact: true }).click()
   const value = await page.locator('#year-progress').inputValue()
   await page.waitForTimeout(200)
   expect(await page.locator('#year-progress').inputValue()).toBe(value)
@@ -53,7 +53,7 @@ test('clocks support keyboard ages, synchronized playback, pause and scrubbing',
   const paths = await page
     .locator('.dial-year')
     .evaluateAll((elements) => elements.map((el) => el.getAttribute('stroke-dasharray')))
-  expect(parseFloat(paths[0]!)).toBeCloseTo(0.5 / 33)
+  expect(parseFloat(paths[0]!)).toBeCloseTo(0.5 / 6)
   expect(parseFloat(paths[1]!)).toBeCloseTo(0.5 / 85)
 })
 
@@ -143,11 +143,13 @@ test('reduced motion offers a direct equivalent with no timed interaction', asyn
   await expect(
     page.getByRole('button', { name: 'Reduced motion is enabled by your device' }),
   ).toBeDisabled()
-  await expect(page.getByRole('button', { name: 'Let a year pass' })).toHaveCount(0)
+  await expect(page.getByRole('button', { name: 'Watch the same year pass' })).toHaveCount(0)
+  await expect(page.locator('#year-progress')).toHaveValue('0')
+  await page.getByRole('button', { name: 'Compare the same year' }).click()
+  await expect(page.locator('#year-progress')).toHaveValue('12')
+  await expect(page.locator('.clock-play')).not.toHaveClass(/has-cue/)
   await page.getByRole('button', { name: 'Show the beginning' }).click()
   await expect(page.locator('#year-progress')).toHaveValue('0')
-  await page.getByRole('button', { name: 'Show the whole year' }).click()
-  await expect(page.locator('#year-progress')).toHaveValue('12')
 })
 
 test('key states pass automated accessibility checks', async ({ page }) => {
@@ -187,7 +189,7 @@ test('the global motion control stops playback without silently restarting it', 
   page,
 }) => {
   await page.goto('/#weight')
-  await page.getByRole('button', { name: 'Let a year pass' }).click()
+  await page.getByRole('button', { name: 'Watch the same year pass' }).click()
   await expect
     .poll(async () => Number(await page.locator('#year-progress').inputValue()))
     .toBeGreaterThan(0)
@@ -228,12 +230,13 @@ test('a failed deletion never claims that a persistent thought is gone', async (
 
 test('a complete year stops at twelve months for both lives', async ({ page }) => {
   await page.goto('/#weight')
-  await page.getByRole('button', { name: 'Let a year pass' }).click()
+  await page.getByRole('button', { name: 'Watch the same year pass' }).click()
   await expect(page.locator('#year-progress')).toHaveValue('12', { timeout: 12000 })
-  await expect(page.getByRole('button', { name: 'Let a year pass' })).toBeVisible()
-  await expect(page.locator('.clock-summary')).toContainText(
-    '3.1% of one circle and 20.0% of the other',
+  await expect(page.getByRole('button', { name: 'Watch again' })).toBeVisible()
+  await expect(page.locator('.clock-summary')).toHaveText(
+    'The same year. A different share of the story.',
   )
+  await expect(page.locator('.year-share')).toHaveText(['One of 5 years.', 'One of 50 years.'])
 })
 
 test('a chosen illustration accompanies tomorrow without changing the visitor’s words', async ({
@@ -366,4 +369,78 @@ test('selecting and switching paper cards keeps the drawings in proportion throu
   expect(result.maximumDistortion).toBeLessThan(0.01)
   expect(result.distinctWidths).toBeGreaterThan(3)
   await expect(page.locator('.memory-moment[aria-pressed="true"]')).toHaveCount(0)
+})
+
+test('each life has one segment per year and the same months fill both', async ({ page }) => {
+  await page.goto('/#weight')
+  await expect(page.locator('.clock-reference .dial-segment')).toHaveCount(5)
+  await expect(page.locator('.clock-borrowed .dial-segment')).toHaveCount(50)
+  await page.locator('#year-progress').fill('6')
+  await expect
+    .poll(async () => parseFloat((await page.locator('.year-strip-fill').getAttribute('width'))!))
+    .toBeCloseTo(120)
+  const arcs = await page
+    .locator('.dial-year')
+    .evaluateAll((els) => els.map((el) => parseFloat(el.getAttribute('stroke-dasharray')!)))
+  expect(arcs[0]).toBeCloseTo(0.5 / 5)
+  expect(arcs[1]).toBeCloseTo(0.5 / 50)
+  await page.locator('#reference-age').fill('1')
+  await page.locator('#borrowed-age').fill('100')
+  await expect(page.locator('.clock-reference .dial-segment')).toHaveCount(1)
+  await expect(page.locator('.clock-borrowed .dial-segment')).toHaveCount(100)
+  await expect(page.locator('.clock-reference .year-dial')).toHaveAccessibleName(
+    /the whole circle, 100.0 percent/,
+  )
+  await expect(page.locator('.clock-borrowed .year-dial')).toHaveAccessibleName(
+    /one of 100 years, 1.0 percent/,
+  )
+  await expect
+    .poll(async () =>
+      parseFloat(
+        (await page.locator('.clock-borrowed .dial-year').getAttribute('stroke-dasharray'))!,
+      ),
+    )
+    .toBeCloseTo(0.01)
+  await page.locator('#borrowed-age').fill('1')
+  await expect(page.locator('.year-share')).toHaveText(['One whole year.', 'One whole year.'])
+  await expect(page.locator('.clock-summary')).toHaveText(
+    'The same year. The same share of life so far.',
+  )
+})
+
+test('the play invitation draws attention once and precedes age controls', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'no-preference' })
+  await page.addInitScript(() => {
+    document.addEventListener('animationstart', (event) => {
+      if (event.animationName === 'invite-year')
+        document.documentElement.dataset.yearInvitations = String(
+          Number(document.documentElement.dataset.yearInvitations || '0') + 1,
+        )
+    })
+  })
+  await page.goto('/')
+  // Touching non-interactive paper while scrolling should not consume the invitation.
+  await page.locator('.weight-heading').dispatchEvent('pointerdown')
+  const play = page.getByRole('button', { name: 'Watch the same year pass' })
+  await play.scrollIntoViewIfNeeded()
+  await expect
+    .poll(() => page.evaluate(() => document.documentElement.dataset.yearInvitations))
+    .toBe('1')
+  expect(
+    await play.evaluate(
+      (el) =>
+        !!(
+          el.compareDocumentPosition(document.querySelector('#reference-age')!) &
+          Node.DOCUMENT_POSITION_FOLLOWING
+        ),
+    ),
+  ).toBe(true)
+  await expect(play).not.toHaveClass(/has-cue/)
+  await page.locator('#top').scrollIntoViewIfNeeded()
+  await play.scrollIntoViewIfNeeded()
+  await page.waitForTimeout(700)
+  expect(await page.evaluate(() => document.documentElement.dataset.yearInvitations)).toBe('1')
+  await play.click()
+  await expect(page.getByRole('button', { name: 'Pause', exact: true })).toBeVisible()
+  await expect(page.locator('.clock-play')).not.toHaveClass(/has-cue/)
 })

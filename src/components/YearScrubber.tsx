@@ -12,6 +12,7 @@ export default function YearScrubber({
   still: boolean
   onScrub: () => void
 }) {
+  const initialMonths = useRef(Math.round(progress.get() * 12)).current
   const input = useRef<HTMLInputElement>(null)
   const output = useRef<HTMLOutputElement>(null)
   useEffect(() => {
@@ -29,8 +30,8 @@ export default function YearScrubber({
   return (
     <div className="year-scrubber">
       <label htmlFor="year-progress">
-        {still ? 'Explore the year at your pace' : 'One imagined year, in eight seconds'}
-        <output ref={output}>12 / 12 months</output>
+        {still ? 'Move through the year' : 'Twelve months in eight seconds'}
+        <output ref={output}>{initialMonths} / 12 months</output>
       </label>
       <input
         id="year-progress"
@@ -39,8 +40,8 @@ export default function YearScrubber({
         min="0"
         max="12"
         step="0.1"
-        defaultValue="12"
-        aria-valuetext="12 of 12 months"
+        defaultValue={initialMonths}
+        aria-valuetext={`${initialMonths} of 12 months`}
         onChange={(event) => {
           onScrub()
           progress.set(Number(event.target.value) / 12)

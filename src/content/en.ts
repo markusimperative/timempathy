@@ -8,11 +8,11 @@ export const copy = {
     invitation: 'Step into someone else’s sense of time.',
   },
   weight: {
-    title: 'Borrow another clock.',
+    title: 'One year, inside two lives.',
     intro:
-      'Imagine holding all the years you’ve lived in a single circle. How much room would one year take?',
+      'Each circle holds a life so far. Each piece is one year. The year stays the same; its share changes.',
     caveat:
-      'A lens, not a law. These circles show one year as a fraction of an age. They do not measure how time feels. Attention, emotion, memory, and circumstance matter, too.',
+      'A share of life already lived, not a measure of how quickly time feels. This is a visual analogy; attention, emotion, memory, and circumstance matter, too.',
   },
   memory: {
     title: ['A day passes.', 'What stays?'],

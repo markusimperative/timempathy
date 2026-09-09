@@ -4,7 +4,13 @@
 
 A contemplative, interactive journey through the weight of a year, the texture of memory, and the ordinary hopes that connect people across ages. This first version is a working **local prototype**, with clearly labeled fictional wall contributions and a private reflection that is never sent to a server.
 
-## Current interaction experiment
+## Current clock experience
+
+**One year, inside two lives.** A strip introduces the same twelve months, then two segmented circles place that year among five and fifty years already lived. Each piece is one year. The copper play button sits directly beneath the comparison and gives one gentle invitation when it first enters view. The strip and both year segments fill together over eight seconds; visitors can pause, scrub, replay, or change either age. Reduced motion offers an immediate comparison with the same controls.
+
+[Clock comparison in motion](docs/screenshots/desktop-clock-playing.png)
+
+## Current memory experience
 
 The memory chapter is an illustrated paper week. Pull the copper thread between **As it happens** and **Looking back** to fold familiar mornings together. Selecting any day reopens its scene, reveals a small detail, and places a related drawing beside the tomorrow prompt. The choice lasts for the visit and can be released; it never fills in the reflection or gets stored with it.
 

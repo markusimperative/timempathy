@@ -29,6 +29,19 @@ try {
     .screenshot({ path: '.local/screenshots/desktop-tomorrow-companion.png' })
   await page.getByRole('button', { name: 'Find an echo', exact: true }).click()
   await page.locator('#wall').screenshot({ path: '.local/screenshots/desktop-wall-echo.png' })
+  const motionPage = await browser.newPage({
+    viewport: { width: 1440, height: 960 },
+    reducedMotion: 'no-preference',
+  })
+  await motionPage.goto('http://127.0.0.1:5173/#weight')
+  await motionPage.evaluate(() => document.fonts.ready)
+  await motionPage.getByRole('button', { name: 'Watch the same year pass' }).click()
+  await motionPage.mouse.move(0, 0)
+  await motionPage.waitForTimeout(2800)
+  await motionPage
+    .locator('#weight')
+    .screenshot({ path: '.local/screenshots/desktop-clock-playing.png' })
+  await motionPage.close()
   await page.setViewportSize({ width: 390, height: 844 })
   await page.goto('http://127.0.0.1:5173')
   await page.screenshot({ path: '.local/screenshots/mobile-hero.png' })

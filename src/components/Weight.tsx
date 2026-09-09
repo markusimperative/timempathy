@@ -1,21 +1,27 @@
 import { useEffect, useRef, useState } from 'react'
 import { ArrowDown, Pause, Play, RotateCcw } from 'lucide-react'
+import { animate, useInView, useMotionValue, useMotionValueEvent } from 'motion/react'
 import { copy } from '../content/en'
-import { YearDial } from './Artwork'
-import { animate, useMotionValue, useMotionValueEvent } from 'motion/react'
+import { YearDial, YearStrip } from './Artwork'
 import YearScrubber from './YearScrubber'
 
-const presets = [5, 18, 32, 65, 85]
+const presets = [5, 18, 32, 50, 65, 85]
 const duration = 8
 
 export default function Weight({ still }: { still: boolean }) {
-  const [referenceAge, setReferenceAge] = useState(32)
-  const [borrowedAge, setBorrowedAge] = useState(5)
-  const progress = useMotionValue(1)
-  const [phase, setPhase] = useState<'start' | 'middle' | 'end'>('end')
+  const [referenceAge, setReferenceAge] = useState(5)
+  const [borrowedAge, setBorrowedAge] = useState(50)
+  const progress = useMotionValue(0)
+  const [phase, setPhase] = useState<'start' | 'middle' | 'end'>('start')
   const phaseRef = useRef(phase)
   const [playing, setPlaying] = useState(false)
+  const [hasPlayed, setHasPlayed] = useState(false)
+  const [cueActive, setCueActive] = useState(false)
+  const cueSeen = useRef(false)
   const sectionRef = useRef<HTMLElement>(null)
+  const playRef = useRef<HTMLButtonElement>(null)
+  const playInView = useInView(playRef, { once: true, amount: 0.85 })
+
   useMotionValueEvent(progress, 'change', (value) => {
     const nextPhase = value === 0 ? 'start' : value >= 1 ? 'end' : 'middle'
     if (nextPhase !== phaseRef.current) {
@@ -24,9 +30,25 @@ export default function Weight({ still }: { still: boolean }) {
     }
   })
 
+  const dismissCue = () => {
+    cueSeen.current = true
+    setCueActive(false)
+  }
+
   useEffect(() => {
-    if (still) setPlaying(false)
-  }, [still])
+    if (playInView && !cueSeen.current) {
+      cueSeen.current = true
+      if (!still) setCueActive(true)
+    }
+  }, [playInView, still])
+
+  useEffect(() => {
+    if (still) {
+      progress.stop()
+      setPlaying(false)
+      setCueActive(false)
+    }
+  }, [still, progress])
 
   useEffect(() => {
     if (!playing || still) return
@@ -40,26 +62,26 @@ export default function Weight({ still }: { still: boolean }) {
 
   useEffect(() => {
     const stop = () => {
-      if (document.hidden) {
-        progress.stop()
-        setPlaying(false)
-      }
+      progress.stop()
+      setPlaying(false)
+      setCueActive(false)
     }
-    document.addEventListener('visibilitychange', stop)
+    const onVisibility = () => {
+      if (document.hidden) stop()
+    }
+    document.addEventListener('visibilitychange', onVisibility)
     const observer = new IntersectionObserver(([entry]) => {
-      if (!entry.isIntersecting) {
-        progress.stop()
-        setPlaying(false)
-      }
+      if (!entry.isIntersecting) stop()
     })
     if (sectionRef.current) observer.observe(sectionRef.current)
     return () => {
-      document.removeEventListener('visibilitychange', stop)
+      document.removeEventListener('visibilitychange', onVisibility)
       observer.disconnect()
     }
   }, [progress])
 
   const changeAge = (value: number, side: 'reference' | 'borrowed') => {
+    dismissCue()
     setPlaying(false)
     progress.stop()
     progress.set(1)
@@ -67,117 +89,96 @@ export default function Weight({ still }: { still: boolean }) {
     else setBorrowedAge(value)
   }
   const play = () => {
+    dismissCue()
+    if (still) {
+      progress.set(progress.get() === 1 ? 0 : 1)
+      return
+    }
     if (playing) {
       progress.stop()
       setPlaying(false)
       return
     }
     if (progress.get() === 1) progress.set(0)
+    setHasPlayed(true)
     setPlaying(true)
   }
+  const playLabel = still
+    ? phase === 'end'
+      ? 'Show the beginning'
+      : 'Compare the same year'
+    : playing
+      ? 'Pause'
+      : phase === 'middle'
+        ? 'Continue the year'
+        : hasPlayed
+          ? 'Watch again'
+          : 'Watch the same year pass'
+
   return (
     <section
       id="weight"
       className="weight-section dark-section"
       aria-labelledby="weight-title"
       ref={sectionRef}
+      onPointerDownCapture={(event) => {
+        if (event.target instanceof Element && event.target.closest('button, input, a'))
+          dismissCue()
+      }}
+      onKeyDownCapture={dismissCue}
     >
       <div className="section-head">
         <span className="eyebrow">01 / THE WEIGHT OF A YEAR</span>
-        <span className="section-aside">SAME DURATION. DIFFERENT PROPORTIONS.</span>
+        <span className="section-aside">BORROW ANOTHER CLOCK.</span>
       </div>
       <div className="weight-heading">
         <h2 id="weight-title">{copy.weight.title}</h2>
         <p>{copy.weight.intro}</p>
       </div>
+      <YearStrip progress={progress} />
       <div className="clocks">
-        <div className="clock clock-reference">
-          <p className="clock-kicker">
-            <span className="color-dot sage-dot" />A clock to begin with
-          </p>
-          <YearDial age={referenceAge} progress={progress} variant="sage" />
-          <p className="fraction">
-            One year. <em>1/{referenceAge}</em> of a life so far.
-          </p>
-          <label className="range-label" htmlFor="reference-age">
-            Starting age <output>{referenceAge}</output>
-          </label>
-          <input
-            id="reference-age"
-            aria-label="Starting age"
-            type="range"
-            min="1"
-            max="100"
-            value={referenceAge}
-            onChange={(e) => changeAge(+e.target.value, 'reference')}
-          />
-        </div>
-        <div className="clock-connection" aria-hidden="true">
-          <span>one year</span>
-          <i />
-          <span>in both lives</span>
-        </div>
-        <div className="clock clock-borrowed">
-          <p className="clock-kicker">
-            <span className="color-dot copper-dot" />
-            The clock you’re borrowing
-          </p>
-          <YearDial age={borrowedAge} progress={progress} variant="copper" />
-          <p className="fraction">
-            One year. <em>1/{borrowedAge}</em> of a life so far.
-          </p>
-          <label className="range-label" htmlFor="borrowed-age">
-            Borrowed age <output>{borrowedAge}</output>
-          </label>
-          <input
-            id="borrowed-age"
-            aria-label="Borrowed age"
-            type="range"
-            min="1"
-            max="100"
-            value={borrowedAge}
-            onChange={(e) => changeAge(+e.target.value, 'borrowed')}
-          />
-        </div>
-      </div>
-      <div className="borrow-presets">
-        <span>Try another age</span>
-        <div role="group" aria-label="Borrow an age">
-          {presets.map((age) => (
-            <button
-              key={age}
-              aria-pressed={borrowedAge === age}
-              onClick={() => changeAge(age, 'borrowed')}
-            >
-              {age}
-            </button>
-          ))}
-        </div>
+        {[referenceAge, borrowedAge].map((age, index) => (
+          <figure
+            className={`clock ${index === 0 ? 'clock-reference' : 'clock-borrowed'}`}
+            key={index}
+          >
+            <YearDial age={age} progress={progress} />
+            <figcaption className="year-share">
+              {age === 1 ? (
+                'One whole year.'
+              ) : (
+                <>
+                  One of <em>{age}</em> years.
+                </>
+              )}
+            </figcaption>
+          </figure>
+        ))}
       </div>
       <div className="passage-controls">
-        {!still && (
-          <button className="button button-light" onClick={play}>
-            {playing ? <Pause size={16} /> : <Play size={16} />}
-            {playing
-              ? 'Pause the year'
-              : phase === 'middle'
-                ? 'Continue the year'
-                : 'Let a year pass'}
-          </button>
-        )}
-        {still && (
-          <button
-            className="button button-light"
-            onClick={() => progress.set(progress.get() === 1 ? 0 : 1)}
-          >
-            <RotateCcw size={16} />
-            {phase === 'end' ? 'Show the beginning' : 'Show the whole year'}
-          </button>
-        )}
+        <button
+          ref={playRef}
+          className={`button clock-play ${cueActive ? 'has-cue' : ''}`}
+          onClick={play}
+          onFocus={dismissCue}
+          onAnimationEnd={() => setCueActive(false)}
+          aria-describedby="play-description"
+        >
+          <span className="play-symbol" aria-hidden="true">
+            {still ? <RotateCcw size={21} /> : playing ? <Pause size={21} /> : <Play size={21} />}
+          </span>
+          {playLabel}
+        </button>
+        <p id="play-description">
+          {still
+            ? 'Explore the comparison at your own pace.'
+            : 'Follow twelve months into both lives.'}
+        </p>
         <YearScrubber
           progress={progress}
           still={still}
           onScrub={() => {
+            dismissCue()
             progress.stop()
             setPlaying(false)
           }}
@@ -185,11 +186,60 @@ export default function Weight({ still }: { still: boolean }) {
       </div>
       <p className="clock-summary" aria-live="polite">
         {playing
-          ? 'Both years are passing together.'
-          : phase === 'end'
-            ? `The same year occupies ${(100 / referenceAge).toFixed(1)}% of one circle and ${(100 / borrowedAge).toFixed(1)}% of the other.`
-            : 'The year is paused. Move through it at your own pace.'}
+          ? 'The same twelve months are passing in both lives.'
+          : phase === 'middle'
+            ? 'The year is paused. Move through it at your own pace.'
+            : phase === 'end'
+              ? referenceAge === borrowedAge
+                ? 'The same year. The same share of life so far.'
+                : 'The same year. A different share of the story.'
+              : 'The copper outline marks one year in each life.'}
       </p>
+      <div className="age-exploration">
+        <p>Change an age. See how the year’s share changes.</p>
+        <div className="age-controls">
+          <div>
+            <label className="range-label" htmlFor="reference-age">
+              Starting age <output aria-hidden="true">{referenceAge}</output>
+            </label>
+            <input
+              id="reference-age"
+              type="range"
+              min="1"
+              max="100"
+              value={referenceAge}
+              onChange={(e) => changeAge(+e.target.value, 'reference')}
+            />
+          </div>
+          <div>
+            <label className="range-label" htmlFor="borrowed-age">
+              Borrowed age <output aria-hidden="true">{borrowedAge}</output>
+            </label>
+            <input
+              id="borrowed-age"
+              type="range"
+              min="1"
+              max="100"
+              value={borrowedAge}
+              onChange={(e) => changeAge(+e.target.value, 'borrowed')}
+            />
+          </div>
+        </div>
+        <div className="borrow-presets">
+          <span>Borrow an age</span>
+          <div role="group" aria-label="Borrow an age">
+            {presets.map((age) => (
+              <button
+                key={age}
+                aria-pressed={borrowedAge === age}
+                onClick={() => changeAge(age, 'borrowed')}
+              >
+                {age}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
       <div className="model-note">
         <span className="note-mark">↳</span>
         <p>
