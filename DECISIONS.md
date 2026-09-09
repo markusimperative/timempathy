@@ -101,3 +101,9 @@ One shared scrubber and the copper play button remain below the clocks. The butt
 The principal acceptance check is the actual viewport, not a screenshot that expands to capture an oversized element. At 1366 × 768 the chapter is about 708px high; at 390 × 844 it is about 647px. A short-phone spacing variant fits the chapter into 320 × 568 while keeping the clocks, controls, and play action visible. Only the redundant visible “Borrow an age” label is omitted there; the preset group keeps its accessible name. Zoomed text and unusual aspect ratios retain natural scrolling.
 
 All 40 existing desktop/mobile browser cases pass. The new viewport regression also passes on a laptop and a short phone, including age 100 and playback with both clocks and the button visible. Its first phone run revealed a nine-pixel anchor overshoot caused by using the desktop inset; matching the existing mobile inset fixed the issue. Unit tests (15), TypeScript, the production build, privacy/runtime smoke, formatting, and whitespace checks pass. Clock inspection screenshots now capture the browser viewport.
+
+## 2026-09-10 — Give the lens its own place
+
+The creator requested the lens explanation directly beneath “Borrow another clock” and smaller numbers inside the faces. The existing explanation now appears once in a compact, separate “About this lens” section between the clocks and memory. The inline caveat/link is removed from the playback controls; the final information section retains privacy and research in two columns. Dial numbers are reduced from 27 to 22 percent of the dial width (about 19%) while the complete text group stays centered.
+
+Desktop and phone rendering confirms the section order, centered labels, and no overflow. Ten targeted Chromium cases pass across both sizes, covering the journey, keyboard playback, accessibility, enlarged layouts, and complete clock viewport fitting. TypeScript, the production build, formatting, and whitespace checks pass.

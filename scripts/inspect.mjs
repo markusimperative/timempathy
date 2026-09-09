@@ -20,7 +20,7 @@ try {
   await page.goto('http://127.0.0.1:5173')
   await page.evaluate(() => document.fonts.ready)
   await page.screenshot({ path: '.local/screenshots/desktop-hero.png' })
-  for (const section of ['weight', 'memory', 'tomorrow', 'wall']) {
+  for (const section of ['weight', 'lens', 'memory', 'tomorrow', 'wall']) {
     if (section === 'weight') {
       await captureClock(page, '.local/screenshots/desktop-weight.png')
       continue
@@ -56,7 +56,7 @@ try {
   await page.setViewportSize({ width: 390, height: 844 })
   await page.goto('http://127.0.0.1:5173')
   await page.screenshot({ path: '.local/screenshots/mobile-hero.png' })
-  for (const section of ['weight', 'memory', 'tomorrow', 'wall']) {
+  for (const section of ['weight', 'lens', 'memory', 'tomorrow', 'wall']) {
     if (section === 'weight') {
       await captureClock(page, '.local/screenshots/mobile-weight.png')
       continue

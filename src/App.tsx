@@ -74,6 +74,22 @@ export default function App() {
             </div>
           </section>
           <Weight still={still} />
+          <section className="lens-section" id="lens" aria-labelledby="lens-title">
+            <div className="lens-inner">
+              <h2 id="lens-title">About this lens</h2>
+              <div className="lens-copy">
+                <p>
+                  The circles use a simple proportion: one year divided by an age. Each circle
+                  stands for life already lived, never a lifespan or time remaining. Both animated
+                  years take eight seconds.
+                </p>
+                <p>
+                  This arithmetic is a visual metaphor. It cannot tell us how a person experiences
+                  time. There is no single clock for an age group.
+                </p>
+              </div>
+            </div>
+          </section>
           <Memory still={still} held={heldMoment} onHold={setHeldMoment} />
           <Tomorrows
             still={still}
@@ -88,18 +104,6 @@ export default function App() {
               <em>Room for your own experience.</em>
             </h2>
             <div className="about-columns">
-              <div>
-                <h3>A lens, not a law</h3>
-                <p>
-                  The circles use a simple proportion: one year divided by an age. Each circle
-                  stands for life already lived, never a lifespan or time remaining. Both animated
-                  years take eight seconds.
-                </p>
-                <p>
-                  This arithmetic is a visual metaphor. It cannot tell us how a person experiences
-                  time. There is no single clock for an age group.
-                </p>
-              </div>
               <div>
                 <h3>Your words stay here</h3>
                 <p>

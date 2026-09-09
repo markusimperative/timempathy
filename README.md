@@ -6,7 +6,7 @@ A contemplative, interactive journey through the weight of a year, the texture o
 
 ## Current clock experience
 
-**Borrow another clock.** Two light rings hold five and fifty years already lived. A highlighted arc shows one year; fine ticks mark the years. Each age slider sits beneath its own clock, with a small row of quick age choices below the pair. One shared scrubber and the final copper play button control the eight-second passage. The labels remain centered, and the “one year / in both lives” arrow stays between the faces. Reduced motion offers an immediate comparison.
+**Borrow another clock.** Two light rings hold five and fifty years already lived. A highlighted arc shows one year; fine ticks mark the years. Each age slider sits beneath its own clock, with a small row of quick age choices below the pair. One shared scrubber and the final copper play button control the eight-second passage. The labels remain centered, and the “one year / in both lives” arrow stays between the faces. Reduced motion offers an immediate comparison. “About this lens” follows as a separate section explaining the proportion before the memory chapter.
 
 The chapter is sized against real viewports, including a 1366 × 768 laptop and a 320 × 568 phone. Its title, clocks, controls, and final action fit together. Enlarged text and unusual aspect ratios can still scroll naturally; content is never clipped to force a fit.
 

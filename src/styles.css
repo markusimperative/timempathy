@@ -480,7 +480,7 @@
   }
   .dial-age {
     font-family: var(--serif);
-    font-size: 27cqi;
+    font-size: 22cqi;
     line-height: 0.85;
     color: #f1f0dd;
   }
@@ -576,18 +576,9 @@
     display: block;
     margin: 2px 0 0;
   }
-  .model-note {
-    margin: 10px 0 16px;
-    color: #c4cdbb;
-    font-size: 11px;
-    line-height: 1.5;
-    text-align: center;
-  }
-  .model-note a {
-    white-space: nowrap;
-  }
   .button.clock-play {
     position: relative;
+    margin-top: 16px;
     min-height: 54px;
     min-width: 286px;
     justify-content: flex-start;
@@ -649,6 +640,31 @@
       opacity: 0;
       transform: scale(1.09, 1.38);
     }
+  }
+  .lens-section {
+    padding: 36px 7%;
+    background: #eeebe1;
+    border-bottom: 1px solid var(--line);
+  }
+  .lens-inner {
+    display: grid;
+    grid-template-columns: 220px minmax(0, 1fr);
+    gap: 48px;
+    max-width: 900px;
+    margin: auto;
+    align-items: start;
+  }
+  .lens-section h2 {
+    font-size: 34px;
+    line-height: 1.15;
+  }
+  .lens-copy p {
+    color: #626b5b;
+    font-size: 13px;
+    line-height: 1.8;
+  }
+  .lens-copy p + p {
+    margin-top: 12px;
   }
   .memory-section {
     padding-top: 50px;
@@ -1064,7 +1080,7 @@
   }
   .about-columns {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 50px;
   }
   .about-columns h3 {
@@ -1273,6 +1289,16 @@
     .eyebrow {
       font-size: 11px;
     }
+    .lens-section {
+      padding: 28px 6%;
+    }
+    .lens-inner {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+    .lens-section h2 {
+      font-size: 30px;
+    }
     .weight-heading {
       margin-top: 24px;
     }
@@ -1319,10 +1345,6 @@
     .year-scrubber label {
       font-size: 11px;
       gap: 6px;
-    }
-    .model-note {
-      max-width: 310px;
-      margin: 10px 0 16px;
     }
     .button.clock-play {
       min-width: 0;
@@ -1563,9 +1585,6 @@
     .passage-controls {
       margin-top: 12px;
       padding-top: 12px;
-    }
-    .model-note {
-      margin: 8px 0 12px;
     }
   }
   @media (prefers-reduced-motion: reduce) {

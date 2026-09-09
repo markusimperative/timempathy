@@ -10,7 +10,6 @@ export const copy = {
   weight: {
     title: 'Borrow another clock.',
     intro: 'Each circle holds a life so far. The bright arc is one year.',
-    caveat: 'A visual analogy, not a measure of how time feels.',
   },
   memory: {
     title: ['A day passes.', 'What stays?'],

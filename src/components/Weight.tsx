@@ -215,9 +215,6 @@ export default function Weight({ still }: { still: boolean }) {
             setPlaying(false)
           }}
         />
-        <p className="model-note">
-          {copy.weight.caveat} <a href="#about">About this lens</a>
-        </p>
         <p id="play-description" className="sr-only">
           {still
             ? 'Explore the comparison at your own pace.'
