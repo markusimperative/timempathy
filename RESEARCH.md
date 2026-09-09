@@ -18,7 +18,7 @@ An online survey of 423 people aged 17–81 investigated reported passage of tim
 
 Experiments using film clips and recognition tasks found relations between event boundaries and memory for objects. These findings concern event organization and short-delay memory, not a formula for how quickly years pass.
 
-**Application:** the memory sequence is inspired by the idea that memory is organized around events. Compressing repeated cups is an authored illustration, not a reproduction of this study or a claim that routine is forgotten. A visitor can deliberately hold an ordinary cup in the scene. The copy makes this scope visible.
+**Application:** the memory sequence is inspired by the idea that memory is organized around events. The initial repeated-cup fold and the visitor-shaped folds are authored illustrations, not a reproduction of this study or a claim that routine is forgotten. Explicitly opening a day keeps it distinct when the paper contracts, including an ordinary cup. That rule makes a choice perceptible; it is not an attention measurement or an empirical model of memory. The copy makes this scope visible.
 
 ## Arithmetic, not empirical psychology
 
@@ -26,9 +26,9 @@ Experiments using film clips and recognition tasks found relations between event
 
 ## Design hypotheses requiring people, not unit tests
 
-- Moving two differently sized year traces simultaneously may make proportional difference easier to grasp than a numerical comparison.
-- Choosing to preserve a repeated ordinary moment may challenge the idea that only novelty makes a life memorable.
-- Seeing similar wishes attributed to distant ages may support recognition across generations.
+- Keeping the same elapsed months fixed while the visitor exchanges ages may make context perceptible through the changing arc. The geometry uses 1/age; it does not change psychological time or playback speed.
+- Seeing the material length of the week contract around explicitly opened days may make remembered duration perceptible. A repeated ordinary moment has the same ability to remain distinct as rain or a conversation.
+- Opening one wish and encountering its companion in the same field of view may support recognition across ages. Underlined passages and all six pairings are editorial choices between fictional texts, not classifications or inferred similarities between real people.
 
 None of these hypotheses has been evaluated with participants. The fictional dataset cannot establish the prevalence of any hope across ages. Do not cite it as demographic evidence.
 
@@ -36,7 +36,7 @@ None of these hypotheses has been evaluated with participants. The fictional dat
 
 - [React](https://github.com/facebook/react): established UI composition, MIT; local state is enough for this scope.
 - [Vite](https://github.com/vitejs/vite), [guide](https://vite.dev/guide/): established development/build pipeline, MIT; compatible with the installed Node 24 runtime.
-- [Motion](https://github.com/motiondivision/motion), [reduced-motion documentation](https://motion.dev/docs/react-use-reduced-motion): MIT; used for component transitions and preference detection. Native requestAnimationFrame drives the small, deterministic synchronized year clock rather than an additional physics/timing dependency.
+- [Motion](https://github.com/motiondivision/motion), [reduced-motion documentation](https://motion.dev/docs/react-use-reduced-motion): MIT; used for component transitions and preference detection. Shared Motion values drive synchronized year progress and the change in arc size when ages are borrowed. CSS transitions resize the actual paper widths to preserve the SVG artwork.
 - [Lucide](https://github.com/lucide-icons/lucide): ISC icons with an inherited MIT notice for Feather-derived work; selective imports avoid shipping the full icon set.
 - [Zod](https://github.com/colinhacks/zod): MIT; shared type-safe validation of input and stored data without handwritten validation infrastructure.
 - [Fontsource](https://github.com/fontsource/fontsource): locally packaged fonts; individual font licenses are SIL OFL 1.1.

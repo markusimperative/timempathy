@@ -16,6 +16,7 @@ export default function Weight({ still }: { still: boolean }) {
   const phaseRef = useRef(phase)
   const [playing, setPlaying] = useState(false)
   const [hasPlayed, setHasPlayed] = useState(false)
+  const [borrowedNote, setBorrowedNote] = useState('')
   const [cueActive, setCueActive] = useState(false)
   const cueSeen = useRef(false)
   const sectionRef = useRef<HTMLElement>(null)
@@ -84,11 +85,24 @@ export default function Weight({ still }: { still: boolean }) {
     dismissCue()
     setPlaying(false)
     progress.stop()
-    progress.set(1)
+    setBorrowedNote(
+      `${Math.round(progress.get() * 12)} months held in place. ${side === 'reference' ? 'Starting' : 'Borrowed'} age ${value}.`,
+    )
     if (side === 'reference') setReferenceAge(value)
     else setBorrowedAge(value)
   }
+  const exchangeClocks = () => {
+    dismissCue()
+    progress.stop()
+    setPlaying(false)
+    setReferenceAge(borrowedAge)
+    setBorrowedAge(referenceAge)
+    setBorrowedNote(
+      `The clocks have exchanged places. The same ${Math.round(progress.get() * 12)} months remain in both.`,
+    )
+  }
   const play = () => {
+    setBorrowedNote('')
     dismissCue()
     if (still) {
       progress.set(progress.get() === 1 ? 0 : 1)
@@ -139,14 +153,24 @@ export default function Weight({ still }: { still: boolean }) {
         {[referenceAge, borrowedAge].map((age, index) => (
           <Fragment key={index}>
             {index === 1 && (
-              <div className="clock-connection" aria-hidden="true">
+              <button
+                className="clock-connection"
+                onClick={exchangeClocks}
+                aria-label="Exchange clocks, keeping the same elapsed months"
+                title="Exchange clocks"
+              >
                 <span>one year</span>
                 <ArrowLeftRight size={46} strokeWidth={1} />
                 <span>in both lives</span>
-              </div>
+              </button>
             )}
             <figure className={`clock ${index === 0 ? 'clock-reference' : 'clock-borrowed'}`}>
-              <YearDial age={age} progress={progress} variant={index === 0 ? 'sage' : 'copper'} />
+              <YearDial
+                age={age}
+                progress={progress}
+                variant={index === 0 ? 'sage' : 'copper'}
+                still={still}
+              />
               <figcaption className="clock-details">
                 <p className="year-share">
                   {age === 1 ? (
@@ -183,13 +207,14 @@ export default function Weight({ still }: { still: boolean }) {
       <p className="clock-summary sr-only" aria-live="polite">
         {playing
           ? 'The same twelve months are passing in both lives.'
-          : phase === 'middle'
-            ? 'The year is paused. Move through it at your own pace.'
-            : phase === 'end'
-              ? referenceAge === borrowedAge
-                ? 'The same year. The same share of life so far.'
-                : 'The same year. A different share of the story.'
-              : 'The highlighted arc marks one year in each life.'}
+          : borrowedNote ||
+            (phase === 'middle'
+              ? 'The year is paused. Move through it at your own pace.'
+              : phase === 'end'
+                ? referenceAge === borrowedAge
+                  ? 'The same year. The same share of life so far.'
+                  : 'The same year. A different share of the story.'
+                : 'The highlighted arc marks one year in each life.')}
       </p>
       <div className="borrow-presets">
         <span>Borrow an age</span>
@@ -210,6 +235,7 @@ export default function Weight({ still }: { still: boolean }) {
           progress={progress}
           still={still}
           onScrub={() => {
+            setBorrowedNote('')
             dismissCue()
             progress.stop()
             setPlaying(false)

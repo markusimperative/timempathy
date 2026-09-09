@@ -1,5 +1,6 @@
 import { yearShare } from '../lib/model'
-import { motion, useTransform } from 'motion/react'
+import { useEffect } from 'react'
+import { animate, motion, useMotionValue, useTransform } from 'motion/react'
 import type { MotionValue } from 'motion/react'
 
 export function Mark() {
@@ -78,20 +79,33 @@ export function YearDial({
   age,
   progress,
   variant,
+  still,
 }: {
   age: number
   progress: MotionValue<number>
   variant: 'sage' | 'copper'
+  still: boolean
 }) {
   const share = yearShare(age)
-  const dash = useTransform(progress, (value) => `${share * value} 1`)
+  const displayedShare = useMotionValue(share)
+  useEffect(() => {
+    if (still) {
+      displayedShare.set(share)
+      return
+    }
+    const changingLife = animate(displayedShare, share, {
+      duration: 0.7,
+      ease: [0.22, 0.7, 0.2, 1],
+    })
+    return () => changingLife.stop()
+  }, [share, still, displayedShare])
+  const outline = useTransform(() => `${displayedShare.get()} 1`)
+  const dash = useTransform(() => `${displayedShare.get() * progress.get()} 1`)
   const x = useTransform(
-    progress,
-    (value) => 180 + 132 * Math.cos(value * share * Math.PI * 2 - Math.PI / 2),
+    () => 180 + 132 * Math.cos(progress.get() * displayedShare.get() * Math.PI * 2 - Math.PI / 2),
   )
   const y = useTransform(
-    progress,
-    (value) => 180 + 132 * Math.sin(value * share * Math.PI * 2 - Math.PI / 2),
+    () => 180 + 132 * Math.sin(progress.get() * displayedShare.get() * Math.PI * 2 - Math.PI / 2),
   )
   const pointOpacity = useTransform(progress, (value) => (value > 0 ? 1 : 0))
   return (
@@ -120,7 +134,7 @@ export function YearDial({
           ))}
         </g>
         <circle className="dial-track" cx="180" cy="180" r="132" fill="none" strokeWidth="8" />
-        <circle
+        <motion.circle
           className="dial-potential"
           cx="180"
           cy="180"
@@ -128,10 +142,10 @@ export function YearDial({
           fill="none"
           strokeWidth="8"
           pathLength="1"
-          strokeDasharray={`${share} 1`}
+          strokeDasharray={outline}
           transform="rotate(-90 180 180)"
         />
-        <circle
+        <motion.circle
           className="dial-year-outline"
           cx="180"
           cy="180"
@@ -139,7 +153,7 @@ export function YearDial({
           fill="none"
           strokeWidth="1.5"
           pathLength="1"
-          strokeDasharray={`${share} 1`}
+          strokeDasharray={outline}
           transform="rotate(-90 180 180)"
         />
         <motion.circle

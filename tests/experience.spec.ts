@@ -60,7 +60,7 @@ test('clocks support keyboard ages, synchronized playback, pause and scrubbing',
 test('memory gives an ordinary repeated moment equal permission to stay', async ({ page }) => {
   await page.goto('/#memory')
   await page.getByRole('button', { name: 'Looking back', exact: true }).click()
-  await expect(page.getByText(/Here, familiar cups fold together/)).toBeVisible()
+  await expect(page.getByText('Less paper. Still seven days. Open any fold.')).toBeVisible()
   const ordinary = page.getByRole('button', { name: /WED Morning, again/ })
   await ordinary.click()
   await expect(ordinary).toHaveAttribute('aria-pressed', 'true')
@@ -398,12 +398,11 @@ test('each life marks its years and the same months trace both arcs', async ({ p
         (await page.locator('.clock-borrowed .dial-year').getAttribute('stroke-dasharray'))!,
       ),
     )
-    .toBeCloseTo(0.01)
+    .toBeCloseTo(0.005)
+  await page.locator('#year-progress').fill('12')
   await page.locator('#borrowed-age').fill('1')
   await expect(page.locator('.year-share')).toHaveText(['One whole year.', 'One whole year.'])
-  await expect(page.locator('.clock-summary')).toHaveText(
-    'The same year. The same share of life so far.',
-  )
+  await expect(page.locator('.clock-summary')).toContainText('12 months held in place')
 })
 
 test('the final play invitation draws attention once', async ({ page }) => {
@@ -460,4 +459,98 @@ test('the clock chapter and its final play action fit together in the viewport',
   await expect(page.locator('.year-dial').first()).toBeInViewport({ ratio: 1 })
   await expect(page.locator('.year-dial').last()).toBeInViewport({ ratio: 1 })
   await expect(page.locator('.clock-play')).toBeInViewport({ ratio: 1 })
+})
+
+test('borrowing changes the shape of a held year without advancing it', async ({ page }) => {
+  await page.goto('/#weight')
+  await page.locator('#year-progress').fill('6')
+  const observed = await page.evaluate(async () => {
+    const input = document.querySelector<HTMLInputElement>('#borrowed-age')!
+    const values: number[] = []
+    const setValue = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')!.set!
+    setValue.call(input, '5')
+    input.dispatchEvent(new Event('input', { bubbles: true }))
+    const start = performance.now()
+    await new Promise<void>((resolve) => {
+      const frame = () => {
+        values.push(
+          parseFloat(
+            document.querySelector('.clock-borrowed .dial-year')!.getAttribute('stroke-dasharray')!,
+          ),
+        )
+        if (performance.now() - start < 850) requestAnimationFrame(frame)
+        else resolve()
+      }
+      requestAnimationFrame(frame)
+    })
+    return values
+  })
+  expect(observed.some((value) => value > 0.011 && value < 0.095)).toBe(true)
+  await expect(page.locator('#year-progress')).toHaveValue('6')
+  await page.locator('#borrowed-age').fill('85')
+  await page
+    .getByRole('button', { name: 'Exchange clocks, keeping the same elapsed months' })
+    .click()
+  await expect(page.locator('#reference-age')).toHaveValue('85')
+  await expect(page.locator('#borrowed-age')).toHaveValue('5')
+  await expect(page.locator('#year-progress')).toHaveValue('6')
+  await page.getByRole('button', { name: 'Continue the year' }).click()
+  await expect
+    .poll(async () => Number(await page.locator('#year-progress').inputValue()))
+    .toBeGreaterThan(6)
+})
+
+test('opened ordinary moments shape a physically shorter recollection', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await page.goto('/#memory')
+  const cup = page.getByRole('button', { name: /MON A familiar cup/ })
+  await cup.click()
+  await cup.click()
+  const widths = () =>
+    page
+      .locator('.memory-page')
+      .evaluateAll((items) => items.map((el) => el.getBoundingClientRect().width))
+  const lived = await widths()
+  await page.getByRole('button', { name: 'Looking back', exact: true }).click()
+  const recalled = await widths()
+  expect(recalled.reduce((sum, width) => sum + width, 0)).toBeLessThan(
+    lived.reduce((sum, width) => sum + width, 0) * 0.85,
+  )
+  expect(recalled[0]).toBeCloseTo(lived[0], 0)
+  expect(recalled[3]).toBeLessThan(lived[3])
+  await page.getByRole('button', { name: /THU A sudden rain/ }).click()
+  await page.getByRole('button', { name: /THU A sudden rain/ }).click()
+  const reopened = await widths()
+  expect(reopened[0]).toBeCloseTo(lived[0], 0)
+  expect(reopened[3]).toBeCloseTo(lived[3], 0)
+  await expect(page.getByRole('slider', { name: 'Fold the week into memory' })).toHaveAttribute(
+    'aria-valuetext',
+    'Looking back, the days you opened remain unfolded',
+  )
+  expect(await page.evaluate(() => localStorage.length)).toBe(0)
+  await page.reload()
+  await expect(page.locator('.memory-page.was-opened')).toHaveCount(0)
+})
+
+test('a wish can open its cross-age companion and return keyboard focus', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await page.goto('/#wall')
+  const wish = page.locator('#hope-open-s2')
+  await wish.focus()
+  await page.keyboard.press('Enter')
+  const pair = page.getByRole('group', { name: 'Two imagined wishes, ages 79 and 17' })
+  await expect(pair).toBeFocused()
+  await expect(pair.locator('.hope-note')).toHaveCount(2)
+  await expect(pair.locator('.echo-fragment')).toHaveText(['dinner', 'dinner'])
+  await expect(pair.locator('.hope-age').first()).toBeInViewport({ ratio: 1 })
+  await expect(pair.locator('.hope-age').last()).toBeInViewport({ ratio: 1 })
+  expect(await page.evaluate(() => localStorage.length)).toBe(0)
+  await page.keyboard.press('Escape')
+  await expect(wish).toBeFocused()
+  await expect(page.locator('.echo-pair')).toHaveCount(0)
+  await expect(page.locator('.hope-note')).toHaveCount(12)
+  await page.getByRole('button', { name: 'Find an echo', exact: true }).click()
+  await page.locator('.echo-pair').focus()
+  await page.keyboard.press('Escape')
+  await expect(page.getByRole('button', { name: 'Find an echo', exact: true })).toBeFocused()
 })

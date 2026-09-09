@@ -3,7 +3,7 @@
 ## Implemented local behavior
 
 - No account, email, birthday, profile, fingerprint, analytics, tracking cookie, or hidden identifier.
-- The selectable clock ages are transient interface state; they are not copied into the reflection or stored.
+- Clock ages, explicitly opened memory scenes, and the chosen Wall pairing are transient interface state. They are not copied into the reflection or stored. Opening scenes records only explicit choices for this page; the app does not measure reading time, hovering, or dwell duration. Reloading clears these choices.
 - A reflection contains only `text` (trimmed, 1–240 UTF-16 code units) and `age` (optional integer 1–120). React renders it as text, never HTML.
 - Unsubmitted text lives in memory. Submitting without the unchecked persistence option keeps one reflection in memory for the current page only.
 - If the visitor explicitly selects persistence, the same two-field record is saved under `timempathy.reflection.v1` in localStorage. There is no history or timestamp. A saved reflection survives until removed or browser storage is cleared.

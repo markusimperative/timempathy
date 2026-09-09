@@ -441,6 +441,16 @@
     color: #c8cebf;
     text-align: center;
   }
+  .clock-connection {
+    padding: 6px 0;
+    border-radius: 4px;
+  }
+  .clock-connection:hover svg {
+    transform: translateX(2px);
+  }
+  .clock-connection svg {
+    transition: transform 180ms ease;
+  }
   .clock-connection span {
     white-space: nowrap;
   }
@@ -1025,22 +1035,68 @@
     font-size: 23px;
     line-height: 1;
   }
-  .echo-label {
-    color: #813b21;
-    margin-left: auto;
-    font-size: 11px;
+  .hope-open {
+    display: block;
+    width: 100%;
+    min-height: 44px;
+    padding: 0;
+    text-align: left;
+    font: inherit;
+    line-height: inherit;
   }
-  .has-echo .hope-note {
-    opacity: 1;
+  .hope-open:hover {
+    color: #754c36;
   }
-  .has-echo .is-echo {
-    opacity: 1;
-    box-shadow:
-      0 0 0 2px #a85534,
-      0 5px 18px #a8553410;
+  .echo-pair {
+    position: relative;
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
+    width: 100%;
+    max-width: 880px;
+    margin: 0 auto 18px;
   }
-  .has-echo .hope-note:hover {
-    opacity: 1;
+  .echo-pair::before {
+    content: '';
+    position: absolute;
+    top: 15px;
+    left: 25%;
+    right: 25%;
+    height: 1px;
+    background: #aa8163;
+  }
+  .echo-pair::after {
+    content: '';
+    position: absolute;
+    top: 12px;
+    left: calc(50% - 3px);
+    width: 6px;
+    height: 6px;
+    border: 1px solid #aa8163;
+    border-radius: 50%;
+    background: var(--paper);
+  }
+  .echo-pair .hope-note {
+    margin: 0;
+    transform: none;
+    box-shadow: 0 0 0 1px #a8553440;
+  }
+  .echo-fragment {
+    background-image: linear-gradient(#a85534, #a85534);
+    background-position: left bottom;
+    background-repeat: no-repeat;
+    background-size: 100% 1px;
+    padding-bottom: 2px;
+    animation: meet-in-the-middle 900ms 250ms ease-out both;
+  }
+  @keyframes meet-in-the-middle {
+    from {
+      background-size: 0 1px;
+    }
+    to {
+      background-size: 100% 1px;
+    }
   }
   .private-thought {
     padding: 24px;
@@ -1298,6 +1354,22 @@
     }
     .lens-section h2 {
       font-size: 30px;
+    }
+    .echo-pair {
+      gap: 16px;
+      margin-bottom: 10px;
+    }
+    .echo-pair .hope-note:nth-child(n) {
+      margin: 0;
+      padding: 30px 14px 18px;
+      min-height: 210px;
+    }
+    .echo-pair blockquote {
+      font-size: 23px;
+    }
+    .echo-pair figcaption {
+      flex-wrap: wrap;
+      gap: 4px;
     }
     .weight-heading {
       margin-top: 24px;

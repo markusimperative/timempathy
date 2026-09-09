@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from 'react'
 import type { FormEvent } from 'react'
 import { ArrowDown, ArrowRight, Check, Shuffle, Trash2 } from 'lucide-react'
 import { motion } from 'motion/react'
+import HopeNote from './HopeNote'
+import { echoes } from '../content/echoes'
 import { copy, hopes } from '../content/en'
 import type { Hope } from '../content/en'
 import { forgetReflection, readReflection, reflectionSchema, saveReflection } from '../lib/model'
@@ -14,12 +16,6 @@ const filters = [
   { id: 'company', label: 'Being together' },
   { id: 'quiet', label: 'A little quiet' },
   { id: 'small', label: 'Small pleasures' },
-] as const
-const pairs = [
-  ['s1', 's2'],
-  ['s3', 's10'],
-  ['s4', 's11'],
-  ['s6', 's8'],
 ] as const
 
 function initialReflection() {
@@ -54,6 +50,16 @@ export default function Tomorrows({
   )
   const [filter, setFilter] = useState<Hope['thread'] | 'all'>('all')
   const [echo, setEcho] = useState(-1)
+  const [echoOrigin, setEchoOrigin] = useState<string | null>(null)
+  const pairRef = useRef<HTMLDivElement>(null)
+  const echoButtonRef = useRef<HTMLButtonElement>(null)
+  const focusPair = useRef(false)
+  useEffect(() => {
+    if (!focusPair.current || echo < 0) return
+    focusPair.current = false
+    pairRef.current?.focus({ preventScroll: true })
+    pairRef.current?.scrollIntoView({ block: 'nearest', behavior: still ? 'instant' : 'smooth' })
+  }, [echo, echoOrigin, still])
   const [status, setStatus] = useState('')
   const successRef = useRef<HTMLDivElement>(null)
   const textRef = useRef<HTMLTextAreaElement>(null)
@@ -123,16 +129,34 @@ export default function Tomorrows({
   }
 
   const visibleHopes = hopes.filter((hope) => filter === 'all' || hope.thread === filter)
-  const activePair = echo >= 0 ? pairs[echo % pairs.length] : null
-  const orderedHopes = activePair
-    ? [
-        ...visibleHopes.filter((hope) => activePair.some((id) => id === hope.id)),
-        ...visibleHopes.filter((hope) => !activePair.some((id) => id === hope.id)),
-      ]
-    : visibleHopes
+  const activeEcho = echo >= 0 ? echoes[echo % echoes.length] : null
+  const activePair = activeEcho?.ids ?? null
+  const pairedHopes = activePair
+    ? activePair.map((id) => hopes.find((hope) => hope.id === id)!)
+    : []
+  if (echoOrigin && pairedHopes[1]?.id === echoOrigin) pairedHopes.reverse()
+  const remainingHopes = visibleHopes.filter((hope) => !activePair?.some((id) => id === hope.id))
   const findEcho = () => {
     setFilter('all')
-    setEcho(echo + 1)
+    setEchoOrigin(null)
+    setEcho((previous) => (previous + 1) % echoes.length)
+  }
+  const openWish = (id: string) => {
+    const pair = echoes.findIndex((item) => item.ids.some((hopeId) => hopeId === id))
+    if (pair < 0) return
+    focusPair.current = true
+    setFilter('all')
+    setEchoOrigin(id)
+    setEcho(pair)
+  }
+  const leavePair = () => {
+    setEcho(-1)
+    requestAnimationFrame(() => {
+      const target = echoOrigin
+        ? document.getElementById(`hope-open-${echoOrigin}`)
+        : echoButtonRef.current
+      target?.focus()
+    })
   }
 
   return (
@@ -315,40 +339,59 @@ export default function Tomorrows({
                 onClick={() => {
                   setFilter(item.id)
                   setEcho(-1)
+                  setEchoOrigin(null)
                 }}
               >
                 {item.label}
               </button>
             ))}
           </div>
-          <button className="echo-button" onClick={findEcho}>
+          <button ref={echoButtonRef} className="echo-button" onClick={findEcho}>
             <Shuffle size={16} />
             {echo < 0 ? 'Find an echo' : 'Another echo'}
           </button>
         </div>
         <div className="echo-caption" role="status">
-          {activePair
-            ? `An echo across ages ${hopes.find((h) => h.id === activePair[0])!.age} and ${hopes.find((h) => h.id === activePair[1])!.age}. Two different lives, a familiar wish.`
-            : `${visibleHopes.length} imagined tomorrows. No order of importance.`}
+          {activePair ? (
+            <>
+              <span aria-hidden="true">Two tomorrows, side by side.</span>
+              <span className="sr-only">
+                An echo across ages {pairedHopes[0].age} and {pairedHopes[1].age}. The underlined
+                details connect these authored wishes.
+              </span>
+            </>
+          ) : (
+            'Open a wish. Let another tomorrow sit beside it.'
+          )}
         </div>
         <div className={`hope-wall ${activePair ? 'has-echo' : ''}`}>
-          {orderedHopes.map((hope) => (
-            <motion.figure
-              layout={!still}
-              transition={{ duration: still ? 0 : 0.4 }}
-              key={hope.id}
-              className={`hope-note note-${hopes.indexOf(hope) % 4} ${activePair?.some((id) => id === hope.id) ? 'is-echo' : ''}`}
+          {activeEcho && (
+            <div
+              key={echo}
+              className="echo-pair"
+              ref={pairRef}
+              role="group"
+              aria-label={`Two imagined wishes, ages ${pairedHopes[0].age} and ${pairedHopes[1].age}`}
+              tabIndex={-1}
+              onKeyDown={(event) => {
+                if (event.key === 'Escape') {
+                  event.preventDefault()
+                  leavePair()
+                }
+              }}
             >
-              <span className="note-hole" aria-hidden="true" />
-              <blockquote>“{hope.text}”</blockquote>
-              <figcaption>
-                <span className="hope-age">{hope.age}</span>
-                <span>years old</span>
-                {activePair?.some((id) => id === hope.id) && (
-                  <span className="echo-label">An echo ↔</span>
-                )}
-              </figcaption>
-            </motion.figure>
+              {pairedHopes.map((hope) => (
+                <HopeNote
+                  key={hope.id}
+                  hope={hope}
+                  still={still}
+                  fragment={activeEcho.fragments[activeEcho.ids.findIndex((id) => id === hope.id)]}
+                />
+              ))}
+            </div>
+          )}
+          {remainingHopes.map((hope) => (
+            <HopeNote key={hope.id} hope={hope} still={still} onOpen={() => openWish(hope.id)} />
           ))}
         </div>
         <p className="wall-ending">

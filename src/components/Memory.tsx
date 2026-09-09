@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react'
+import type { CSSProperties } from 'react'
 import { ArrowDown, ArrowLeft, ArrowRight } from 'lucide-react'
 import { motion } from 'motion/react'
 import { copy } from '../content/en'
@@ -15,6 +16,9 @@ export default function Memory({
   onHold: (day: number | null) => void
 }) {
   const [fold, setFold] = useState(0)
+  // Explicit choices only: no dwell measurement, storage, or inferred attention.
+  const [opened, setOpened] = useState<Set<number>>(() => new Set())
+  const personal = opened.size > 0
   const stripRef = useRef<HTMLDivElement>(null)
   const remembered = fold >= 0.5
   const chosen = held === null ? null : moments[held]
@@ -60,11 +64,13 @@ export default function Memory({
                 fold === 0
                   ? 'Seven equal days, as they happen'
                   : fold === 1
-                    ? 'Looking back, familiar mornings folded together'
+                    ? personal
+                      ? 'Looking back, the days you opened remain unfolded'
+                      : 'Looking back, familiar mornings folded together'
                     : 'Partway between the week and its memory'
               }
             />
-            <span className="fold-hint">Pull the thread to fold the week.</span>
+            <span className="fold-hint">Open a day. Then pull the thread.</span>
           </div>
         </div>
       </div>
@@ -89,18 +95,27 @@ export default function Memory({
       >
         {moments.map((moment, i) => {
           const selected = held === i
-          const folded = i < 3 && !selected
+          const folded = !selected && (personal ? !opened.has(i) : i < 3)
           const amount = folded ? fold : 0
           return (
             <div
               key={moment.day}
-              className={`memory-page ${selected ? 'selected' : ''}`}
-              style={{ flexGrow: selected ? 1.55 : 1 - amount * 0.52 }}
+              className={`memory-page ${selected ? 'selected' : ''} ${opened.has(i) ? 'was-opened' : ''}`}
+              style={
+                {
+                  '--memory-width': selected
+                    ? 1.55
+                    : (held === null ? 1 : 5.45 / 6) * (1 - amount * 0.42),
+                } as CSSProperties
+              }
             >
               <button
                 className={`memory-moment ${selected ? 'held' : ''}`}
                 aria-pressed={selected}
-                onClick={() => onHold(selected ? null : i)}
+                onClick={() => {
+                  if (!selected) setOpened((previous) => new Set(previous).add(i))
+                  onHold(selected ? null : i)
+                }}
               >
                 <span className="moment-day">
                   {moment.day}
@@ -138,7 +153,15 @@ export default function Memory({
         <span className="small-note">
           {remembered ? 'A WEEK, REMEMBERED' : 'SEVEN DAYS, AS THEY HAPPEN'}
         </span>
-        <p>{chosen ? chosen.note : remembered ? copy.memory.remembered : copy.memory.lived}</p>
+        <p>
+          {chosen
+            ? chosen.note
+            : remembered
+              ? personal
+                ? 'The days you opened stay unfolded. Still seven days.'
+                : copy.memory.remembered
+              : copy.memory.lived}
+        </p>
       </div>
       <div className={`memory-keepsake ${chosen ? 'has-keepsake' : ''}`}>
         <div className="keepsake-drawing" aria-hidden="true">

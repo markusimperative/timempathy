@@ -9,15 +9,13 @@ export const copy = {
   },
   weight: {
     title: 'Borrow another clock.',
-    intro: 'Each circle holds a life so far. The bright arc is one year.',
+    intro: 'Let a year pass. Then borrow another age.',
   },
   memory: {
     title: ['A day passes.', 'What stays?'],
-    intro: 'A week can be seven equal days on a calendar, and something quite different in memory.',
-    lived:
-      'Seven days, each with the same space. A familiar cup, a different sky, a conversation at the table.',
-    remembered:
-      'Here, familiar cups fold together, while other moments stay distinct. This is one imagined memory. Yours might hold the cups most clearly.',
+    intro: 'Spend a moment in this week. Then look back.',
+    lived: 'A cup, a window, someone across the table.',
+    remembered: 'Less paper. Still seven days. Open any fold.',
     closing: 'The familiar can be what we treasure most.',
   },
   tomorrow: {

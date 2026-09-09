@@ -6,7 +6,7 @@ A contemplative, interactive journey through the weight of a year, the texture o
 
 ## Current clock experience
 
-**Borrow another clock.** Two light rings hold five and fifty years already lived. A highlighted arc shows one year; fine ticks mark the years. Each age slider sits beneath its own clock, with a small row of quick age choices below the pair. One shared scrubber and the final copper play button control the eight-second passage. The labels remain centered, and the “one year / in both lives” arrow stays between the faces. Reduced motion offers an immediate comparison. “About this lens” follows as a separate section explaining the proportion before the memory chapter.
+**Borrow another clock.** Two light rings hold five and fifty years already lived. A highlighted arc shows one year; fine ticks mark the years. Each age slider sits beneath its own clock, with a small row of quick age choices below the pair. One shared scrubber and the final copper play button control the eight-second passage. Changing an age now holds the elapsed months in place while the arc changes shape. The “one year / in both lives” arrow exchanges the two ages without advancing the year. The labels remain centered. Reduced motion offers an immediate comparison. “About this lens” follows as a separate section explaining the proportion before the memory chapter.
 
 The chapter is sized against real viewports, including a 1366 × 768 laptop and a 320 × 568 phone. Its title, clocks, controls, and final action fit together. Enlarged text and unusual aspect ratios can still scroll naturally; content is never clipped to force a fit.
 
@@ -14,11 +14,17 @@ The chapter is sized against real viewports, including a 1366 × 768 laptop and 
 
 ## Current memory experience
 
-The memory chapter is an illustrated paper week. Pull the copper thread between **As it happens** and **Looking back** to fold familiar mornings together. Selecting any day reopens its scene, reveals a small detail, and places a related drawing beside the tomorrow prompt. The choice lasts for the visit and can be released; it never fills in the reflection or gets stored with it.
+The memory chapter is an illustrated paper week. Open an ordinary moment, then pull the copper thread toward **Looking back**: the paper week becomes physically shorter, while the days you opened remain unfolded. Releasing a day leaves its place in this recollection, and **As it happens** opens the full week again. Before any choice, the original familiar-morning fold remains as an authored example. The currently held day still carries its drawing into tomorrow. These explicit choices last only for the visit; there is no reading-time measurement or stored interaction record.
 
-Native range and button controls support keyboard input. On narrow screens the week can be swiped or moved with arrow buttons. Reduced motion preserves the same choices without timed transitions. The clocks use shared Motion values for smooth year traces. The imagined wall retains its original note-card presentation and adjacent echo pairs.
+Native range and button controls support keyboard input. On narrow screens the week can be swiped or moved with arrow buttons. Reduced motion preserves the same choices without timed transitions. The clocks use shared Motion values for smooth year traces. The paper artwork keeps its proportions while it contracts; titles scale with each fold.
 
 [Selected memory scene](docs/screenshots/desktop-memory-held.png) · [A moment beside tomorrow on mobile](docs/screenshots/mobile-tomorrow-companion.png)
+
+## Current Wall experience
+
+Open a wish to bring its authored companion beside it. Both ages remain visible together, including on a narrow phone. A fine thread and underlined details link the two original texts; no summary tells the visitor what to feel. **Find an echo** remains another way in. Keyboard focus moves to the pair and Escape returns to the opened wish or the echo button. The twelve fictional wishes form six explicitly authored pairings; this is neither matching against real people nor evidence about age groups.
+
+[Two wishes together on a phone](docs/screenshots/mobile-wall-pair.png) · [An ordinary cup shaping recollection](docs/screenshots/desktop-memory-personal.png)
 
 ## Current visual direction
 
@@ -73,6 +79,8 @@ Static React + TypeScript application, built with Vite. Component state handles 
 | `src/components/MemoryArtwork.tsx` | Original layered SVG scenes and portable object drawings               |
 | `src/content/moments.ts`           | Authored week and accessible descriptions of its details               |
 | `src/components/Memory.tsx`        | Authored memory transformation and visitor-selected moment             |
+| `src/components/HopeNote.tsx`      | Tactile wish and paired-fragment rendering                             |
+| `src/content/echoes.ts`            | Authored cross-age relationships between the fictional wishes          |
 | `src/components/Tomorrows.tsx`     | Private reflection, wall, themes, cross-age echoes                     |
 | `src/content/en.ts`                | Narrative copy and explicitly fictional hopes                          |
 | `src/lib/model.ts`                 | Proportions, validation, and one private storage record                |
