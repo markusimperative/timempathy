@@ -6,7 +6,9 @@ A contemplative, interactive journey through the weight of a year, the texture o
 
 ## Current clock experience
 
-**One year, inside two lives.** Two segmented circles place the same year among five and fifty years already lived, joined by a “one year / in both lives” arrow. Each piece is one year. Centered labels remain aligned as ages change. Age selection sits beside the twelve-month timeline; on phones the two age sliders share a row, with presets and the timeline below them. The copper play button is the section’s final action and gives one gentle invitation when it first enters view. The strip and both year segments fill together over eight seconds; visitors can pause, scrub, replay, or change either age. Reduced motion offers an immediate comparison with the same controls.
+**Borrow another clock.** Two light rings hold five and fifty years already lived. A highlighted arc shows one year; fine ticks mark the years. Each age slider sits beneath its own clock, with a small row of quick age choices below the pair. One shared scrubber and the final copper play button control the eight-second passage. The labels remain centered, and the “one year / in both lives” arrow stays between the faces. Reduced motion offers an immediate comparison.
+
+The chapter is sized against real viewports, including a 1366 × 768 laptop and a 320 × 568 phone. Its title, clocks, controls, and final action fit together. Enlarged text and unusual aspect ratios can still scroll naturally; content is never clipped to force a fit.
 
 [Clock comparison in motion](docs/screenshots/desktop-clock-playing.png)
 

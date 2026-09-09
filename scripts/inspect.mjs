@@ -1,6 +1,15 @@
 import { chromium } from '@playwright/test'
 import { mkdir } from 'node:fs/promises'
 
+// Capture the clock in an actual viewport so an oversized chapter cannot hide
+// behind a full-element screenshot.
+async function captureClock(page, path) {
+  await page
+    .locator('#weight')
+    .evaluate((el) => el.scrollIntoView({ block: 'start', behavior: 'instant' }))
+  await page.screenshot({ path })
+}
+
 await mkdir('.local/screenshots', { recursive: true })
 const browser = await chromium.launch()
 try {
@@ -12,6 +21,10 @@ try {
   await page.evaluate(() => document.fonts.ready)
   await page.screenshot({ path: '.local/screenshots/desktop-hero.png' })
   for (const section of ['weight', 'memory', 'tomorrow', 'wall']) {
+    if (section === 'weight') {
+      await captureClock(page, '.local/screenshots/desktop-weight.png')
+      continue
+    }
     await page
       .locator(`#${section}`)
       .screenshot({ path: `.local/screenshots/desktop-${section}.png` })
@@ -38,14 +51,16 @@ try {
   await motionPage.getByRole('button', { name: 'Watch the same year pass' }).click()
   await motionPage.mouse.move(0, 0)
   await motionPage.waitForTimeout(2800)
-  await motionPage
-    .locator('#weight')
-    .screenshot({ path: '.local/screenshots/desktop-clock-playing.png' })
+  await captureClock(motionPage, '.local/screenshots/desktop-clock-playing.png')
   await motionPage.close()
   await page.setViewportSize({ width: 390, height: 844 })
   await page.goto('http://127.0.0.1:5173')
   await page.screenshot({ path: '.local/screenshots/mobile-hero.png' })
   for (const section of ['weight', 'memory', 'tomorrow', 'wall']) {
+    if (section === 'weight') {
+      await captureClock(page, '.local/screenshots/mobile-weight.png')
+      continue
+    }
     await page
       .locator(`#${section}`)
       .screenshot({ path: `.local/screenshots/mobile-${section}.png` })

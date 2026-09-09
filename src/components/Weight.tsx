@@ -1,8 +1,8 @@
 import { Fragment, useEffect, useRef, useState } from 'react'
-import { ArrowDown, ArrowLeftRight, Pause, Play, RotateCcw } from 'lucide-react'
+import { ArrowLeftRight, Pause, Play, RotateCcw } from 'lucide-react'
 import { animate, useInView, useMotionValue, useMotionValueEvent } from 'motion/react'
 import { copy } from '../content/en'
-import { YearDial, YearStrip } from './Artwork'
+import { YearDial } from './Artwork'
 import YearScrubber from './YearScrubber'
 
 const presets = [5, 18, 32, 50, 65, 85]
@@ -129,7 +129,7 @@ export default function Weight({ still }: { still: boolean }) {
     >
       <div className="section-head">
         <span className="eyebrow">01 / THE WEIGHT OF A YEAR</span>
-        <span className="section-aside">BORROW ANOTHER CLOCK.</span>
+        <span className="section-aside">SAME DURATION. DIFFERENT PROPORTIONS.</span>
       </div>
       <div className="weight-heading">
         <h2 id="weight-title">{copy.weight.title}</h2>
@@ -146,21 +146,41 @@ export default function Weight({ still }: { still: boolean }) {
               </div>
             )}
             <figure className={`clock ${index === 0 ? 'clock-reference' : 'clock-borrowed'}`}>
-              <YearDial age={age} progress={progress} />
-              <figcaption className="year-share">
-                {age === 1 ? (
-                  'One whole year.'
-                ) : (
-                  <>
-                    One of <em>{age}</em> years.
-                  </>
-                )}
+              <YearDial age={age} progress={progress} variant={index === 0 ? 'sage' : 'copper'} />
+              <figcaption className="clock-details">
+                <p className="year-share">
+                  {age === 1 ? (
+                    'One whole year.'
+                  ) : (
+                    <>
+                      One of <em>{age}</em> years.
+                    </>
+                  )}
+                </p>
+                <div className="clock-age-control">
+                  <label
+                    className="range-label"
+                    htmlFor={index === 0 ? 'reference-age' : 'borrowed-age'}
+                  >
+                    {index === 0 ? 'Starting age' : 'Borrowed age'}
+                  </label>
+                  <input
+                    id={index === 0 ? 'reference-age' : 'borrowed-age'}
+                    type="range"
+                    min="1"
+                    max="100"
+                    value={age}
+                    onChange={(event) =>
+                      changeAge(+event.target.value, index === 0 ? 'reference' : 'borrowed')
+                    }
+                  />
+                </div>
               </figcaption>
             </figure>
           </Fragment>
         ))}
       </div>
-      <p className="clock-summary" aria-live="polite">
+      <p className="clock-summary sr-only" aria-live="polite">
         {playing
           ? 'The same twelve months are passing in both lives.'
           : phase === 'middle'
@@ -169,82 +189,36 @@ export default function Weight({ still }: { still: boolean }) {
               ? referenceAge === borrowedAge
                 ? 'The same year. The same share of life so far.'
                 : 'The same year. A different share of the story.'
-              : 'The copper outline marks one year in each life.'}
+              : 'The highlighted arc marks one year in each life.'}
       </p>
-      <div className="clock-controls">
-        <div className="age-exploration">
-          <p>Change an age. See how the year’s share changes.</p>
-          <div className="age-controls">
-            <div>
-              <label className="range-label" htmlFor="reference-age">
-                Starting age <output aria-hidden="true">{referenceAge}</output>
-              </label>
-              <input
-                id="reference-age"
-                type="range"
-                min="1"
-                max="100"
-                value={referenceAge}
-                onChange={(e) => changeAge(+e.target.value, 'reference')}
-              />
-            </div>
-            <div>
-              <label className="range-label" htmlFor="borrowed-age">
-                Borrowed age <output aria-hidden="true">{borrowedAge}</output>
-              </label>
-              <input
-                id="borrowed-age"
-                type="range"
-                min="1"
-                max="100"
-                value={borrowedAge}
-                onChange={(e) => changeAge(+e.target.value, 'borrowed')}
-              />
-            </div>
-          </div>
-          <div className="borrow-presets">
-            <span>Borrow an age</span>
-            <div role="group" aria-label="Borrow an age">
-              {presets.map((age) => (
-                <button
-                  key={age}
-                  aria-pressed={borrowedAge === age}
-                  onClick={() => changeAge(age, 'borrowed')}
-                >
-                  {age}
-                </button>
-              ))}
-            </div>
-          </div>
+      <div className="borrow-presets">
+        <span>Borrow an age</span>
+        <div role="group" aria-label="Borrow an age">
+          {presets.map((age) => (
+            <button
+              key={age}
+              aria-pressed={borrowedAge === age}
+              onClick={() => changeAge(age, 'borrowed')}
+            >
+              {age}
+            </button>
+          ))}
         </div>
-        <div className="year-exploration">
-          <YearStrip progress={progress} />
-          <YearScrubber
-            progress={progress}
-            still={still}
-            onScrub={() => {
-              dismissCue()
-              progress.stop()
-              setPlaying(false)
-            }}
-          />
-        </div>
-      </div>
-      <div className="model-note">
-        <span className="note-mark">↳</span>
-        <p>
-          {copy.weight.caveat} <a href="#about">About this lens</a>
-        </p>
-        <a
-          className="next-chapter"
-          href="#memory"
-          aria-label="Continue to A day passes. What stays?"
-        >
-          <ArrowDown size={23} />
-        </a>
       </div>
       <div className="passage-controls">
-        <p id="play-description">
+        <YearScrubber
+          progress={progress}
+          still={still}
+          onScrub={() => {
+            dismissCue()
+            progress.stop()
+            setPlaying(false)
+          }}
+        />
+        <p className="model-note">
+          {copy.weight.caveat} <a href="#about">About this lens</a>
+        </p>
+        <p id="play-description" className="sr-only">
           {still
             ? 'Explore the comparison at your own pace.'
             : 'Follow twelve months into both lives.'}

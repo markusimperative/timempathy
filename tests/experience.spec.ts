@@ -17,7 +17,7 @@ test('the complete journey renders locally without errors or outside requests', 
   )
   await page.getByRole('link', { name: 'Borrow a clock', exact: true }).click()
   await expect(page).toHaveURL(/#weight$/)
-  await expect(page.getByRole('heading', { name: 'One year, inside two lives.' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Borrow another clock.' })).toBeVisible()
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(
     true,
   )
@@ -371,14 +371,12 @@ test('selecting and switching paper cards keeps the drawings in proportion throu
   await expect(page.locator('.memory-moment[aria-pressed="true"]')).toHaveCount(0)
 })
 
-test('each life has one segment per year and the same months fill both', async ({ page }) => {
+test('each life marks its years and the same months trace both arcs', async ({ page }) => {
   await page.goto('/#weight')
-  await expect(page.locator('.clock-reference .dial-segment')).toHaveCount(5)
-  await expect(page.locator('.clock-borrowed .dial-segment')).toHaveCount(50)
+  await expect(page.locator('.clock-reference .dial-ticks line')).toHaveCount(5)
+  await expect(page.locator('.clock-borrowed .dial-ticks line')).toHaveCount(50)
   await page.locator('#year-progress').fill('6')
-  await expect
-    .poll(async () => parseFloat((await page.locator('.year-strip-fill').getAttribute('width'))!))
-    .toBeCloseTo(120)
+  await expect(page.locator('#year-progress')).toHaveAttribute('aria-valuetext', '6 of 12 months')
   const arcs = await page
     .locator('.dial-year')
     .evaluateAll((els) => els.map((el) => parseFloat(el.getAttribute('stroke-dasharray')!)))
@@ -386,8 +384,8 @@ test('each life has one segment per year and the same months fill both', async (
   expect(arcs[1]).toBeCloseTo(0.5 / 50)
   await page.locator('#reference-age').fill('1')
   await page.locator('#borrowed-age').fill('100')
-  await expect(page.locator('.clock-reference .dial-segment')).toHaveCount(1)
-  await expect(page.locator('.clock-borrowed .dial-segment')).toHaveCount(100)
+  await expect(page.locator('.clock-reference .dial-ticks line')).toHaveCount(1)
+  await expect(page.locator('.clock-borrowed .dial-ticks line')).toHaveCount(100)
   await expect(page.locator('.clock-reference .year-dial')).toHaveAccessibleName(
     /the whole circle, 100.0 percent/,
   )
@@ -440,4 +438,26 @@ test('the final play invitation draws attention once', async ({ page }) => {
   await play.click()
   await expect(page.getByRole('button', { name: 'Pause', exact: true })).toBeVisible()
   await expect(page.locator('.clock-play')).not.toHaveClass(/has-cue/)
+})
+
+test('the clock chapter and its final play action fit together in the viewport', async ({
+  page,
+  isMobile,
+}) => {
+  await page.setViewportSize(isMobile ? { width: 320, height: 568 } : { width: 1366, height: 768 })
+  await page.goto('/#weight')
+  await page.evaluate(() => document.fonts.ready)
+  await page
+    .locator('#weight')
+    .evaluate((el) => el.scrollIntoView({ block: 'start', behavior: 'instant' }))
+  const chapter = await page.locator('#weight').boundingBox()
+  expect(chapter).not.toBeNull()
+  expect(chapter!.y).toBeGreaterThanOrEqual(-1)
+  expect(chapter!.y + chapter!.height).toBeLessThanOrEqual(page.viewportSize()!.height + 1)
+  await expect(page.locator('.clock-play')).toBeInViewport({ ratio: 1 })
+  await page.locator('#borrowed-age').fill('100')
+  await page.locator('.clock-play').click()
+  await expect(page.locator('.year-dial').first()).toBeInViewport({ ratio: 1 })
+  await expect(page.locator('.year-dial').last()).toBeInViewport({ ratio: 1 })
+  await expect(page.locator('.clock-play')).toBeInViewport({ ratio: 1 })
 })

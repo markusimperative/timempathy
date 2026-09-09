@@ -72,102 +72,70 @@ export function TimeSculpture({ still }: { still: boolean }) {
   )
 }
 
-// One shared progress value draws the same twelve months along the strip and
-// into one year-sized segment of each life. Age changes the context, not speed.
-export function YearStrip({ progress }: { progress: MotionValue<number> }) {
-  const width = useTransform(progress, (value) => value * 240)
-  return (
-    <figure className="shared-year">
-      <figcaption>
-        One year <span>The same twelve months.</span>
-      </figcaption>
-      <svg viewBox="0 0 242 24" aria-hidden="true">
-        <rect className="year-strip-outline" x="1" y="3" width="240" height="18" rx="2" />
-        <motion.rect className="year-strip-fill" x="1" y="3" width={width} height="18" rx="2" />
-        {Array.from({ length: 11 }, (_, i) => (
-          <line
-            key={i}
-            x1={21 + i * 20}
-            y1="4"
-            x2={21 + i * 20}
-            y2="20"
-            className="year-strip-month"
-          />
-        ))}
-      </svg>
-      <div className="year-bookends" aria-hidden="true">
-        <span>January</span>
-        <span>December</span>
-      </div>
-    </figure>
-  )
-}
-
-export function YearDial({ age, progress }: { age: number; progress: MotionValue<number> }) {
+// One shared progress value traces the same year into two differently sized
+// shares of life. The light ring and yearly ticks keep the comparison legible.
+export function YearDial({
+  age,
+  progress,
+  variant,
+}: {
+  age: number
+  progress: MotionValue<number>
+  variant: 'sage' | 'copper'
+}) {
   const share = yearShare(age)
   const dash = useTransform(progress, (value) => `${share * value} 1`)
   const x = useTransform(
     progress,
-    (value) => 180 + 128 * Math.cos(value * share * Math.PI * 2 - Math.PI / 2),
+    (value) => 180 + 132 * Math.cos(value * share * Math.PI * 2 - Math.PI / 2),
   )
   const y = useTransform(
     progress,
-    (value) => 180 + 128 * Math.sin(value * share * Math.PI * 2 - Math.PI / 2),
+    (value) => 180 + 132 * Math.sin(value * share * Math.PI * 2 - Math.PI / 2),
   )
-  const pointOpacity = useTransform(progress, (value) => (value > 0 && value < 1 ? 1 : 0))
+  const pointOpacity = useTransform(progress, (value) => (value > 0 ? 1 : 0))
   return (
-    <div className="dial-illustration">
+    <div className={`dial-illustration ${variant}`}>
       <svg
         className="year-dial"
         viewBox="0 0 360 360"
         role="img"
-        aria-label={`${age} ${age === 1 ? 'year' : 'years'} lived. Each segment is one year. The copper segment is ${age === 1 ? 'the whole circle' : `one of ${age} years`}, ${(share * 100).toFixed(1)} percent of life so far.`}
+        aria-label={`${age} ${age === 1 ? 'year' : 'years'} lived. Each tick marks a year. The highlighted arc is ${age === 1 ? 'the whole circle' : `one of ${age} years`}, ${(share * 100).toFixed(1)} percent of life so far.`}
       >
-        <circle className="dial-inner-thread" cx="180" cy="180" r="99" fill="none" />
-        <circle className="dial-outer-thread" cx="180" cy="180" r="153" fill="none" />
-        <g className="dial-segments" fill="none" strokeWidth="34">
+        <g className="dial-threads" fill="none" aria-hidden="true">
+          {Array.from({ length: 9 }, (_, i) => (
+            <circle key={i} cx="180" cy="180" r={86 + i * 3.5} />
+          ))}
+        </g>
+        <g className="dial-ticks">
           {Array.from({ length: age }, (_, i) => (
-            <circle
-              className={`dial-segment ${i === 0 ? 'is-one-year' : ''}`}
+            <line
               key={i}
-              cx="180"
-              cy="180"
-              r="128"
-              pathLength="1"
-              strokeDasharray={`${share} 1`}
-              transform={`rotate(${-90 + i * share * 360} 180 180)`}
+              x1="180"
+              y1="29"
+              x2="180"
+              y2={i === 0 ? 42 : 35}
+              transform={`rotate(${i * share * 360} 180 180)`}
             />
           ))}
         </g>
-        <motion.circle
-          className="dial-year"
+        <circle className="dial-track" cx="180" cy="180" r="132" fill="none" strokeWidth="8" />
+        <circle
+          className="dial-potential"
           cx="180"
           cy="180"
-          r="128"
+          r="132"
           fill="none"
-          strokeWidth="34"
+          strokeWidth="8"
           pathLength="1"
-          strokeDasharray={dash}
+          strokeDasharray={`${share} 1`}
           transform="rotate(-90 180 180)"
         />
-        <g className="dial-divisions">
-          {age > 1 &&
-            Array.from({ length: age }, (_, i) => (
-              <line
-                key={i}
-                x1="180"
-                y1="68"
-                x2="180"
-                y2="35"
-                transform={`rotate(${i * share * 360} 180 180)`}
-              />
-            ))}
-        </g>
         <circle
           className="dial-year-outline"
           cx="180"
           cy="180"
-          r="145"
+          r="136"
           fill="none"
           strokeWidth="1.5"
           pathLength="1"
@@ -175,10 +143,21 @@ export function YearDial({ age, progress }: { age: number; progress: MotionValue
           transform="rotate(-90 180 180)"
         />
         <motion.circle
+          className="dial-year"
+          cx="180"
+          cy="180"
+          r="132"
+          fill="none"
+          strokeWidth="8"
+          pathLength="1"
+          strokeDasharray={dash}
+          transform="rotate(-90 180 180)"
+        />
+        <motion.circle
           className="dial-point"
           cx={x}
           cy={y}
-          r="4"
+          r="5"
           style={{ opacity: pointOpacity }}
         />
       </svg>
