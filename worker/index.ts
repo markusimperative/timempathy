@@ -16,6 +16,7 @@ type Env = {
   READ_LIMIT: RateLimit
   WRITE_LIMIT: RateLimit
   PUBLIC_ORIGIN: string
+  ADDITIONAL_PUBLIC_ORIGIN?: string
   RATE_LIMIT_SECRET: string
 }
 type Row = {
@@ -44,10 +45,14 @@ app.use('/api/*', async (c, next) => {
   c.header('Referrer-Policy', 'no-referrer')
   const url = new URL(c.req.url)
   const local = ['localhost', '127.0.0.1', '[::1]'].includes(url.hostname)
-  const origin = c.env.PUBLIC_ORIGIN || (local ? url.origin : '')
-  if (!origin || url.origin !== origin)
+  const origins = [
+    c.env.PUBLIC_ORIGIN || (local ? url.origin : ''),
+    c.env.ADDITIONAL_PUBLIC_ORIGIN,
+  ].filter(Boolean)
+  if (!origins.includes(url.origin))
     return c.json({ message: 'Open the Wall at its published address.' }, 403)
-  if (!['GET', 'HEAD'].includes(c.req.method) && c.req.header('Origin') !== origin)
+  // Each address serves its own same-origin API, including during a domain move.
+  if (!['GET', 'HEAD'].includes(c.req.method) && c.req.header('Origin') !== url.origin)
     return c.json({ message: 'Open the Wall before sending a request.' }, 403)
   if (!c.env.RATE_LIMIT_SECRET || c.env.RATE_LIMIT_SECRET.length < 32)
     return c.json({ message: unavailable }, 503)

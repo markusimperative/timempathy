@@ -53,9 +53,13 @@ if (!local && (args[0] === 'deploy' || (args[0] === 'd1' && args.includes('--rem
     )
   }
   if (args[0] === 'deploy') {
-    const origin = new URL(config.vars.PUBLIC_ORIGIN)
-    if (origin.protocol !== 'https:' || origin.origin !== config.vars.PUBLIC_ORIGIN)
-      throw Error('PUBLIC_ORIGIN must be the exact HTTPS origin, without a trailing slash.')
+    for (const name of ['PUBLIC_ORIGIN', 'ADDITIONAL_PUBLIC_ORIGIN']) {
+      const value = config.vars[name]
+      if (name === 'ADDITIONAL_PUBLIC_ORIGIN' && value === undefined) continue
+      const origin = new URL(value)
+      if (origin.protocol !== 'https:' || origin.origin !== value)
+        throw Error(`${name} must be the exact HTTPS origin, without a trailing slash.`)
+    }
   }
 }
 const child = spawn(process.execPath, [resolve('node_modules/wrangler/bin/wrangler.js'), ...args], {

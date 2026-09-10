@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import { randomBytes, randomUUID, createHash } from 'node:crypto'
-import { readFile } from 'node:fs/promises'
+import { readFile, mkdir } from 'node:fs/promises'
 import { resolve } from 'node:path'
 import { spawn } from 'node:child_process'
 
@@ -23,7 +23,10 @@ config.d1_databases = config.d1_databases.map((db) => ({
 }))
 config.vars = { PUBLIC_ORIGIN: '', RATE_LIMIT_SECRET: randomBytes(32).toString('hex') }
 config.dev = { ip: '127.0.0.1', port: 0 }
-const harness = createTestHarness({ workers: [{ config }] })
+// Resolve local variable files outside the developer's .dev.vars directory.
+const root = resolve('.local/cloudflare/test-harness')
+await mkdir(root, { recursive: true })
+const harness = createTestHarness({ root, workers: [{ config }] })
 const key = () => randomBytes(32).toString('hex')
 const hope = (extra = {}) => ({
   text: 'A cup of tea together.',
@@ -69,7 +72,7 @@ try {
   assert.equal((await (await receipt('receipt', input.key)).json()).state, 'shared')
   assert.equal((await (await request('/api/wall', input)).json()).id, initial.id)
   await status(await request('/api/wall', { ...input, age: 9 }), 409)
-  await harness.update({ workers: [{ config }] })
+  await harness.update({ root, workers: [{ config }] })
   ;({ DB } = await worker.getEnv())
   assert.equal((await feed())[0].id, initial.id)
   await status(await receipt('withdraw', key()), 404)
@@ -193,9 +196,74 @@ try {
   await status(await request(), 503)
   await status(await request('/'), 200)
   await DB.prepare('ALTER TABLE offline_hopes RENAME TO hopes').run()
+  // Exercise real deployment hostnames entirely inside the isolated local Worker.
+  const primary = 'https://timempathy.timempathy.workers.dev'
+  const custom = 'https://timepathy.markmathew.com'
+  await harness.update({
+    root,
+    workers: [
+      {
+        config: {
+          ...config,
+          vars: {
+            ...config.vars,
+            PUBLIC_ORIGIN: primary,
+            ADDITIONAL_PUBLIC_ORIGIN: custom,
+          },
+        },
+      },
+    ],
+  })
+  const domainEnv = await worker.getEnv()
+  assert.equal(domainEnv.PUBLIC_ORIGIN, primary)
+  assert.equal(domainEnv.ADDITIONAL_PUBLIC_ORIGIN, custom)
+  const atAddress = (address, path = '/api/wall', body, headers = {}) =>
+    worker.fetch(address + path, {
+      method: body === undefined ? 'GET' : 'POST',
+      body: body === undefined ? undefined : JSON.stringify(body),
+      headers: {
+        Origin: address,
+        'Content-Type': 'application/json',
+        'CF-Connecting-IP': `198.51.100.${++serial % 250}`,
+        ...headers,
+      },
+    })
+  for (const address of [primary, custom]) await status(await atAddress(address), 200)
+  const moving = hope()
+  const onCustom = await atAddress(custom, '/api/wall', moving)
+  await status(onCustom, 201)
+  const movingId = (await onCustom.json()).id
+  assert.ok((await (await atAddress(primary)).json()).hopes.some((item) => item.id === movingId))
+  await status(
+    await atAddress(
+      primary,
+      '/api/wall/withdraw',
+      {},
+      {
+        Authorization: 'Bearer ' + moving.key,
+      },
+    ),
+    200,
+  )
+  assert.deepEqual((await (await atAddress(custom)).json()).hopes, [])
+  for (const [address, otherOrigin] of [
+    [custom, primary],
+    [primary, custom],
+    [custom, ''],
+    [custom, 'null'],
+  ])
+    await status(await atAddress(address, '/api/wall', hope(), { Origin: otherOrigin }), 403)
+  for (const address of [
+    'https://elsewhere.test',
+    custom + '.elsewhere.test',
+    custom.replace('https:', 'http:'),
+  ])
+    await status(await atAddress(address), 403)
+  assert.deepEqual((await (await atAddress(custom)).json()).hopes, [])
+  await harness.update({ root, workers: [{ config }] })
   assert.equal(harness.getLogs().filter((entry) => entry.level === 'error').length, 0)
   console.log(
-    'Worker API verified: real D1 migrations, reload persistence, consent, concurrency, capacity, expiry, removal, rate limits, same-origin protection, static headers and database outage.',
+    'Worker API verified: real D1 migrations, reload persistence, consent, concurrency, capacity, expiry, removal, rate limits, both domain origins, same-origin protection, static headers and database outage.',
   )
   await new Promise((resolveRun, reject) => {
     const child = spawn(process.execPath, ['scripts/verify-shared-wall.mjs'], {

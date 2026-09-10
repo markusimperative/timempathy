@@ -23,6 +23,7 @@
   ],
   "vars": {
     "PUBLIC_ORIGIN": "https://timempathy.timempathy.workers.dev",
+    "ADDITIONAL_PUBLIC_ORIGIN": "https://timepathy.markmathew.com",
   },
   "ratelimits": [
     {

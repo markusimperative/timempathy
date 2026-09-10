@@ -6,6 +6,22 @@ The creator authorized this hosting route. Keep the account on **Workers Free**;
 
 The configured Worker serves only `/api/*`; the asset service serves the React build and fonts directly. D1 stores only explicitly shared hopes and removal receipts. Keep D1 read replication off so a removed hope cannot be served from a lagging read replica. No analytics, paid services, domain, external moderation provider, or extra content processor is configured.
 
+## Requested custom domain — awaiting DNS activation
+
+The creator requested **timepathy.markmathew.com** on 2026-09-10 and confirmed that neither the existing Namecheap email forwarding nor website redirect is in use. Keep the registration at Namecheap and use Cloudflare's Free DNS plan. No registrar transfer or paid plan is needed. The hostname deliberately follows the requested spelling; the project name remains Timempathy.
+
+Current public DNS uses `dns1.registrar-servers.com` and `dns2.registrar-servers.com`. The requested subdomain does not yet exist. Public lookups found Namecheap parking/forwarding and MX/SPF records; they are not a complete export of the zone. Review the imported records against Namecheap's Advanced DNS before changing nameservers. Moving those MX records alone does not preserve Namecheap's DNS-dependent free email-forwarding service.
+
+1. In the same Cloudflare account as the Worker, open **Domains → Onboard a domain**, enter `markmathew.com`, select the **Free** plan, and review the DNS import. Current project-local deployment OAuth cannot create a zone; this step needs the domain owner's dashboard session.
+2. Copy the two nameservers Cloudflare actually assigns. In Namecheap, open **Domain List → Manage** beside `markmathew.com` → **Nameservers → Custom DNS**, enter those two nameservers and save. Do not guess their names or add them as ordinary NS host records. Wait until Cloudflare shows the zone as Active.
+3. Open **Workers & Pages → timempathy → Settings → Domains & Routes → Add → Custom Domain** and enter `timepathy.markmathew.com`. Cloudflare creates the Worker DNS record and certificate. Do not separately point a Namecheap CNAME at the workers.dev address.
+4. Once attached, persist the route in `wrangler.jsonc`: `"routes": [{ "pattern": "timepathy.markmathew.com", "custom_domain": true }]`. Set `PUBLIC_ORIGIN` to `https://timepathy.markmathew.com` and `ADDITIONAL_PUBLIC_ORIGIN` to `https://timempathy.timempathy.workers.dev`, retaining `workers_dev: true`. Deploy the checked code. If Wrangler needs zone read access to reconcile the route, extend only the project-local authorization; never use global credentials.
+5. Verify both HTTPS addresses and their Wall APIs, then check the rendered custom-domain experience and a clearly labelled temporary contribution followed by immediate withdrawal. Update the README and GitHub homepage only after this succeeds.
+
+The API accepts these two exact origins and still requires every write's Origin header to equal its request URL's origin. There is no cross-origin sharing endpoint or wildcard host access. The origin preparation is deployed and verified at the existing live address; DNS and HTTPS for the new hostname are still pending. Both addresses use the same D1 database and existing removal keys. Private reflections saved in browser storage remain local to the address where they were written; there is no automatic transfer or forced redirect.
+
+References: [Cloudflare domain onboarding](https://developers.cloudflare.com/fundamentals/manage-domains/add-site/), [Worker custom domains](https://developers.cloudflare.com/workers/configuration/routing/custom-domains/), [Namecheap nameserver settings](https://www.namecheap.com/support/knowledgebase/article.aspx/767/10/how-to-change-dns-for-a-domain/), [Namecheap email forwarding](https://www.namecheap.com/support/knowledgebase/article.aspx/308/2214/how-to-set-up-free-email-forwarding/).
+
 ## Before first deployment
 
 1. Run `pnpm install --frozen-lockfile`, `pnpm build`, `pnpm cf:check`, and `pnpm test:worker`.
