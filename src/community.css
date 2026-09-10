@@ -1,0 +1,302 @@
+@layer components {
+  .private-thought .small-note,
+  .shared-note-actions .small-note {
+    color: #4c5846;
+  }
+  .reflection-next {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    margin: 28px 0 22px;
+  }
+  .sharing-focus,
+  .sharing-choice {
+    max-width: 560px;
+    margin: 28px auto 0;
+    text-align: left;
+  }
+  .sharing-choice {
+    border-top: 1px solid var(--line);
+    padding-top: 26px;
+  }
+  .sharing-choice h3 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 30px;
+    margin-bottom: 12px;
+  }
+  .sharing-choice p {
+    color: #4c5846;
+    font-size: 13px;
+    line-height: 1.8;
+    margin: 12px 0;
+  }
+  .sharing-choice .small-note {
+    font-size: 12px;
+  }
+  .share-age {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-top: 24px;
+    font-size: 13px;
+  }
+  .share-age input {
+    width: 76px;
+    min-height: 44px;
+    padding: 8px 12px;
+    border: 1px solid #959d8b;
+    background: var(--paper);
+  }
+  .sharing-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 20px;
+    margin-top: 20px;
+  }
+  .sharing-actions button {
+    min-height: 44px;
+  }
+  .receipt-details {
+    margin: 22px 0;
+  }
+  .receipt-details summary,
+  .manage-hope summary,
+  .imagined-wall > summary {
+    font-size: 13px;
+    cursor: pointer;
+    padding: 12px 0;
+  }
+  .receipt-details input,
+  .manage-hope input {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    min-height: 44px;
+    font-family: monospace;
+    font-size: 12px;
+    background: var(--paper);
+    border: 1px solid #959d8b;
+  }
+  .community-wall {
+    margin: 30px 0 45px;
+    scroll-margin-top: 30px;
+  }
+  .community-intro {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 24px;
+  }
+  .community-intro p {
+    color: #4c5846;
+    font-size: 13px;
+    flex: 1;
+  }
+  .community-intro button {
+    min-height: 44px;
+    font-size: 12px;
+  }
+  .wall-empty {
+    text-align: center;
+    padding: 30px 20px 38px;
+    border-block: 1px solid var(--line);
+    margin: 15px 0;
+  }
+  .empty-thread {
+    color: var(--copper);
+    font-family: var(--serif);
+    font-size: 50px;
+    line-height: 1;
+  }
+  .wall-empty p {
+    font-family: var(--serif);
+    font-size: 30px;
+    margin: 12px 0;
+  }
+  .wall-empty > span:last-child {
+    font-size: 13px;
+    color: #4c5846;
+  }
+  .meet-tomorrow {
+    margin: 24px 0;
+  }
+  .shared-hope-list {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
+    margin-top: 24px;
+  }
+  .shared-hope {
+    padding: 25px 26px;
+    background: #ece7d7;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+  .shared-hope:nth-child(3n + 2),
+  .encountered-hope {
+    background: #e3e8da;
+  }
+  .shared-hope:nth-child(3n + 3) {
+    background: #ebdfd2;
+  }
+  .shared-hope figcaption {
+    display: flex;
+    align-items: baseline;
+    gap: 9px;
+    color: #4c5846;
+    font-size: 11px;
+    margin-bottom: 20px;
+  }
+  .shared-age {
+    font-family: var(--serif);
+    font-size: 32px;
+    line-height: 1;
+  }
+  .shared-hope blockquote {
+    font-family: var(--serif);
+    font-size: clamp(23px, 2.4vw, 32px);
+    line-height: 1.22;
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
+    flex: 1;
+  }
+  .shared-note-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 18px;
+  }
+  .shared-note-actions button {
+    min-height: 44px;
+    font-size: 12px;
+  }
+  .flag-hope {
+    min-width: 44px;
+    display: grid;
+    place-items: center;
+  }
+  .shared-encounter {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 22px;
+    max-width: 880px;
+    margin: 10px auto 40px;
+    padding-top: 12px;
+    border-top: 1px solid #ac805d;
+  }
+  .shared-encounter .shared-hope {
+    min-height: 225px;
+  }
+  .shared-encounter .shared-hope:only-of-type {
+    grid-column: 1 / -1;
+  }
+  .shared-encounter .text-link {
+    margin-top: 24px;
+    font-size: 12px;
+    line-height: 1.5;
+    min-height: 44px;
+  }
+  .encounter-question {
+    grid-column: 1 / -1;
+    text-align: center;
+    font-family: var(--serif);
+    font-size: 25px;
+  }
+  .encounter-close {
+    grid-column: 1 / -1;
+    justify-self: center;
+    min-height: 44px;
+  }
+  .manage-hope {
+    margin-top: 25px;
+    max-width: 560px;
+  }
+  .manage-hope label {
+    display: block;
+    font-size: 12px;
+    margin: 12px 0 7px;
+  }
+  .manage-hope p {
+    font-size: 13px;
+    margin-top: 10px;
+  }
+  .report-choice {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid var(--line);
+  }
+  .report-choice label,
+  .report-choice p {
+    font-size: 12px;
+    line-height: 1.6;
+  }
+  .report-choice select {
+    display: block;
+    max-width: 100%;
+    min-height: 44px;
+    margin: 8px 0;
+    background: var(--paper);
+    border: 1px solid #959d8b;
+  }
+  .report-choice button {
+    min-height: 44px;
+    margin-right: 16px;
+  }
+  .imagined-wall {
+    border-top: 1px solid var(--line);
+    padding-top: 10px;
+  }
+}
+@layer responsive {
+  @media (max-width: 760px) {
+    .community-intro {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px 16px;
+    }
+    .community-intro .eyebrow {
+      font-size: 10px;
+    }
+    .community-intro p {
+      grid-column: 1 / -1;
+      grid-row: 2;
+    }
+
+    .shared-hope-list {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+    .shared-hope {
+      padding: 22px 16px;
+    }
+    .shared-encounter {
+      gap: 14px;
+    }
+    .shared-encounter .shared-hope {
+      padding: 22px 14px;
+    }
+    .shared-hope figcaption {
+      flex-wrap: wrap;
+      gap: 4px 8px;
+    }
+    .shared-note-actions {
+      flex-wrap: wrap;
+      gap: 0;
+    }
+    .reflection-next {
+      flex-direction: column;
+      gap: 20px;
+    }
+  }
+  @media (max-width: 350px) {
+    .shared-hope-list {
+      grid-template-columns: 1fr;
+    }
+  }
+}

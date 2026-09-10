@@ -2,7 +2,7 @@
 
 **We share the same clock, but not the same experience of time.**
 
-A contemplative, interactive journey through the weight of a year, the texture of memory, and the ordinary hopes that connect people across ages. This first version is a working **local prototype**, with clearly labeled fictional wall contributions and a private reflection that is never sent to a server.
+A contemplative, interactive journey through the weight of a year, the texture of memory, and the ordinary hopes that connect people across ages. This is a working **local prototype** with private reflection and an optional shared Wall. A visitor can offer a hope, encounter another age, and borrow the clock beside those words. Sharing uses a local server; keeping a thought private never sends it there.
 
 ## Current clock experience
 
@@ -22,9 +22,15 @@ Native range and button controls support keyboard input. On narrow screens the w
 
 ## Current Wall experience
 
-Open a wish to bring its authored companion beside it, near the place you were already reading. Edge-column wishes keep their side of the row, and the current theme stays selected. Both ages remain visible together, including on a narrow phone. The companion arrives first, a fine thread connects them, and shared details underline in a short sequence; no summary tells the visitor what to feel. **Find an echo** remains another way in. Keyboard focus moves to the pair and Escape returns to the opened wish or the echo button. The twelve fictional wishes form six explicitly authored pairings; this is neither matching against real people nor evidence about age groups.
+A reflection begins privately. **Offer it to the Wall** opens a separate choice explaining who can read it, the seven-day lifetime, and removal. After the visitor supplies an age and explicitly agrees, their original words appear immediately following local automated checks. Anyone using the prototype may participate; there is no account, invitation, or manual review queue.
 
-[A wish keeping its place on mobile](docs/screenshots/mobile-wall-anchored.png) · [An ordinary cup staying clear](docs/screenshots/desktop-memory-impressions.png)
+**Meet another tomorrow** brings two hopes together, favouring another age without interpreting either person's words. **Borrow this person's clock** takes that age into the existing clock comparison while preserving the elapsed months. Returning brings the visitor back to the words. The encounter temporarily replaces the list, giving one pair room to be read.
+
+Authors receive a random removal key, which is not saved automatically. They can withdraw immediately or later with that key. Readers can flag a hope; this removes its words without manual review. Basic automated checks reject obvious contact details and abusive English language. They have false positives and misses; they are not comprehensive moderation.
+
+The shared Wall starts empty. The original twelve fictional wishes remain in a separate **Explore the imagined wall** disclosure, open while the shared Wall is empty. Their six authored pairings and original interactions remain available. Test fixtures never seed the real database.
+
+[Shared encounter, desktop](docs/screenshots/shared-wall-desktop.png) · [Shared encounter, phone](docs/screenshots/shared-wall-mobile.png). These screenshots show isolated test contributions, not participants.
 
 ## Current visual direction
 
@@ -32,7 +38,7 @@ The original paper / forest / copper design is restored following creator review
 
 ## Run
 
-Requires Node.js 22.12+ (tested on 24.19.0) and pnpm 11.19.0.
+Requires Node.js 24.15+ (tested on 24.19.0) and pnpm 11.19.0.
 
 ```sh
 pnpm install --frozen-lockfile
@@ -48,20 +54,24 @@ On the dedicated Windows workstation, Node and pnpm are supplied by the Codex ru
 .\scripts\pnpm.ps1 dev
 ```
 
-No accounts, keys, environment variables, database, or cloud service are needed. Browser persistence is tied to the exact origin; `localhost`, `127.0.0.1`, and a production origin have separate saved thoughts.
+No account, environment variables, or cloud service are needed. The server creates `.local/wall/prototype.sqlite` automatically. This local database is ignored by Git; development and the local production preview use the same file. A contribution removal key is generated only when opening the sharing choice. Browser persistence is tied to the exact origin; `localhost`, `127.0.0.1`, and a production origin have separate saved thoughts.
 
 ## Verify
 
 ```sh
 pnpm typecheck
 pnpm test
+pnpm test:wall
 pnpm build
 pnpm exec playwright install chromium
 pnpm test:e2e
 pnpm test:production
+pnpm test:shared
 pnpm format:check
 pnpm audit
 ```
+
+`pnpm test:wall` exercises the API, including consent, deletion, expiry, persistence and rate limits. `pnpm test:shared` starts the built app with an isolated in-memory Wall on loopback port 4180 and verifies separate visitors, failure recovery, accessibility, and a 320px layout. It never writes test hopes to the normal database. `pnpm test:production` also checks that the private journey survives a static-only host with the sharing API unavailable.
 
 `pnpm inspect` captures the real desktop and mobile render into `.local/screenshots` while the development server is running. `pnpm preview` serves the built application at [localhost:4173](http://127.0.0.1:4173). Browser test failures retain traces in `test-results`; `pnpm exec playwright show-report` opens the test report. Generated output and any local reflection data are not committed.
 
@@ -69,7 +79,7 @@ Firefox is an optional additional target: install it with `pnpm exec playwright 
 
 ## Architecture
 
-Static React + TypeScript application, built with Vite. Component state handles interaction; fragment links handle navigation. No backend or service worker. Assets and fonts are hosted with the app. Production runtime makes no external requests until a visitor deliberately opens one of the research links.
+React + TypeScript, built with Vite, with a small Fastify service and SQLite storage for explicitly shared hopes. Component state handles interaction; fragment links handle navigation. No service worker. Assets and fonts are hosted with the app. The client requests only its same-origin Wall API; research links remain deliberate outbound navigation. Development mounts Fastify in Vite; `pnpm preview` serves the built app and API together at port 4173, bound to loopback. A static-only host supports private reflection and imagined wishes but cannot publish contributions.
 
 | Location                            | Responsibility                                                         |
 | ----------------------------------- | ---------------------------------------------------------------------- |
@@ -82,7 +92,11 @@ Static React + TypeScript application, built with Vite. Component state handles 
 | `src/components/Memory.tsx`         | Authored memory transformation and visitor-selected moment             |
 | `src/components/HopeNote.tsx`       | Tactile wish and paired-fragment rendering                             |
 | `src/content/echoes.ts`             | Authored cross-age relationships between the fictional wishes          |
-| `src/components/Tomorrows.tsx`      | Private reflection, wall, themes, cross-age echoes                     |
+| `src/components/Tomorrows.tsx`      | Private reflection, sharing choice and imagined wishes                 |
+| `src/components/ShareHope.tsx`      | Consent, submission recovery and removal receipt                       |
+| `src/components/CommunityWall.tsx`  | Shared hopes, age encounters, borrowing and reporting                  |
+| `src/lib/wall.ts`                   | Validated client API, refresh and age-based encounter selection        |
+| `server/wall.ts`                    | Validation, automatic checks, rate limits, SQLite and deletion         |
 | `src/content/en.ts`                 | Narrative copy and explicitly fictional hopes                          |
 | `src/lib/model.ts`                  | Proportions, validation, and one private storage record                |
 | `tests/material-experience.spec.ts` | Trace cancellation, anchored wishes, theme continuity, reversible ink  |
@@ -97,12 +111,14 @@ The application separates the central narrative from presentation. A full locali
 - [Impeccable setup](docs/IMPECCABLE.md): pinned skill installation and local live-mode configuration.
 - [DECISIONS.md](DECISIONS.md): why this interpretation and architecture were chosen.
 - [RESEARCH.md](RESEARCH.md): primary sources, limitations, and design hypotheses.
-- [PRIVACY_AND_MODERATION.md](PRIVACY_AND_MODERATION.md): actual data behavior and the required public-wall architecture.
+- [PRIVACY_AND_MODERATION.md](PRIVACY_AND_MODERATION.md): actual data behavior, automatic publication and deletion.
 - [DEPENDENCIES.md](DEPENDENCIES.md): open-source reuse and licenses.
 - [REVIEW.md](REVIEW.md): first substantial version, verification, weaknesses, and next exploration.
 
 ## Boundaries
 
-This is ready for local review, not for collecting public submissions. The wall examples are invented and are not evidence about any age group. The time model is a visual analogy, never a scientific law. There is no life expectancy calculation, social ranking, analytics, AI interpretation, or automatic publication.
+The complete sharing flow runs locally. Public hosting has not been selected or deployed. The creator explicitly chose open participation and no manual review at this stage; the earlier pending-first proposal is superseded. The local Wall expires hopes after seven days, holds at most 200 records (including removal receipts), and does not upload its database to GitHub.
+
+The imagined examples are invented and are not evidence about any age group. The time model is a visual analogy, never a scientific law. There is no life expectancy calculation, social ranking, analytics or AI interpretation. Technical checks cannot establish whether visitors actually experience greater empathy.
 
 The code remains private/unlicensed pending the creator's choice of a project license. Third-party software retains its own licenses; runtime notices ship in `public/third-party-notices.txt` and are copied into the production build.

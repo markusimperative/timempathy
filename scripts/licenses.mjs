@@ -38,8 +38,19 @@ async function visit(name, from = resolve('package.json')) {
   const files = (await readdir(folder)).filter((file) =>
     /^(licen[sc]e|copying|notice|ofl)(\.|$)/i.test(file),
   )
-  if (!files.length) throw Error('License notice missing for ' + name)
-  const texts = await Promise.all(files.map((file) => readFile(join(folder, file), 'utf8')))
+  const texts = files.length
+    ? await Promise.all(files.map((file) => readFile(join(folder, file), 'utf8')))
+    : [
+        await readFile(
+          resolve(
+            'scripts/license-notices',
+            name.replaceAll('/', '__') + '@' + metadata.version + '.txt',
+          ),
+          'utf8',
+        ),
+      ]
+  // Missing published notices require a version-specific, source-attributed copy; never guess a license.
+
   notices.push(
     name +
       '@' +
@@ -47,7 +58,14 @@ async function visit(name, from = resolve('package.json')) {
       '\nLicense: ' +
       metadata.license +
       '\n\n' +
-      texts.map((text) => text.replaceAll('\r\n', '\n').trimEnd()).join('\n\n'),
+      texts
+        .map((text) =>
+          text
+            .replaceAll('\r\n', '\n')
+            .replace(/[ \t]+$/gm, '')
+            .trimEnd(),
+        )
+        .join('\n\n'),
   )
   for (const child of Object.keys(metadata.dependencies ?? {})) await visit(child, packagePath)
 }

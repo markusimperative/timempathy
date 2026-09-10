@@ -1,45 +1,53 @@
-# Privacy and moderation
+# Privacy and publication
 
-## Implemented local behavior
+## Creator direction
 
-- No account, email, birthday, profile, fingerprint, analytics, tracking cookie, or hidden identifier.
-- Clock ages, explicitly opened memory scenes, and the chosen Wall pairing are transient interface state. They are not copied into the reflection or stored. Opening scenes records only explicit choices for this page; the app does not measure reading time, hovering, or dwell duration. Reloading clears these choices.
-- A reflection contains only `text` (trimmed, 1–240 UTF-16 code units) and `age` (optional integer 1–120). React renders it as text, never HTML.
-- Unsubmitted text lives in memory. Submitting without the unchecked persistence option keeps one reflection in memory for the current page only.
-- If the visitor explicitly selects persistence, the same two-field record is saved under `timempathy.reflection.v1` in localStorage. There is no history or timestamp. A saved reflection survives until removed or browser storage is cleared.
-- This is device-local storage, not encryption or a secure vault. Other users of the browser can read it. The UI says so before opting in.
-- The removal action removes the app's single storage key. A failed write falls back to a clearly disclosed session-only thought. A failed deletion leaves the thought visible and explains how to clear site storage. Malformed stored data is not rendered; the app reports that it could not be read.
-- Browser deletion is not forensic erasure and cannot remove copies a visitor has made. No synchronization exists between tabs or devices. A stale tab may display an old in-memory copy until it is reloaded.
-- No reflection is transmitted, publicly displayed to other visitors, or mixed into the sample dataset. The local preview carries the label “Your private thought.”
-- All fonts and assets are local. Research links are ordinary external links with `rel=noreferrer`; visiting them is a deliberate outbound action.
-- The development server is bound to `127.0.0.1`. No public deployment or remote repository write has been performed.
+On 2026-09-10 the creator specified: “Any user can participate, let there be no manual review at this stage.” This supersedes the earlier pending-first/manual-review proposal in this document and the original brief. PROJECT.md remains unchanged as the historical brief. The current implementation has no moderator account, inbox, pending state, or approval gate.
 
-## Public wall architecture — designed, not implemented
+The complete flow runs on loopback. No public hosting or external content processor has been connected. The private GitHub repository backs up project code, never the local Wall database, private reflections, or removal keys.
 
-A public wall must have a real moderation boundary. Adding a POST endpoint that immediately populates the wall is not an acceptable next step.
+## Private reflection
 
-### Data boundary
+- No account, email, birthday, profile, fingerprint, analytics, tracking cookie, or persistent visitor identifier.
+- Clock ages, memory choices, and encounters last only for the visit. There is no dwell measurement or inferred attention. Borrowing a shared hope's age does not save it in the visitor's reflection.
+- A private reflection has only trimmed text (1–240 UTF-16 code units) and an optional integer age (1–120). React renders all words as text, never HTML.
+- Writing and **Keep this thought** never submit words to the server. Without the separate unchecked persistence option, the thought lives only in page memory.
+- Explicit browser persistence saves those two fields under `timempathy.reflection.v1`. There is no history or timestamp. Other users of the same browser can read it; this is disclosed before opting in. It is not encryption or a secure vault.
+- Removing the private copy removes that one storage record. Failed persistence falls back to disclosed visit-only storage. Failed deletion keeps the thought visible and explains how to clear site storage. Removing the private copy does not withdraw a shared hope, and the active removal key remains available.
+- Browser storage is origin-specific. Private copies in different tabs do not synchronize; an old tab can retain its in-memory copy. Deletion cannot erase screenshots or copies someone has made.
 
-Use a small conventional backend with a relational database and a separate authenticated moderation view. Do not build a custom authentication system: choose a maintained provider or established self-hosted auth package once hosting is selected. The public read API must query only approved records. Raw submissions and moderation reasons must never be included in the public API, client bundles, static assets, or public error messages.
+## Explicit sharing
 
-Proposed contribution record: random opaque ID, text, integer age, language, status, created timestamp, review timestamp, and expiry timestamp. Public projection: opaque contribution ID, approved text, and age only. The contributor gets an unguessable deletion receipt; store only its hash server-side. No public user identity or long-lived visitor identifier.
+**Offer it to the Wall** presents the audience, lifetime, automated checks and removal method before transmission. Sharing requires an age and an unchecked agreement checkbox. Participants do not need an invitation or account. The server validates agreement and the current consent version as well as the words and age.
 
-### Lifecycle
+Accepted words are published immediately, unchanged apart from trimming outer whitespace. The public projection contains only a random contribution ID, text and age. The server stores a consent version, creation/expiry times, state, and a hash of the removal key. Public reads never include keys, hashes, timestamps or private reflection records.
 
-`received → pending review → approved | rejected`; an approved item can later become `withdrawn` or `quarantined`. Every state change is audited in the private moderator system. If the moderation service is unavailable, submissions remain pending and nothing new becomes public. The server enforces schema validation, request size limits, and rate limiting; client-side validation is supplementary.
+The client creates a cryptographically random 256-bit key for a sharing attempt. The same key makes retries idempotent and later authorizes withdrawal. The raw key is sent only in the submission body or an Authorization header, never a URL. Only its SHA-256 hash is stored server-side. The key is shown to its author, with an explicit copy control, and is not automatically persisted in the browser. Anyone holding it can remove that hope; a lost key cannot be recovered through an account.
 
-Human review precedes publication. Automated checks may flag spam, links, contact details, hate, sexual content, harassment, threats, or self-harm material, but must not be treated as comprehensive moderation. No model should rewrite a visitor's hope or decide what it ought to mean. Any future vendor use requires its own privacy and authority decision.
+If a response is lost after acceptance, retrying cannot create another copy. **Withdraw and keep it private** attempts to remove any accepted request before closing the sharing choice. If this cannot be confirmed, the UI keeps the key available and explains the uncertainty. Closing the page can still lose a key that the visitor has not copied.
 
-### Abuse prevention and care
+## Automatic checks and removal
 
-- Establish written moderation criteria and reviewer coverage before accepting submissions.
-- Protect the moderation view with established authentication, least privilege, and short sessions.
-- Give visitors a discreet reporting mechanism; reported material can be quarantined while reviewed.
-- Use bounded rate limits. If IP-derived data is needed, use a short-lived keyed digest and a small expiry; do not retain raw IP addresses by default. Reverse-proxy and hosting logs must also be reviewed rather than assuming the application controls all collection.
-- Avoid making distress performative. Define a humane private response path and locally appropriate support information before accepting high-risk content. The site must not suggest that anonymous submission provides emergency care or a monitored support channel.
-- Set explicit retention and deletion policies, including backups. Initial engineering proposal: expire abandoned/rejected submissions after seven days, delete short-lived rate-limit records within 24 hours, and revisit approved content after 90 days. These are proposals, not promises made by the current product.
-- Design for deletion receipts, takedown/reporting, and moderation failures in integration tests. Verify pending records are inaccessible even with guessed IDs and manipulated queries.
+The server rejects oversized/malformed input, obvious links, email addresses, phone-like strings, handles, hidden control characters, and matches from Obscenity's English dataset. Rejected words are not stored. These heuristics can miss harmful or identifying content, especially outside English, and can reject benign words. They do not detect every name, location, threat or other concern. No text is sent to an AI model or external moderation provider; no model rewrites hopes or interprets their meaning.
 
-### Creator decisions before launch
+- Accepted: `shared` immediately; there is no pending review state.
+- Author withdrawal: text and age are set to NULL; state becomes `withdrawn`.
+- Reader flag: text and age are set to NULL; state becomes `flagged` immediately, with no review queue. Readers choose a reason to make the consequence clear, but the reason and reporter identity are not retained. Flags can be misused to remove benign hopes; this is a tradeoff of the creator's current no-review stage.
+- Both removal states retain only the receipt/consent metadata until the original expiry, preventing a retry from restoring the words. No public report counts, reactions or ranking exist.
+- After seven days, the entire contribution/receipt row expires. Cleanup runs on startup, on requests, and every minute while the server is running. When stopped, no timer runs; expiry is applied on the next startup before serving data.
 
-The creator must approve the intended audience (including how minors are handled), publication territory, moderation responsibility and funding, retention policy, hosting destination, and any external processor. Those choices carry real ongoing obligations. No legal compliance determination has been made here. This document is an engineering design for review, not a claim that a public launch is already authorized or safe.
+The client refreshes shared hopes on focus/visibility, by explicit refresh, and every 30 seconds while the page is visible. Other readers can retain an already rendered copy until their next successful refresh; offline pages and screenshots cannot be recalled. Failed refresh clears the live list rather than presenting it as current. A removal request deletes only the shared record, never an author's private browser copy.
+
+## Local service and storage
+
+Fastify handles requests, size limits and errors. Maintained rate-limit middleware uses a per-process keyed digest of the connection IP in memory, with a one-minute rate window. The digest is an abuse-control key, not a visitor history. Request logging is disabled; the application does not write raw IP addresses, request bodies, or removal keys to logs. The library's bounded in-memory cache can retain expired counters until expiry access/eviction or process exit; there is no persistent rate-limit store.
+
+Limits are 90 requests per minute per connection IP, with five per minute on sharing and reporting routes. These limits include the same-origin service, are deliberately small for the local prototype, and are not a complete public abuse-prevention system. Proxy-provided client IP headers are not trusted. Mutation requests require an explicitly configured Origin; the Host must match a configured local address. No CORS access is enabled. Error responses do not echo submitted content. API responses are marked no-store.
+
+Node's built-in SQLite stores up to 200 records in `.local/wall/prototype.sqlite`, including unexpired removal receipts. SQLite uses DELETE journaling and secure_delete for removed cells. This is local filesystem storage, not encryption or a promise of forensic erasure. No application backup of the database exists. The database and transient test artifacts are Git-ignored. Tests use an isolated in-memory database or a disposable test file and never seed the normal Wall with fictional people.
+
+Fonts and assets ship with the app. Research links are ordinary external links with `rel=noreferrer`; following them is a visitor action. On a static-only host, the shared API is unavailable and private reflection and the clearly imagined Wall remain usable.
+
+## Online hosting boundary
+
+Public deployment has not been performed. A concrete hosting destination, persistent storage, TLS/origin configuration, provider logging and backup/deletion behavior still need to be settled for that deployment. The current local implementation and its no-manual-review publication policy are reviewable without external accounts or processors. This document describes engineering behavior; it does not claim comprehensive moderation or a legal compliance determination.

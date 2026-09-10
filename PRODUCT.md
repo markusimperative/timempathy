@@ -12,7 +12,7 @@ web
 
 Visitors across ages who want to explore how a shared duration can carry different subjective weight and recognize ordinary hopes in lives unlike their own. The experience is self-paced and requires no account, expertise, or contribution.
 
-A specific public-launch audience, including how contributions from minors would be handled, is undecided. The current scope is a local prototype for creator review, not a live public contribution service.
+The creator explicitly chose open participation: any user may participate, with no manual review at this stage. The implementation accepts ages 1–120. The complete contribution flow is currently local; public hosting remains unselected.
 
 ## Product Purpose
 
@@ -36,11 +36,11 @@ The central question is **How would you like to remember tomorrow?** It invites 
 
 - **Borrow another clock:** two ages share one elapsed year. Changing or exchanging ages holds the elapsed months while the arc's proportion changes. Both animated years take eight seconds. The proportion 1 / age is illustrative arithmetic about life already lived, never psychological speed, remaining lifespan, or a scientific law.
 - **Memory:** seven authored ordinary-life scenes can fold into a shorter paper week. Explicitly opened days remain unfolded during recollection. A currently held moment can carry its drawing into tomorrow. These are authored interaction rules, not a test or measurement of the visitor's memory or attention.
-- **Private reflection:** one short thought with an optional age stays in this visit by default. A separate explicit choice permits local browser storage, with a removal action. Nothing is submitted to a server or added to the Wall.
-- **Wall of Tomorrows:** twelve clearly fictional wishes form six authored cross-age pairings. A visitor can open a wish to encounter its companion with both ages visible. Age serves recognition, never ranking or generational stereotypes.
+- **Private reflection:** one short thought with an optional age stays in this visit by default. A separate explicit choice permits local browser storage, with a removal action. Keeping it private sends nothing to the server. A separate sharing choice requires an age and explicit agreement before submitting it to the Wall.
+- **Wall of Tomorrows:** consented hopes appear immediately after local automated checks, with age beside the original words. Visitors can encounter another age and borrow that person’s clock. Their own hope is excluded from automatic encounters; no semantic similarity or emotional conclusion is assigned. The original twelve fictional wishes and six authored pairings remain separately labelled and available. Age serves recognition, never ranking or generational stereotypes. Authors can withdraw using a removal key; reader flags remove words immediately. Shared hopes expire after seven days.
 - No accounts, public profiles, social competition, analytics, tracking, dwell measurement, mortality countdowns, productivity scoring, or AI interpretation. Do not add conventional features merely to expand the product.
 - Fonts and assets ship locally. English is currently implemented; the architecture must leave room for localization without making the concept depend on English wordplay.
-- A future public Wall needs creator-approved audience and territory, hosting, human moderation responsibility, retention/deletion policy, and any external processors. The proposed architecture in [PRIVACY_AND_MODERATION.md](PRIVACY_AND_MODERATION.md) is not permission to launch or collect submissions.
+- The creator’s open-participation/no-manual-review instruction supersedes the previous pending-first architecture. The local implementation uses automated checks and direct removal, not a review queue. Its actual boundaries are recorded in [PRIVACY_AND_MODERATION.md](PRIVACY_AND_MODERATION.md). Public hosting and any future external processors need authorization for a concrete destination; none have been selected or connected.
 
 ## Brand Commitments
 
@@ -71,4 +71,4 @@ Every essential interaction must work by keyboard and touch, with meaningful scr
 
 Preserve the compact, centered clock experience and its final playback action, while allowing natural scrolling with enlarged text. Keep paper illustrations proportional throughout resizing. Cross-age wishes must remain readable together on narrow screens, with predictable focus and return behavior.
 
-Avoid a single cultural model of a good life. Public audience policy and a complete localization pass remain open; do not invent either during interface refinement.
+Avoid a single cultural model of a good life. Participation is open per creator direction. A complete localization pass remains open; the English automated language check does not constitute comprehensive moderation across languages.

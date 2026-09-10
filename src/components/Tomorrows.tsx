@@ -10,6 +10,10 @@ import { forgetReflection, readReflection, reflectionSchema, saveReflection } fr
 import type { Reflection } from '../lib/model'
 import type { MemoryMoment } from '../content/moments'
 import { MemoryObject } from './MemoryArtwork'
+import ShareHope from './ShareHope'
+import CommunityWall from './CommunityWall'
+import { useWall } from '../lib/wall'
+import type { WallHope } from '../lib/wall'
 
 const filters = [
   { id: 'all', label: 'All tomorrows' },
@@ -30,11 +34,19 @@ export default function Tomorrows({
   still,
   moment,
   onRelease,
+  onBorrow,
 }: {
   still: boolean
   moment: MemoryMoment | null
   onRelease: () => void
+  onBorrow: (hope: WallHope) => void
 }) {
+  const wall = useWall()
+  const [sharing, setSharing] = useState(false)
+  const [sharingReflection, setSharingReflection] = useState<Reflection | null>(null)
+  const [sharedId, setSharedId] = useState<string>()
+  const sharingRef = useRef<HTMLDivElement>(null)
+  const shareButtonRef = useRef<HTMLButtonElement>(null)
   const [initial] = useState(initialReflection)
   const [saved, setSaved] = useState<Reflection | null>(initial.value)
   const [persistent, setPersistent] = useState(!!initial.value)
@@ -138,7 +150,7 @@ export default function Tomorrows({
     setSaved(result.data)
     setText('')
     setAge('')
-    setStatus('Your private thought has been added below the imagined wall’s introduction.')
+    setStatus('Your thought is held privately for you beside the Wall.')
   }
 
   const forget = () => {
@@ -160,7 +172,15 @@ export default function Tomorrows({
     setPersistent(false)
     setRemember(false)
     setStorageNote('')
-    setStatus('Your thought has been removed.')
+    if (!sharedId) {
+      setSharing(false)
+      setSharingReflection(null)
+    }
+    setStatus(
+      sharedId
+        ? 'Your private copy has been removed. Manage your shared copy using its removal key.'
+        : 'Your thought has been removed.',
+    )
     requestAnimationFrame(() => textRef.current?.focus())
   }
 
@@ -256,16 +276,49 @@ export default function Tomorrows({
               {persistent
                 ? 'Saved only in this browser, until you remove it. Someone using this browser could read it.'
                 : 'Kept only for this visit. It will disappear when you reload or leave.'}{' '}
-              Nothing was sent or published.
+              {sharedId
+                ? 'This is your private copy. Manage the shared copy with your removal key below.'
+                : sharingReflection
+                  ? 'The sharing choice below controls whether a copy appears on the Wall.'
+                  : 'Nothing was sent or published.'}
             </p>
-            <div className="saved-actions">
-              <a className="text-link" href="#your-thought">
-                Find it on your wall <ArrowDown size={16} />
+            <div className="reflection-next">
+              {!sharingReflection && (
+                <button
+                  ref={shareButtonRef}
+                  className="button button-dark"
+                  disabled={!wall.feed}
+                  onClick={() => {
+                    setSharingReflection(saved)
+                    setSharing(true)
+                    requestAnimationFrame(() => {
+                      sharingRef.current?.focus({ preventScroll: true })
+                      sharingRef.current?.scrollIntoView({
+                        block: 'nearest',
+                        behavior: still ? 'instant' : 'smooth',
+                      })
+                    })
+                  }}
+                >
+                  Offer it to the Wall <ArrowRight size={16} />
+                </button>
+              )}
+              <a className="text-link" href="#shared-wall">
+                Meet another tomorrow <ArrowDown size={16} />
               </a>
-              <button className="text-button" onClick={forget}>
-                <Trash2 size={15} />
-                Remove my thought
-              </button>
+            </div>
+            <div className="saved-actions">
+              {!sharedId && (
+                <a className="text-link" href="#your-thought">
+                  Find it on your wall <ArrowDown size={16} />
+                </a>
+              )}
+              {(!sharingReflection || sharedId) && (
+                <button className="text-button" onClick={forget}>
+                  <Trash2 size={15} />
+                  {sharedId ? 'Remove private copy' : 'Remove my thought'}
+                </button>
+              )}
             </div>
           </div>
         ) : (
@@ -333,6 +386,27 @@ export default function Tomorrows({
             </button>
           </form>
         )}
+        {sharingReflection && (
+          <div ref={sharingRef} tabIndex={-1} hidden={!sharing} className="sharing-focus">
+            <ShareHope
+              reflection={sharingReflection}
+              feed={wall.feed}
+              onShared={(receipt, publishedAge) => {
+                setSharingReflection((current) =>
+                  current ? { ...current, age: publishedAge } : current,
+                )
+                setSharedId(receipt.id)
+                void wall.refresh()
+              }}
+              onClose={() => {
+                setSharing(false)
+                setSharingReflection(null)
+                requestAnimationFrame(() => shareButtonRef.current?.focus())
+              }}
+              onChange={() => void wall.refresh()}
+            />
+          </div>
+        )}
         {storageNote && (
           <p className="storage-note" role="status">
             {storageNote}
@@ -360,11 +434,7 @@ export default function Tomorrows({
             Some may sound a little like your own.
           </p>
         </div>
-        <p className="sample-notice">
-          <span className="color-dot" />
-          An imagined wall — these are written examples, not real submissions.
-        </p>
-        {saved && (
+        {saved && !sharedId && (
           <div id="your-thought" className="private-thought">
             <span className="eyebrow">
               YOUR PRIVATE THOUGHT{saved.age !== null ? ` / AGE ${saved.age}` : ''}
@@ -375,77 +445,95 @@ export default function Tomorrows({
             </span>
           </div>
         )}
-        <div className="wall-controls">
-          <div className="wall-filters" role="group" aria-label="Explore tomorrows">
-            {filters.map((item) => (
-              <button
-                key={item.id}
-                aria-pressed={filter === item.id}
-                onClick={() => {
-                  setFilter(item.id)
-                  setEcho(-1)
-                  setEchoOrigin(null)
-                }}
-              >
-                {item.label}
-              </button>
-            ))}
-          </div>
-          <button ref={echoButtonRef} className="echo-button" onClick={findEcho}>
-            <Shuffle size={16} />
-            {echo < 0 ? 'Find an echo' : 'Another echo'}
-          </button>
-        </div>
-        <div className="echo-caption" role="status">
-          {activePair ? (
-            <>
-              <span aria-hidden="true">Two tomorrows, side by side.</span>
-              <span className="sr-only">
-                An echo across ages {pairedHopes[0].age} and {pairedHopes[1].age}. The underlined
-                details connect these authored wishes.
-              </span>
-            </>
-          ) : (
-            'Open a wish. Let another tomorrow sit beside it.'
-          )}
-        </div>
-        <div ref={wallRef} className={`hope-wall ${activePair ? 'has-echo' : ''}`}>
-          {remainingHopes.slice(0, pairIndex).map(renderWish)}
-          {activeEcho && (
-            <div
-              key={`${echo}-${echoOrigin ?? 'discovery'}`}
-              className={`echo-pair ${echoOrigin ? 'is-anchored' : ''} ${sourceOnRight ? 'source-on-right' : ''}`}
-              data-still={still}
-              style={
-                echoOrigin
-                  ? { gridColumn: `${pairColumn} / span ${Math.min(2, wallColumns)}` }
-                  : undefined
-              }
-              ref={pairRef}
-              role="group"
-              aria-label={`Two imagined wishes, ages ${pairedHopes[0].age} and ${pairedHopes[1].age}`}
-              tabIndex={-1}
-              onKeyDown={(event) => {
-                if (event.key === 'Escape') {
-                  event.preventDefault()
-                  leavePair()
-                }
-              }}
-            >
-              <span className="echo-thread" aria-hidden="true" />
-              {pairedHopes.map((hope, index) => (
-                <HopeNote
-                  key={hope.id}
-                  hope={hope}
-                  meeting={index === 0 ? 'source' : 'companion'}
-                  still={still}
-                  fragment={activeEcho.fragments[activeEcho.ids.findIndex((id) => id === hope.id)]}
-                />
+        <CommunityWall
+          feed={wall.feed}
+          loading={wall.loading}
+          reflection={saved ? (sharingReflection && sharedId ? sharingReflection : saved) : null}
+          ownId={sharedId}
+          refresh={wall.refresh}
+          onBorrow={onBorrow}
+          still={still}
+        />
+        <details className="imagined-wall" open={!wall.feed?.hopes.length}>
+          <summary>Explore the imagined wall</summary>
+          <p className="sample-notice">
+            <span className="color-dot" />
+            An imagined wall — these are written examples, not real submissions.
+          </p>
+          <div className="wall-controls">
+            <div className="wall-filters" role="group" aria-label="Explore tomorrows">
+              {filters.map((item) => (
+                <button
+                  key={item.id}
+                  aria-pressed={filter === item.id}
+                  onClick={() => {
+                    setFilter(item.id)
+                    setEcho(-1)
+                    setEchoOrigin(null)
+                  }}
+                >
+                  {item.label}
+                </button>
               ))}
             </div>
-          )}
-          {remainingHopes.slice(pairIndex).map(renderWish)}
-        </div>
+            <button ref={echoButtonRef} className="echo-button" onClick={findEcho}>
+              <Shuffle size={16} />
+              {echo < 0 ? 'Find an echo' : 'Another echo'}
+            </button>
+          </div>
+          <div className="echo-caption" role="status">
+            {activePair ? (
+              <>
+                <span aria-hidden="true">Two tomorrows, side by side.</span>
+                <span className="sr-only">
+                  An echo across ages {pairedHopes[0].age} and {pairedHopes[1].age}. The underlined
+                  details connect these authored wishes.
+                </span>
+              </>
+            ) : (
+              'Open a wish. Let another tomorrow sit beside it.'
+            )}
+          </div>
+          <div ref={wallRef} className={`hope-wall ${activePair ? 'has-echo' : ''}`}>
+            {remainingHopes.slice(0, pairIndex).map(renderWish)}
+            {activeEcho && (
+              <div
+                key={`${echo}-${echoOrigin ?? 'discovery'}`}
+                className={`echo-pair ${echoOrigin ? 'is-anchored' : ''} ${sourceOnRight ? 'source-on-right' : ''}`}
+                data-still={still}
+                style={
+                  echoOrigin
+                    ? { gridColumn: `${pairColumn} / span ${Math.min(2, wallColumns)}` }
+                    : undefined
+                }
+                ref={pairRef}
+                role="group"
+                aria-label={`Two imagined wishes, ages ${pairedHopes[0].age} and ${pairedHopes[1].age}`}
+                tabIndex={-1}
+                onKeyDown={(event) => {
+                  if (event.key === 'Escape') {
+                    event.preventDefault()
+                    leavePair()
+                  }
+                }}
+              >
+                <span className="echo-thread" aria-hidden="true" />
+                {pairedHopes.map((hope, index) => (
+                  <HopeNote
+                    key={hope.id}
+                    hope={hope}
+                    meeting={index === 0 ? 'source' : 'companion'}
+                    still={still}
+                    fragment={
+                      activeEcho.fragments[activeEcho.ids.findIndex((id) => id === hope.id)]
+                    }
+                  />
+                ))}
+              </div>
+            )}
+            {remainingHopes.slice(pairIndex).map(renderWish)}
+          </div>
+        </details>
         <p className="wall-ending">
           A different amount of life behind us.
           <br />

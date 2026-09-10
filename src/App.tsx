@@ -7,11 +7,13 @@ import Weight from './components/Weight'
 import Memory from './components/Memory'
 import Tomorrows from './components/Tomorrows'
 import { moments } from './content/moments'
+import type { WallHope } from './lib/wall'
 
 export default function App() {
   const reducedMotion = useReducedMotion()
   const [paused, setPaused] = useState(false)
   const [heldMoment, setHeldMoment] = useState<number | null>(null)
+  const [borrowedHope, setBorrowedHope] = useState<WallHope | null>(null)
   const still = !!reducedMotion || paused
   return (
     <MotionConfig reducedMotion={still ? 'always' : 'user'}>
@@ -73,7 +75,7 @@ export default function App() {
               </a>
             </div>
           </section>
-          <Weight still={still} />
+          <Weight still={still} borrowedHope={borrowedHope} />
           <section className="lens-section" id="lens" aria-labelledby="lens-title">
             <div className="lens-inner">
               <h2 id="lens-title">About this lens</h2>
@@ -95,6 +97,15 @@ export default function App() {
             still={still}
             moment={heldMoment === null ? null : moments[heldMoment]}
             onRelease={() => setHeldMoment(null)}
+            onBorrow={(hope) => {
+              setBorrowedHope({ ...hope })
+              requestAnimationFrame(() => {
+                document
+                  .getElementById('weight')
+                  ?.scrollIntoView({ block: 'start', behavior: still ? 'instant' : 'smooth' })
+                document.getElementById('weight-title')?.focus({ preventScroll: true })
+              })
+            }}
           />
           <section className="about-section" id="about" aria-labelledby="about-title">
             <span className="eyebrow">A NOTE ON TIME</span>
@@ -105,15 +116,16 @@ export default function App() {
             </h2>
             <div className="about-columns">
               <div>
-                <h3>Your words stay here</h3>
+                <h3>Your words, your choice</h3>
                 <p>
-                  This is a local prototype. The wall contains authored examples. Your reflection
-                  stays in this visit unless you choose to keep it in this browser. You can remove
-                  it at any time.
+                  Your reflection stays private unless you choose to share its words and your age.
+                  This local prototype keeps shared hopes for up to seven days. A removal key lets
+                  you withdraw yours earlier. Imagined examples are labelled separately.
                 </p>
                 <p>
-                  No accounts, trackers, analytics, or public submissions. A public wall would need
-                  human moderation before any contribution appeared.
+                  No accounts, trackers, or analytics. Shared hopes appear after automated checks,
+                  with no manual review at this stage. These checks are limited; flagging a hope
+                  removes it from the Wall. No external service receives your words.
                 </p>
               </div>
               <div id="research">

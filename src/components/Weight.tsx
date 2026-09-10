@@ -4,11 +4,18 @@ import { animate, useInView, useMotionValue, useMotionValueEvent } from 'motion/
 import { copy } from '../content/en'
 import { YearDial } from './Artwork'
 import YearScrubber from './YearScrubber'
+import type { WallHope } from '../lib/wall'
 
 const presets = [5, 18, 32, 50, 65, 85]
 const duration = 8
 
-export default function Weight({ still }: { still: boolean }) {
+export default function Weight({
+  still,
+  borrowedHope,
+}: {
+  still: boolean
+  borrowedHope?: WallHope | null
+}) {
   const [referenceAge, setReferenceAge] = useState(5)
   const [borrowedAge, setBorrowedAge] = useState(50)
   const progress = useMotionValue(0)
@@ -102,6 +109,15 @@ export default function Weight({ still }: { still: boolean }) {
       `The clocks have exchanged places. The same ${Math.round(progress.get() * 12)} months remain in both.`,
     )
   }
+  useEffect(() => {
+    if (!borrowedHope) return
+    progress.stop()
+    setPlaying(false)
+    setBorrowedAge(borrowedHope.age)
+    setBorrowedNote(
+      `Borrowing the clock beside a shared hope, age ${borrowedHope.age}. The same elapsed months remain.`,
+    )
+  }, [borrowedHope, progress])
   const play = () => {
     setBorrowedNote('')
     dismissCue()
@@ -147,8 +163,19 @@ export default function Weight({ still }: { still: boolean }) {
         <span className="section-aside">SAME DURATION. DIFFERENT PROPORTIONS.</span>
       </div>
       <div className="weight-heading">
-        <h2 id="weight-title">{copy.weight.title}</h2>
-        <p>{copy.weight.intro}</p>
+        <h2 id="weight-title" tabIndex={-1}>
+          {copy.weight.title}
+        </h2>
+        <p>
+          {borrowedHope && borrowedAge === borrowedHope.age ? (
+            <>
+              A hope from age {borrowedHope.age} brought you here.{' '}
+              <a href="#shared-wall">Return to their words.</a>
+            </>
+          ) : (
+            copy.weight.intro
+          )}
+        </p>
       </div>
       <div className="clocks">
         {[referenceAge, borrowedAge].map((age, index) => (
@@ -193,7 +220,7 @@ export default function Weight({ still }: { still: boolean }) {
                     id={index === 0 ? 'reference-age' : 'borrowed-age'}
                     type="range"
                     min="1"
-                    max="100"
+                    max="120"
                     value={age}
                     onChange={(event) =>
                       changeAge(+event.target.value, index === 0 ? 'reference' : 'borrowed')

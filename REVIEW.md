@@ -1,3 +1,19 @@
+# Current review — a shared hope and the clock beside it
+
+2026-09-10 · local prototype · branch `experiments/timepathy`
+
+The complete exchange is implemented locally. A reflection begins privately. Its author can explicitly share the original words and an age; another visitor can encounter them and borrow that person's clock while the same elapsed months remain. The original visual identity, illustrated memory week, compact clock layout, native controls and still mode are preserved.
+
+The creator specified open participation and no manual review. Accepted hopes appear immediately after limited local automated checks. They expire after seven days; authors can withdraw with a removal key, and reader flags remove words immediately. Private copies remain separate. There are no accounts, trackers, social scores, external content processors or AI interpretations. The real Wall begins empty, with the original fictional wishes clearly separated in an expandable imagined wall.
+
+Fastify and SQLite provide a small same-origin local service. The service and UI run together through `pnpm dev` or the built-app `pnpm preview`. No public host is configured; the private GitHub repository backs up code only. README and PRIVACY_AND_MODERATION describe the actual service, limits and deletion behavior. The historical manual-review proposal below is superseded by the creator's explicit instruction.
+
+Validation: 15 unit checks, eight API cases, 58 desktop/mobile Chromium cases, a separate built-app multi-visitor exchange test, TypeScript/build, static-only fallback, axe accessibility, Impeccable detector, and dependency audit. The exchange test includes lost responses, guessed keys, withdrawal/flag refresh, explicit consent, full-length text and a 320px phone. Desktop and phone renders were inspected; repetition, phone-header wrapping and small-label contrast were corrected. [Desktop](docs/screenshots/shared-wall-desktop.png) and [phone](docs/screenshots/shared-wall-mobile.png) captures contain isolated test fixtures, not participant contributions.
+
+Remaining limits: no public deployment, no participant validation of empathy outcomes, English-only heuristics with misses and false positives, and no physical-device/Safari/screen-reader verification. Public hosting needs a concrete authorized destination and its storage/logging settings. The next experiential evidence should come from visitors using the exchange without being told what to feel.
+
+---
+
 # First substantial version — review
 
 2026-09-09 · local prototype · branch `codex/first-experience`
