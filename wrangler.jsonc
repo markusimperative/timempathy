@@ -7,6 +7,13 @@
   "compatibility_date": "2026-09-10",
   "workers_dev": true,
   "preview_urls": false,
+  "routes": [
+    {
+      "pattern": "timepathy.markmathew.com",
+      "custom_domain": true,
+      "zone_id": "10852f4ff349ad939f5f3f2805363c91",
+    },
+  ],
   "assets": {
     "directory": "./dist",
     "binding": "ASSETS",
@@ -22,8 +29,8 @@
     },
   ],
   "vars": {
-    "PUBLIC_ORIGIN": "https://timempathy.timempathy.workers.dev",
-    "ADDITIONAL_PUBLIC_ORIGIN": "https://timepathy.markmathew.com",
+    "PUBLIC_ORIGIN": "https://timepathy.markmathew.com",
+    "ADDITIONAL_PUBLIC_ORIGIN": "https://timempathy.timempathy.workers.dev",
   },
   "ratelimits": [
     {

@@ -1,3 +1,13 @@
+# Custom domain activation — 2026-09-10
+
+Timempathy is live at [timepathy.markmathew.com](https://timepathy.markmathew.com/). Registration remains at Namecheap; Cloudflare Free manages DNS and the Worker Custom Domain. The original workers.dev address continues to serve the same experience and D1 Wall. Private browser storage remains separate for each address.
+
+The domain's imported records were checked against Namecheap before changing nameservers. Cloudflare confirmed activation and provisioned HTTPS. The hostname and assigned zone ID are committed in the deployment configuration, and the existing project-local authorization deployed them successfully without additional scopes.
+
+Validation: deployment dry run and live deployment; valid HTTPS and public feeds; a labelled temporary contribution shared from the new domain, visible through both addresses, then withdrawn and confirmed absent; cross-origin writes rejected with 403; desktop and phone browser renders inspected with no recorded runtime errors. No application code, dependencies, or D1 schema changed. See [DEPLOYMENT.md](DEPLOYMENT.md) for the current configuration.
+
+---
+
 # Cloudflare public launch — 2026-09-10
 
 The existing React experience is ready to run on Cloudflare Workers with D1. Local and hosted backends share validation and automated checks. Hono supplies the Worker transport; native Cloudflare rate counters and transactional D1 writes preserve deletion, idempotency and bounded capacity. Fonts and assets bypass the API Worker. The hosted Wall starts empty, with no migration of local/test contributions.
