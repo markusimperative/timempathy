@@ -91,6 +91,8 @@ The application separates the central narrative from presentation. A full locali
 ## Project record
 
 - [PROJECT.md](PROJECT.md): the original creative brief, preserved unchanged.
+- [PRODUCT.md](PRODUCT.md): confirmed product context for Impeccable, grounded in the brief and creator feedback.
+- [Impeccable setup](docs/IMPECCABLE.md): pinned skill installation and local live-mode configuration.
 - [DECISIONS.md](DECISIONS.md): why this interpretation and architecture were chosen.
 - [RESEARCH.md](RESEARCH.md): primary sources, limitations, and design hypotheses.
 - [PRIVACY_AND_MODERATION.md](PRIVACY_AND_MODERATION.md): actual data behavior and the required public-wall architecture.

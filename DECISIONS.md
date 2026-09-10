@@ -119,3 +119,9 @@ The Wall previously announced a familiar wish in its echo caption. A visitor can
 The forest, paper, typography, illustrations, smaller centered clock numbers, nearby lens explanation, and final play-button placement are preserved. Generic behavior continues to use React, Motion, native buttons/ranges, and CSS. No dependencies or external services were added. The scientific scope remains an authored metaphor; effects on empathy still require observation with visitors.
 
 Validation: all 48 desktop/mobile Chromium cases passed, including new checks for intermediate arc shapes with unchanged months, actual paper contraction around opened ordinary moments, and cross-age focus return. Eight affected cases passed again after the fold typography refinement; both focus-return cases passed after completing the echo-button return path. All 15 unit tests, TypeScript, production build and privacy/runtime smoke, and formatting checks pass.
+
+## 2026-09-10 — Initialize Impeccable from established product truth
+
+The creator requested Impeccable init and supplied the upstream repository. The Codex skill was installed user-wide at revision cd12f8660e2dde57b9615c8a6b8ea674101f9cfc (skill 4.3.1, engine 0.1.5). PRODUCT.md captures the original brief, subsequent creator corrections, and verified current behavior, with public-launch policy and unvalidated empathy outcomes explicitly left open. It does not replace PROJECT.md or define a new visual world. The standing autonomous mandate and extensive confirmed context made another routine interview unnecessary.
+
+A future live session can target the existing Vite shell through .impeccable/live/config.json; the CSP detector and running app required no security changes. No picker was injected and no hook was enabled. No standing image-first/code-first preference was inferred. Installation provenance and usage are in docs/IMPECCABLE.md. Application source and runtime dependencies are unchanged.
