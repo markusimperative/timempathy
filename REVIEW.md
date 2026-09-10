@@ -1,6 +1,6 @@
 # Custom domain activation — 2026-09-10
 
-Timempathy is live at [timepathy.markmathew.com](https://timepathy.markmathew.com/). Registration remains at Namecheap; Cloudflare Free manages DNS and the Worker Custom Domain. The original workers.dev address continues to serve the same experience and D1 Wall. Private browser storage remains separate for each address.
+Timempathy is live at [timempathy.markmathew.com](https://timempathy.markmathew.com/). Registration remains at Namecheap; Cloudflare Free manages DNS and the Worker Custom Domain. The original workers.dev address continues to serve the same experience and D1 Wall. Private browser storage remains separate for each address.
 
 The domain's imported records were checked against Namecheap before changing nameservers. Cloudflare confirmed activation and provisioned HTTPS. The hostname and assigned zone ID are committed in the deployment configuration, and the existing project-local authorization deployed them successfully without additional scopes.
 

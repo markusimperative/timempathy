@@ -2,7 +2,7 @@
 
 **We share the same clock, but not the same experience of time.**
 
-[Visit Timempathy](https://timepathy.markmathew.com/)
+[Visit Timempathy](https://timempathy.markmathew.com/)
 
 A contemplative, interactive journey through the weight of a year, the texture of memory, and the ordinary hopes that connect people across ages. The experience supports private reflection and an optional shared Wall, hosted on Cloudflare Workers + D1. A visitor can offer a hope, encounter another age, and borrow the clock beside those words. Only explicitly shared hopes reach the server; keeping a thought private sends none of its words there.
 

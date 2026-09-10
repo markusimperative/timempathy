@@ -9,7 +9,7 @@
   "preview_urls": false,
   "routes": [
     {
-      "pattern": "timepathy.markmathew.com",
+      "pattern": "timempathy.markmathew.com",
       "custom_domain": true,
       "zone_id": "10852f4ff349ad939f5f3f2805363c91",
     },
@@ -29,7 +29,7 @@
     },
   ],
   "vars": {
-    "PUBLIC_ORIGIN": "https://timepathy.markmathew.com",
+    "PUBLIC_ORIGIN": "https://timempathy.markmathew.com",
     "ADDITIONAL_PUBLIC_ORIGIN": "https://timempathy.timempathy.workers.dev",
   },
   "ratelimits": [

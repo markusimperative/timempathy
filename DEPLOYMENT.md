@@ -1,6 +1,6 @@
 # Cloudflare Workers + D1
 
-Live: [Timempathy](https://timepathy.markmathew.com/), first deployed 2026-09-10. The [original workers.dev address](https://timempathy.timempathy.workers.dev/) remains available. Worker: `timempathy`; D1: `timempathy-wall`, EU jurisdiction, read replication disabled. The schema is applied and the rate-limit secret is installed. Use the later-release workflow for this existing deployment.
+Live: [Timempathy](https://timempathy.markmathew.com/), first deployed 2026-09-10. The [original workers.dev address](https://timempathy.timempathy.workers.dev/) remains available. Worker: `timempathy`; D1: `timempathy-wall`, EU jurisdiction, read replication disabled. The schema is applied and the rate-limit secret is installed. Use the later-release workflow for this existing deployment.
 
 The creator authorized this hosting route. Keep the account on **Workers Free**; do not upgrade, purchase a domain, or attach a paid plan as part of deployment. Current free limits: 100,000 Worker requests/day, D1 5 million rows read and 100,000 rows written/day, 500 MB per database and 5 GB total. Static asset requests are free and unlimited. Quotas are shared across an account. Hitting a quota can interrupt the Wall; this setup does not promise unlimited traffic.
 
@@ -8,13 +8,13 @@ The configured Worker serves only `/api/*`; the asset service serves the React b
 
 ## Custom domain — active
 
-The creator requested **timepathy.markmathew.com** on 2026-09-10 and confirmed that neither the existing Namecheap email forwarding nor website redirect is in use. Keep the registration at Namecheap and use Cloudflare's Free DNS plan. No registrar transfer or paid plan is needed. The hostname deliberately follows the requested spelling; the project name remains Timempathy.
+The creator requested **timempathy.markmathew.com** on 2026-09-10 and confirmed that neither the existing Namecheap email forwarding nor website redirect is in use. Keep the registration at Namecheap and use Cloudflare's Free DNS plan. No registrar transfer or paid plan is needed. The creator corrected the hostname spelling to timempathy.markmathew.com after the initial activation.
 
 On 2026-09-10, Cloudflare's imported DNS records were compared with Namecheap's Advanced DNS. The unused root parking/redirect record, `www` parking CNAME, and mail MX/SPF records were retained; root and `www` remain DNS only. Namecheap showed no email aliases and DNSSEC off. These retained mail records do not preserve Namecheap's DNS-dependent free email-forwarding service if it is needed later.
 
 Namecheap now delegates to the two nameservers assigned by Cloudflare: `elaine.ns.cloudflare.com` and `paul.ns.cloudflare.com`. Cloudflare confirmed activation, and public DNS returned both nameservers. Registration remains at Namecheap. Future DNS records belong in Cloudflare, not Namecheap's Advanced DNS.
 
-The Worker Custom Domain is `timepathy.markmathew.com`, in zone `10852f4ff349ad939f5f3f2805363c91`. Cloudflare created its DNS and certificate. Keep this exact route and zone ID in `wrangler.jsonc`; subsequent deployment with the existing project-local OAuth succeeded without broadening its scopes. `PUBLIC_ORIGIN` is the custom hostname, `ADDITIONAL_PUBLIC_ORIGIN` is the original workers.dev hostname, and `workers_dev` stays enabled. Current activation release: `f3ce7003-cbff-4e0f-b64b-f38ef0579f28`.
+The Worker Custom Domain is `timempathy.markmathew.com`, in zone `10852f4ff349ad939f5f3f2805363c91`. Cloudflare created its DNS and certificate. Keep this exact route and zone ID in `wrangler.jsonc`; subsequent deployment with the existing project-local OAuth succeeded without broadening its scopes. `PUBLIC_ORIGIN` is the custom hostname, `ADDITIONAL_PUBLIC_ORIGIN` is the original workers.dev hostname, and `workers_dev` stays enabled. The initial activation release was f3ce7003-cbff-4e0f-b64b-f38ef0579f28; later releases use the corrected hostname.
 
 Both HTTPS addresses and their public Wall APIs were verified. A labelled temporary hope was shared through the custom-domain UI, read through both addresses, withdrawn through the UI, and confirmed absent from both feeds. Cross-origin writes between the two addresses still return 403. Desktop and phone renders were inspected on the custom domain, with no recorded browser errors.
 
@@ -44,7 +44,7 @@ Copy `.dev.vars.example` to `.dev.vars`, run `pnpm cf:migrate:local`, then `pnpm
 
 ## Later releases and recovery
 
-Run the checks, review pending SQL migrations, apply only those migrations to this project's database, then deploy the tested source. Do not enable preview URLs against the real Wall. Keep account and database IDs fixed in configuration to prevent accidental cross-account deployment. Back up code in the existing private repository; no hosted database data belongs in Git.
+Run the checks, review pending SQL migrations, apply only those migrations to this project's database, then deploy the tested source. Do not enable preview URLs against the real Wall. Keep account and database IDs fixed in configuration to prevent accidental cross-account deployment. Back up code in the existing public repository; no hosted database data belongs in Git.
 
 A code rollback must remain compatible with the current D1 schema and consent contract. Do not roll back database history to recover code: D1 recovery can restore previously withdrawn words. Prefer a fresh empty Wall after unrecoverable corruption. The private reflection experience works even when the Wall is offline.
 

@@ -198,7 +198,7 @@ try {
   await DB.prepare('ALTER TABLE offline_hopes RENAME TO hopes').run()
   // Exercise real deployment hostnames entirely inside the isolated local Worker.
   const primary = 'https://timempathy.timempathy.workers.dev'
-  const custom = 'https://timepathy.markmathew.com'
+  const custom = 'https://timempathy.markmathew.com'
   await harness.update({
     root,
     workers: [
