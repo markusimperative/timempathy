@@ -1,5 +1,7 @@
 # Cloudflare Workers + D1
 
+Live: [Timempathy](https://timempathy.timempathy.workers.dev/), first deployed 2026-09-10. Worker: `timempathy`; D1: `timempathy-wall`, EU jurisdiction, read replication disabled. The schema is applied and the rate-limit secret is installed. Use the later-release workflow for this existing deployment.
+
 The creator authorized this hosting route. Keep the account on **Workers Free**; do not upgrade, purchase a domain, or attach a paid plan as part of deployment. Current free limits: 100,000 Worker requests/day, D1 5 million rows read and 100,000 rows written/day, 500 MB per database and 5 GB total. Static asset requests are free and unlimited. Quotas are shared across an account. Hitting a quota can interrupt the Wall; this setup does not promise unlimited traffic.
 
 The configured Worker serves only `/api/*`; the asset service serves the React build and fonts directly. D1 stores only explicitly shared hopes and removal receipts. Keep D1 read replication off so a removed hope cannot be served from a lagging read replica. No analytics, paid services, domain, external moderation provider, or extra content processor is configured.

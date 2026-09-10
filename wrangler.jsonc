@@ -1,7 +1,8 @@
-// Set the D1 ID and PUBLIC_ORIGIN after creating the project resources.
+// Timempathy public deployment. Credentials are managed separately from this file.
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
   "name": "timempathy",
+  "account_id": "24c5d103d15d37986af393db6d75d5aa",
   "main": "worker/index.ts",
   "compatibility_date": "2026-09-10",
   "workers_dev": true,
@@ -16,12 +17,12 @@
     {
       "binding": "DB",
       "database_name": "timempathy-wall",
-      "database_id": "00000000-0000-0000-0000-000000000000",
+      "database_id": "ce8eb870-8f03-453f-b015-7a945d2437f1",
       "migrations_dir": "migrations",
     },
   ],
   "vars": {
-    "PUBLIC_ORIGIN": "",
+    "PUBLIC_ORIGIN": "https://timempathy.timempathy.workers.dev",
   },
   "ratelimits": [
     {

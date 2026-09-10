@@ -2,7 +2,9 @@
 
 **We share the same clock, but not the same experience of time.**
 
-A contemplative, interactive journey through the weight of a year, the texture of memory, and the ordinary hopes that connect people across ages. The experience supports private reflection and an optional shared Wall, with a Cloudflare Workers + D1 deployment path. A visitor can offer a hope, encounter another age, and borrow the clock beside those words. Only explicitly shared hopes reach the server; keeping a thought private sends none of its words there.
+[Visit Timempathy](https://timempathy.timempathy.workers.dev/)
+
+A contemplative, interactive journey through the weight of a year, the texture of memory, and the ordinary hopes that connect people across ages. The experience supports private reflection and an optional shared Wall, hosted on Cloudflare Workers + D1. A visitor can offer a hope, encounter another age, and borrow the clock beside those words. Only explicitly shared hopes reach the server; keeping a thought private sends none of its words there.
 
 ## Current clock experience
 
@@ -66,7 +68,7 @@ No account, environment variables, or cloud service are needed. The server creat
 
 The React experience runs unchanged on Cloudflare Workers, with D1 for the shared Wall. Static files bypass the API Worker. A fresh public Wall starts empty; local development data is never uploaded. Stay on Workers Free to avoid usage charges; when its quotas are reached the Wall can become unavailable while static assets continue to load.
 
-See [DEPLOYMENT.md](DEPLOYMENT.md) for the project-specific login, database migration, secret setup, deployment, and recovery instructions. A build is not a live deployment; that requires Cloudflare account authorization and the public address to be configured.
+See [DEPLOYMENT.md](DEPLOYMENT.md) for the project-specific login, database migration, secret setup, deployment, and recovery instructions. The public site is deployed at the link above; later releases use the existing project account and database in configuration.
 
 To test Cloudflare locally:
 

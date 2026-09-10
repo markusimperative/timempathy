@@ -1,2 +1,3 @@
 # Local emulator only. Use a fresh secret in Cloudflare for deployment.
 RATE_LIMIT_SECRET=local-development-only-change-for-deployment
+PUBLIC_ORIGIN=""

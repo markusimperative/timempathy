@@ -1,4 +1,4 @@
-# Cloudflare deployment preparation — 2026-09-10
+# Cloudflare public launch — 2026-09-10
 
 The existing React experience is ready to run on Cloudflare Workers with D1. Local and hosted backends share validation and automated checks. Hono supplies the Worker transport; native Cloudflare rate counters and transactional D1 writes preserve deletion, idempotency and bounded capacity. Fonts and assets bypass the API Worker. The hosted Wall starts empty, with no migration of local/test contributions.
 
@@ -6,7 +6,9 @@ The public sharing choice names the audience and provider recovery retention. Th
 
 Validation: 62 desktop/mobile browser cases, 15 unit cases, eight local API cases, real D1 migrations and Worker integration checks, the independent-browser exchange, TypeScript, frontend build, deployment dry run, static-only production fallback, dependency audit and formatting pass. The dependency audit found and prompted a narrow development-only sharp 0.35.4 override; the updated runtime and browser journey passed again. No known vulnerabilities remain in the audited dependency graph.
 
-At this checkpoint, Cloudflare account authorization has not reached the CLI: two browser callback attempts timed out and the browser reported an unreachable callback page. A project-isolated device authorization flow is available and avoids that local redirect. No public database or Worker has been created, and no live URL is claimed. The creator has authorized deployment; only the account connection and resource configuration remain. DEPLOYMENT.md provides the concrete sequence. Do not infer live status from a successful local build.
+The site is live at https://timempathy.timempathy.workers.dev/. Device authorization succeeded after the browser callback proved unreachable. The new D1 database uses EU jurisdiction with read replication disabled; the hourly expiry trigger and private rate-limit secret are installed. No local contributions were imported. No paid subscription or custom domain was added.
+
+The live HTTPS browser check passed after the new address became available: public sharing disclosure, one clearly labelled temporary deployment-check contribution visible in an independent browser, borrowed age with held months, author withdrawal, phone layout, axe accessibility, CSP and no external asset requests. The temporary contribution was withdrawn; its blank receipt expires normally. Live desktop and phone clock renders were inspected. Provider recovery retention and free-tier capacity limits remain as documented.
 
 ---
 
