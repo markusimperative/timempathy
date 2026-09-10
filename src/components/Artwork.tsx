@@ -1,5 +1,5 @@
 import { yearShare } from '../lib/model'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { animate, motion, useMotionValue, useTransform } from 'motion/react'
 import type { MotionValue } from 'motion/react'
 
@@ -88,17 +88,40 @@ export function YearDial({
 }) {
   const share = yearShare(age)
   const displayedShare = useMotionValue(share)
+  const previousShare = useRef(share)
+  const trace = useMotionValue(`${share} 1`)
+  const traceOpacity = useMotionValue(0)
   useEffect(() => {
+    const changed = previousShare.current !== share
+    previousShare.current = share
+    traceOpacity.stop()
     if (still) {
+      traceOpacity.set(0)
       displayedShare.set(share)
       return
+    }
+    if (changed) {
+      trace.set(`${displayedShare.get()} 1`)
+      traceOpacity.set(0.6)
+      animate(traceOpacity, 0, { delay: 0.65, duration: 0.9, ease: 'easeOut' })
     }
     const changingLife = animate(displayedShare, share, {
       duration: 0.7,
       ease: [0.22, 0.7, 0.2, 1],
     })
-    return () => changingLife.stop()
-  }, [share, still, displayedShare])
+    return () => {
+      changingLife.stop()
+      traceOpacity.stop()
+    }
+  }, [share, still, displayedShare, trace, traceOpacity])
+  useEffect(
+    () =>
+      progress.on('change', () => {
+        traceOpacity.stop()
+        traceOpacity.set(0)
+      }),
+    [progress, traceOpacity],
+  )
   const outline = useTransform(() => `${displayedShare.get()} 1`)
   const dash = useTransform(() => `${displayedShare.get() * progress.get()} 1`)
   const x = useTransform(
@@ -134,6 +157,20 @@ export function YearDial({
           ))}
         </g>
         <circle className="dial-track" cx="180" cy="180" r="132" fill="none" strokeWidth="8" />
+        <motion.circle
+          className="dial-trace"
+          aria-hidden="true"
+          cx="180"
+          cy="180"
+          r="141"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.2"
+          pathLength="1"
+          strokeDasharray={trace}
+          style={{ opacity: traceOpacity }}
+          transform="rotate(-90 180 180)"
+        />
         <motion.circle
           className="dial-potential"
           cx="180"

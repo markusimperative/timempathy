@@ -7,11 +7,13 @@ export default function HopeNote({
   fragment,
   still,
   onOpen,
+  meeting,
 }: {
   hope: Hope
   fragment?: string
   still: boolean
   onOpen?: () => void
+  meeting?: 'source' | 'companion'
 }) {
   const start = fragment ? hope.text.indexOf(fragment) : -1
   const words =
@@ -30,7 +32,9 @@ export default function HopeNote({
     <motion.figure
       layout={still ? false : 'position'}
       transition={{ duration: still ? 0 : 0.45 }}
-      className={`hope-note note-${hopes.indexOf(hope) % 4} ${fragment ? 'is-echo' : ''}`}
+      className={`hope-note note-${hopes.indexOf(hope) % 4} ${fragment ? 'is-echo' : ''} ${meeting ? `echo-${meeting}` : ''}`}
+      data-hope={hope.id}
+      data-still={still}
     >
       <span className="note-hole" aria-hidden="true" />
       <blockquote>

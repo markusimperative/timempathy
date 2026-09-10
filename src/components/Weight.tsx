@@ -85,8 +85,9 @@ export default function Weight({ still }: { still: boolean }) {
     dismissCue()
     setPlaying(false)
     progress.stop()
+    const previousAge = side === 'reference' ? referenceAge : borrowedAge
     setBorrowedNote(
-      `${Math.round(progress.get() * 12)} months held in place. ${side === 'reference' ? 'Starting' : 'Borrowed'} age ${value}.`,
+      `${Math.round(progress.get() * 12)} months held in place. ${side === 'reference' ? 'Starting' : 'Borrowed'} age ${value}. One year changes from ${(100 / previousAge).toFixed(1)} to ${(100 / value).toFixed(1)} percent of a life so far.`,
     )
     if (side === 'reference') setReferenceAge(value)
     else setBorrowedAge(value)

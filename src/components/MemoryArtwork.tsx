@@ -152,6 +152,7 @@ export function MemoryScene({
             <path d="M39 26Q49 75 39 138M50 20Q38 80 58 155" stroke="#c2c7b6" />
           </motion.g>
           <motion.path
+            initial={false}
             d={active ? 'M113 27L165 49V145L113 162Z' : 'M113 27L178 29V161L113 162Z'}
             fill="#dbe7d966"
             stroke="#4c6e61"

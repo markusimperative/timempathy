@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import type { FormEvent } from 'react'
 import { ArrowDown, ArrowRight, Check, Shuffle, Trash2 } from 'lucide-react'
 import { motion } from 'motion/react'
@@ -53,12 +53,48 @@ export default function Tomorrows({
   const [echoOrigin, setEchoOrigin] = useState<string | null>(null)
   const pairRef = useRef<HTMLDivElement>(null)
   const echoButtonRef = useRef<HTMLButtonElement>(null)
+  const wallRef = useRef<HTMLDivElement>(null)
+  const [wallColumns, setWallColumns] = useState(3)
   const focusPair = useRef(false)
-  useEffect(() => {
-    if (!focusPair.current || echo < 0) return
-    focusPair.current = false
-    pairRef.current?.focus({ preventScroll: true })
-    pairRef.current?.scrollIntoView({ block: 'nearest', behavior: still ? 'instant' : 'smooth' })
+  const returnTo = useRef<string | null>(null)
+  const anchor = useRef<{ id: string; top: number } | null>(null)
+  useLayoutEffect(() => {
+    const wall = wallRef.current
+    if (!wall) return
+    const measure = () =>
+      setWallColumns(getComputedStyle(wall).gridTemplateColumns.split(' ').length)
+    measure()
+    const observer = new ResizeObserver(measure)
+    observer.observe(wall)
+    return () => observer.disconnect()
+  }, [])
+  useLayoutEffect(() => {
+    if (anchor.current) {
+      const note = wallRef.current?.querySelector<HTMLElement>(`[data-hope="${anchor.current.id}"]`)
+      if (note)
+        window.scrollBy({
+          top: note.getBoundingClientRect().top - anchor.current.top,
+          behavior: 'instant',
+        })
+      anchor.current = null
+    }
+    if (focusPair.current && echo >= 0) {
+      focusPair.current = false
+      const pair = pairRef.current
+      pair?.focus({ preventScroll: true })
+      const bounds = pair?.getBoundingClientRect()
+      if (bounds && (bounds.top < 16 || bounds.bottom > window.innerHeight - 16)) {
+        pair?.scrollIntoView({ block: 'nearest', behavior: still ? 'instant' : 'smooth' })
+      }
+    }
+    if (returnTo.current !== null && echo < 0) {
+      const target =
+        returnTo.current === 'button'
+          ? echoButtonRef.current
+          : document.getElementById(`hope-open-${returnTo.current}`)
+      target?.focus({ preventScroll: true })
+      returnTo.current = null
+    }
   }, [echo, echoOrigin, still])
   const [status, setStatus] = useState('')
   const successRef = useRef<HTMLDivElement>(null)
@@ -136,6 +172,18 @@ export default function Tomorrows({
     : []
   if (echoOrigin && pairedHopes[1]?.id === echoOrigin) pairedHopes.reverse()
   const remainingHopes = visibleHopes.filter((hope) => !activePair?.some((id) => id === hope.id))
+  const sourceIndex = echoOrigin ? visibleHopes.findIndex((hope) => hope.id === echoOrigin) : 0
+  const sourceOnRight =
+    !!echoOrigin && wallColumns > 1 && sourceIndex % wallColumns === wallColumns - 1
+  const pairIndex = Math.max(0, sourceIndex - (sourceOnRight ? 1 : 0))
+  const pairColumn = Math.min((pairIndex % wallColumns) + 1, Math.max(1, wallColumns - 1))
+  const rememberPosition = (id: string) => {
+    const note = wallRef.current?.querySelector<HTMLElement>(`[data-hope="${id}"]`)
+    if (note) anchor.current = { id, top: note.getBoundingClientRect().top }
+  }
+  const renderWish = (hope: Hope) => (
+    <HopeNote key={hope.id} hope={hope} still={still} onOpen={() => openWish(hope.id)} />
+  )
   const findEcho = () => {
     setFilter('all')
     setEchoOrigin(null)
@@ -144,19 +192,16 @@ export default function Tomorrows({
   const openWish = (id: string) => {
     const pair = echoes.findIndex((item) => item.ids.some((hopeId) => hopeId === id))
     if (pair < 0) return
+    rememberPosition(id)
     focusPair.current = true
-    setFilter('all')
     setEchoOrigin(id)
     setEcho(pair)
   }
   const leavePair = () => {
+    if (echoOrigin) rememberPosition(echoOrigin)
+    returnTo.current = echoOrigin ?? 'button'
     setEcho(-1)
-    requestAnimationFrame(() => {
-      const target = echoOrigin
-        ? document.getElementById(`hope-open-${echoOrigin}`)
-        : echoButtonRef.current
-      target?.focus()
-    })
+    setEchoOrigin(null)
   }
 
   return (
@@ -364,11 +409,18 @@ export default function Tomorrows({
             'Open a wish. Let another tomorrow sit beside it.'
           )}
         </div>
-        <div className={`hope-wall ${activePair ? 'has-echo' : ''}`}>
+        <div ref={wallRef} className={`hope-wall ${activePair ? 'has-echo' : ''}`}>
+          {remainingHopes.slice(0, pairIndex).map(renderWish)}
           {activeEcho && (
             <div
-              key={echo}
-              className="echo-pair"
+              key={`${echo}-${echoOrigin ?? 'discovery'}`}
+              className={`echo-pair ${echoOrigin ? 'is-anchored' : ''} ${sourceOnRight ? 'source-on-right' : ''}`}
+              data-still={still}
+              style={
+                echoOrigin
+                  ? { gridColumn: `${pairColumn} / span ${Math.min(2, wallColumns)}` }
+                  : undefined
+              }
               ref={pairRef}
               role="group"
               aria-label={`Two imagined wishes, ages ${pairedHopes[0].age} and ${pairedHopes[1].age}`}
@@ -380,19 +432,19 @@ export default function Tomorrows({
                 }
               }}
             >
-              {pairedHopes.map((hope) => (
+              <span className="echo-thread" aria-hidden="true" />
+              {pairedHopes.map((hope, index) => (
                 <HopeNote
                   key={hope.id}
                   hope={hope}
+                  meeting={index === 0 ? 'source' : 'companion'}
                   still={still}
                   fragment={activeEcho.fragments[activeEcho.ids.findIndex((id) => id === hope.id)]}
                 />
               ))}
             </div>
           )}
-          {remainingHopes.map((hope) => (
-            <HopeNote key={hope.id} hope={hope} still={still} onOpen={() => openWish(hope.id)} />
-          ))}
+          {remainingHopes.slice(pairIndex).map(renderWish)}
         </div>
         <p className="wall-ending">
           A different amount of life behind us.

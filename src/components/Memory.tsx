@@ -5,6 +5,7 @@ import { motion } from 'motion/react'
 import { copy } from '../content/en'
 import { moments } from '../content/moments'
 import { MemoryObject, MemoryScene } from './MemoryArtwork'
+import { MemoryPrint } from './MemoryPrint'
 
 export default function Memory({
   still,
@@ -130,7 +131,9 @@ export default function Memory({
                   }}
                   transition={transition}
                 >
-                  <MemoryScene kind={moment.kind} day={i} active={selected} still={still} />
+                  <MemoryPrint amount={amount} still={still}>
+                    <MemoryScene kind={moment.kind} day={i} active={selected} still={still} />
+                  </MemoryPrint>
                   <motion.span
                     className="paper-crease"
                     initial={false}

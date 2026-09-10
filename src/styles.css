@@ -969,6 +969,7 @@
     min-height: 18px;
   }
   .hope-wall {
+    overflow-anchor: none;
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 24px;
@@ -1057,14 +1058,59 @@
     max-width: 880px;
     margin: 0 auto 18px;
   }
-  .echo-pair::before {
-    content: '';
+  .echo-pair.is-anchored {
+    max-width: none;
+    margin: 0;
+  }
+  .source-on-right .echo-source {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  .source-on-right .echo-companion {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  .echo-companion {
+    animation: companion-arrives 480ms cubic-bezier(0.22, 0.7, 0.2, 1) both;
+  }
+  .source-on-right {
+    --companion-travel: -18px;
+  }
+  .echo-thread {
     position: absolute;
     top: 15px;
     left: 25%;
     right: 25%;
     height: 1px;
     background: #aa8163;
+    transform-origin: left;
+    animation: thread-meets 420ms 420ms ease-out both;
+  }
+  .source-on-right .echo-thread {
+    transform-origin: right;
+  }
+  .echo-pair[data-still='true'] .echo-companion,
+  .echo-pair[data-still='true'] .echo-thread,
+  .echo-pair[data-still='true'] .echo-fragment {
+    animation: none;
+  }
+  @keyframes companion-arrives {
+    from {
+      opacity: 0.55;
+      translate: var(--companion-travel, 18px) 0;
+    }
+    to {
+      opacity: 1;
+      translate: 0 0;
+    }
+  }
+  @keyframes thread-meets {
+    from {
+      transform: scaleX(0);
+    }
+    to {
+      transform: scaleX(1);
+    }
   }
   .echo-pair::after {
     content: '';
@@ -1088,7 +1134,7 @@
     background-repeat: no-repeat;
     background-size: 100% 1px;
     padding-bottom: 2px;
-    animation: meet-in-the-middle 900ms 250ms ease-out both;
+    animation: meet-in-the-middle 500ms 780ms ease-out both;
   }
   @keyframes meet-in-the-middle {
     from {
