@@ -331,7 +331,13 @@
 @layer responsive {
   @media (max-width: 1050px) {
     .memory-page {
-      min-width: 100px;
+      /* Leave room to contract before reaching the readable width floor. */
+      flex-basis: calc(max(140px, (100% - 12px) / 7) * var(--memory-width, 1));
+      min-width: 76px;
+    }
+    .week-navigation {
+      display: flex;
+      flex-shrink: 0;
     }
     .paper-face {
       height: 220px;

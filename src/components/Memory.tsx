@@ -66,7 +66,7 @@ export default function Memory({
                   ? 'Seven equal days, as they happen'
                   : fold === 1
                     ? personal
-                      ? 'Looking back, the days you opened remain unfolded'
+                      ? 'Looking back, a shorter week; the days you opened stay clear'
                       : 'Looking back, familiar mornings folded together'
                     : 'Partway between the week and its memory'
               }
@@ -98,6 +98,9 @@ export default function Memory({
           const selected = held === i
           const folded = !selected && (personal ? !opened.has(i) : i < 3)
           const amount = folded ? fold : 0
+          // Opening a day preserves its ink, not its full width forever.
+          // Otherwise exploring all seven days leaves the slider with nothing to change.
+          const compression = folded ? fold : personal && !selected ? fold * 0.45 : 0
           return (
             <div
               key={moment.day}
@@ -106,7 +109,7 @@ export default function Memory({
                 {
                   '--memory-width': selected
                     ? 1.55
-                    : (held === null ? 1 : 5.45 / 6) * (1 - amount * 0.42),
+                    : (held === null ? 1 : 5.45 / 6) * (1 - compression * 0.42),
                 } as CSSProperties
               }
             >
@@ -161,7 +164,7 @@ export default function Memory({
             ? chosen.note
             : remembered
               ? personal
-                ? 'The days you opened stay unfolded. Still seven days.'
+                ? 'The days you opened stay clear. Still seven days.'
                 : copy.memory.remembered
               : copy.memory.lived}
         </p>

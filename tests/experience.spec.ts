@@ -516,16 +516,18 @@ test('opened ordinary moments shape a physically shorter recollection', async ({
   expect(recalled.reduce((sum, width) => sum + width, 0)).toBeLessThan(
     lived.reduce((sum, width) => sum + width, 0) * 0.85,
   )
-  expect(recalled[0]).toBeCloseTo(lived[0], 0)
+  expect(recalled[0]).toBeLessThan(lived[0])
+  expect(recalled[0]).toBeGreaterThan(recalled[3])
   expect(recalled[3]).toBeLessThan(lived[3])
   await page.getByRole('button', { name: /THU A sudden rain/ }).click()
   await page.getByRole('button', { name: /THU A sudden rain/ }).click()
   const reopened = await widths()
-  expect(reopened[0]).toBeCloseTo(lived[0], 0)
-  expect(reopened[3]).toBeCloseTo(lived[3], 0)
+  expect(reopened[0]).toBeCloseTo(recalled[0], 0)
+  expect(reopened[3]).toBeGreaterThan(recalled[3])
+  expect(reopened[3]).toBeLessThan(lived[3])
   await expect(page.getByRole('slider', { name: 'Fold the week into memory' })).toHaveAttribute(
     'aria-valuetext',
-    'Looking back, the days you opened remain unfolded',
+    'Looking back, a shorter week; the days you opened stay clear',
   )
   expect(await page.evaluate(() => localStorage.length)).toBe(0)
   await page.reload()

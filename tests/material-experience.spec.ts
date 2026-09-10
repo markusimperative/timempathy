@@ -99,3 +99,69 @@ test('softened impressions reverse and explicitly opened moments stay clear', as
   await expect(page.locator('.moment-label').first()).toHaveCSS('filter', 'none')
   expect(errors).toEqual([])
 })
+
+test('dragging the memory slider still changes a fully explored week', async ({ page }) => {
+  // Set up a settled week, then exercise the drag with motion enabled.
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await page.goto('/#memory')
+  const cards = page.locator('.memory-moment')
+  for (let day = 0; day < 7; day++) await cards.nth(day).click()
+  await expect(page.locator('.memory-page.was-opened')).toHaveCount(7)
+  await page.emulateMedia({ reducedMotion: 'no-preference' })
+  const widths = () =>
+    page
+      .locator('.memory-page')
+      .evaluateAll((nodes) => nodes.map((node) => node.getBoundingClientRect().width))
+  const total = async () => (await widths()).reduce((sum, width) => sum + width, 0)
+  const thread = page.getByRole('slider', { name: 'Fold the week into memory' })
+  await thread.scrollIntoViewIfNeeded()
+  const start = await widths()
+  const before = await total()
+  const track = (await thread.boundingBox())!
+  const y = track.y + track.height / 2
+  await page.mouse.move(track.x + 8.5, y)
+  await page.mouse.down()
+  await page.mouse.move(track.x + track.width / 2, y, { steps: 6 })
+  await expect(thread).toHaveValue('0.5')
+  await expect.poll(total).toBeLessThan(before * 0.96)
+  const middle = await total()
+  await page.mouse.move(track.x + track.width - 8.5, y, { steps: 6 })
+  await page.mouse.up()
+  await expect(thread).toHaveValue('1')
+  await expect.poll(total).toBeLessThan(middle * 0.96)
+  await expect.poll(async () => (await widths())[6]).toBeCloseTo(start[6], 0)
+  await expect(page.locator('.memory-print')).toHaveCount(7)
+  for (const print of await page.locator('.memory-print').all()) {
+    await expect(print).toHaveCSS('opacity', '1')
+    await expect(print).toHaveCSS('filter', 'none')
+  }
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await thread.focus()
+  await page.keyboard.press('Home')
+  await expect.poll(total).toBeCloseTo(before, 0)
+  await page.keyboard.press('End')
+  await expect.poll(total).toBeLessThan(before * 0.9)
+  await cards.nth(6).click()
+  const released = await total()
+  await page.getByRole('button', { name: 'As it happens', exact: true }).click()
+  expect(await total()).toBeGreaterThan(released * 1.1)
+  await expect(thread).toHaveAttribute('aria-valuetext', 'Seven equal days, as they happen')
+})
+
+test('tablet cards have room to contract after every day was opened', async ({ page }) => {
+  await page.setViewportSize({ width: 820, height: 1000 })
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await page.goto('/#memory')
+  for (const card of await page.locator('.memory-moment').all()) await card.click()
+  const total = () =>
+    page
+      .locator('.memory-page')
+      .evaluateAll((nodes) =>
+        nodes.reduce((sum, node) => sum + node.getBoundingClientRect().width, 0),
+      )
+  const before = await total()
+  await page.getByRole('button', { name: 'Looking back', exact: true }).click()
+  expect(await total()).toBeLessThan(before * 0.9)
+  await expect(page.getByRole('button', { name: 'Later in the week', exact: true })).toBeVisible()
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(820)
+})
