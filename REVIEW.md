@@ -1,3 +1,15 @@
+# Cloudflare deployment preparation — 2026-09-10
+
+The existing React experience is ready to run on Cloudflare Workers with D1. Local and hosted backends share validation and automated checks. Hono supplies the Worker transport; native Cloudflare rate counters and transactional D1 writes preserve deletion, idempotency and bounded capacity. Fonts and assets bypass the API Worker. The hosted Wall starts empty, with no migration of local/test contributions.
+
+The public sharing choice names the audience and provider recovery retention. The incumbent clocks, paper week, private reflection and cross-age encounter design remain. Desktop and phone consent/Wall renders were inspected against the local Cloudflare runtime.
+
+Validation: 62 desktop/mobile browser cases, 15 unit cases, eight local API cases, real D1 migrations and Worker integration checks, the independent-browser exchange, TypeScript, frontend build, deployment dry run, static-only production fallback, dependency audit and formatting pass. The dependency audit found and prompted a narrow development-only sharp 0.35.4 override; the updated runtime and browser journey passed again. No known vulnerabilities remain in the audited dependency graph.
+
+At this checkpoint, Cloudflare account authorization has not reached the CLI: two browser callback attempts timed out and the browser reported an unreachable callback page. A project-isolated device authorization flow is available and avoids that local redirect. No public database or Worker has been created, and no live URL is claimed. The creator has authorized deployment; only the account connection and resource configuration remain. DEPLOYMENT.md provides the concrete sequence. Do not infer live status from a successful local build.
+
+---
+
 # Current review — a shared hope and the clock beside it
 
 2026-09-10 · local prototype · branch `experiments/timepathy`

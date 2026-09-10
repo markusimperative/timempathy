@@ -1,0 +1,7 @@
+allowBuilds:
+  esbuild: true
+  workerd: true
+
+# Patch the image decoder bundled only with the local Worker test runtime.
+overrides:
+  'miniflare>sharp': 0.35.4

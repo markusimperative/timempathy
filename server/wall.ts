@@ -5,22 +5,18 @@ import { createHash, createHmac, randomBytes, randomUUID } from 'node:crypto'
 import { mkdirSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { z } from 'zod'
-import { RegExpMatcher, englishDataset, englishRecommendedTransformers } from 'obscenity'
+import {
+  RETENTION_DAYS,
+  keySchema,
+  submissionSchema,
+  checkWords,
+  reportSchema,
+} from './wall-policy.ts'
+export { RETENTION_DAYS } from './wall-policy.ts'
 
 export const CONSENT_VERSION = 'local-wall-v1'
-export const RETENTION_DAYS = 7
 const lifetime = RETENTION_DAYS * 86400000
-const keySchema = z.string().regex(/^[a-f0-9]{64}$/)
-const submissionSchema = z
-  .object({
-    text: z.string().trim().min(1).max(240),
-    age: z.number().int().min(1).max(120),
-    consent: z.literal(true),
-    consentVersion: z.literal(CONSENT_VERSION),
-    key: keySchema,
-  })
-  .strict()
-const matcher = new RegExpMatcher({ ...englishDataset.build(), ...englishRecommendedTransformers })
+const schema = submissionSchema(CONSENT_VERSION)
 const hash = (key: string) => createHash('sha256').update(key).digest('hex')
 type Row = {
   id: string
@@ -111,7 +107,7 @@ export async function createWallApp(options: WallOptions = {}) {
       .all(now()),
   }))
   app.post('/api/wall', writeLimit, async (request, reply) => {
-    const parsed = submissionSchema.safeParse(request.body)
+    const parsed = schema.safeParse(request.body)
     if (!parsed.success)
       return reply
         .code(400)
@@ -129,21 +125,8 @@ export async function createWallApp(options: WallOptions = {}) {
         })
       return publicState(existing)
     }
-    const normalized = input.text.normalize('NFKC')
-    const contact =
-      /(?:https?:|www\.|[\w.+-]+@[\w.-]+\.[a-z]{2,}|(?:\+?\d[\s().-]*){7,}|@[\w_]{2,}|\b[\w-]+\.(?:com|net|org|io|fr|uk)\b)/iu
-    const control =
-      /[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f\u200b-\u200f\u202a-\u202e\u2066-\u2069]/u
-    if (contact.test(normalized) || control.test(normalized))
-      return reply.code(422).send({
-        message:
-          'Leave out links, contact details, handles, and hidden formatting. You can also keep this thought private.',
-      })
-    if (matcher.hasMatch(normalized))
-      return reply.code(422).send({
-        message:
-          'The automated language check could not accept these words. You can revise them or keep your thought private.',
-      })
+    const problem = checkWords(input.text)
+    if (problem) return reply.code(422).send({ message: problem })
     if (
       Number(
         (db.prepare('SELECT count(*) AS count FROM hopes').get() as { count: number }).count,
@@ -189,10 +172,7 @@ export async function createWallApp(options: WallOptions = {}) {
     return { id: row.id, state: 'withdrawn', expires: row.expires }
   })
   app.post('/api/wall/:id/report', writeLimit, async (request, reply) => {
-    const parsed = z
-      .object({ reason: z.enum(['identifying', 'harmful', 'other']) })
-      .strict()
-      .safeParse(request.body)
+    const parsed = reportSchema.safeParse(request.body)
     const id = z.uuid().safeParse((request.params as { id: string }).id)
     if (!parsed.success || !id.success)
       return reply.code(400).send({ message: 'Choose a reason to flag this hope.' })

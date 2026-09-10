@@ -7,7 +7,7 @@ export const wallHopeSchema = z.object({
 })
 export type WallHope = z.infer<typeof wallHopeSchema>
 const feedSchema = z.object({
-  mode: z.literal('local-prototype'),
+  mode: z.enum(['local-prototype', 'public']),
   consentVersion: z.string(),
   retentionDays: z.number().int(),
   hopes: z.array(wallHopeSchema),

@@ -4,7 +4,7 @@
 
 On 2026-09-10 the creator specified: “Any user can participate, let there be no manual review at this stage.” This supersedes the earlier pending-first/manual-review proposal in this document and the original brief. PROJECT.md remains unchanged as the historical brief. The current implementation has no moderator account, inbox, pending state, or approval gate.
 
-The complete flow runs on loopback. No public hosting or external content processor has been connected. The private GitHub repository backs up project code, never the local Wall database, private reflections, or removal keys.
+The creator selected Cloudflare Workers + D1 for the public launch. The existing local workflow stays available on loopback. The private GitHub repository backs up project code, never the Wall database, private reflections, or removal keys. Local and test databases are never imported into the public Wall. Deployment steps and the account-access boundary are in DEPLOYMENT.md.
 
 ## Private reflection
 
@@ -28,13 +28,13 @@ If a response is lost after acceptance, retrying cannot create another copy. **W
 
 ## Automatic checks and removal
 
-The server rejects oversized/malformed input, obvious links, email addresses, phone-like strings, handles, hidden control characters, and matches from Obscenity's English dataset. Rejected words are not stored. These heuristics can miss harmful or identifying content, especially outside English, and can reject benign words. They do not detect every name, location, threat or other concern. No text is sent to an AI model or external moderation provider; no model rewrites hopes or interprets their meaning.
+The server rejects oversized/malformed input, obvious links, email addresses, phone-like strings, handles, hidden control characters, and matches from Obscenity's English dataset. Rejected words are not stored. These heuristics can miss harmful or identifying content, especially outside English, and can reject benign words. They do not detect every name, location, threat or other concern. Checks run inside the application; no external moderation provider receives the words, and nothing rewrites hopes or interprets their meaning. On the public deployment, Cloudflare hosts the application and processes shared words.
 
 - Accepted: `shared` immediately; there is no pending review state.
 - Author withdrawal: text and age are set to NULL; state becomes `withdrawn`.
 - Reader flag: text and age are set to NULL; state becomes `flagged` immediately, with no review queue. Readers choose a reason to make the consequence clear, but the reason and reporter identity are not retained. Flags can be misused to remove benign hopes; this is a tradeoff of the creator's current no-review stage.
 - Both removal states retain only the receipt/consent metadata until the original expiry, preventing a retry from restoring the words. No public report counts, reactions or ranking exist.
-- After seven days, the entire contribution/receipt row expires. Cleanup runs on startup, on requests, and every minute while the server is running. When stopped, no timer runs; expiry is applied on the next startup before serving data.
+- After seven days, the entire contribution/receipt row expires. Both APIs exclude expired rows immediately. The local server deletes expired rows on startup, requests and a minute timer. The hosted Worker deletes them hourly and before accepting a new contribution; an idle hosted database may retain expired rows for up to an additional hour, or longer during a provider outage.
 
 The client refreshes shared hopes on focus/visibility, by explicit refresh, and every 30 seconds while the page is visible. Other readers can retain an already rendered copy until their next successful refresh; offline pages and screenshots cannot be recalled. Failed refresh clears the live list rather than presenting it as current. A removal request deletes only the shared record, never an author's private browser copy.
 
@@ -48,6 +48,18 @@ Node's built-in SQLite stores up to 200 records in `.local/wall/prototype.sqlite
 
 Fonts and assets ship with the app. Research links are ordinary external links with `rel=noreferrer`; following them is a visitor action. On a static-only host, the shared API is unavailable and private reflection and the clearly imagined Wall remain usable.
 
-## Online hosting boundary
+## Cloudflare hosting
 
-Public deployment has not been performed. A concrete hosting destination, persistent storage, TLS/origin configuration, provider logging and backup/deletion behavior still need to be settled for that deployment. The current local implementation and its no-manual-review publication policy are reviewable without external accounts or processors. This document describes engineering behavior; it does not claim comprehensive moderation or a legal compliance determination.
+The hosted API uses Hono and D1. Sharing requires the separate `public-wall-v1` consent version and explains the public audience before submission. The local consent version is rejected by the hosted API. Anyone on the internet can read or copy public hopes. Readers may retain an already loaded copy; deleting a contribution cannot erase screenshots or third-party copies.
+
+Cloudflare receives normal connection information when serving the website. Private reflection text stays in the browser until explicitly shared. The application adds no analytics or request logging, and Workers observability is disabled in configuration. Cloudflare can still process operational and security data under its own service policies; disabling application logs is not a promise that the provider stores nothing.
+
+Rate limiting uses Cloudflare's native counters: 90 API requests per minute and five per minute for each of sharing and flagging. The key is an hourly rotating HMAC of Cloudflare's trusted connection-IP header using a Worker secret; raw IPs and removal keys are not stored in D1 or rate-limit keys. Counters are approximate and local to a Cloudflare location. People sharing a network share an allowance. These are limited abuse controls, not identity verification or comprehensive protection. No persistent visitor identifier is created. Withdrawal has its own route and is not blocked by the sharing allowance; the general API allowance still applies.
+
+Only the configured published origin is accepted, with an exact same-origin check for mutations and no CORS permission. API responses are `no-store`; static files are served directly with a restrictive content security policy, no-referrer and no framing. The application does not cache the feed. D1 read replication is not enabled. A transactional insert plus a unique removal-key hash prevents concurrent retries or submissions from creating duplicates or exceeding the 200-record capacity, which includes unexpired removal receipts.
+
+D1 automatically retains recovery history for **seven days on Workers Free**. Cleared words can therefore remain in provider recovery history for up to seven more days after database deletion. This is disclosed before public sharing. The application cannot promise immediate physical erasure from provider backups. Do not restore an old Wall backup into public service: it could resurrect withdrawn or flagged words. For this temporary Wall, prefer a fresh empty database after unrecoverable corruption. If the account moves to Paid, review the longer recovery window and update the disclosure before accepting contributions.
+
+Sources: [D1 limits and backup windows](https://developers.cloudflare.com/d1/platform/limits/), [D1 recovery](https://developers.cloudflare.com/d1/reference/time-travel/), [rate-limit behavior](https://developers.cloudflare.com/workers/runtime-apis/bindings/rate-limit/), [Cloudflare privacy policy](https://www.cloudflare.com/privacypolicy/).
+
+This document describes engineering behavior; it does not claim comprehensive moderation or a legal compliance determination.

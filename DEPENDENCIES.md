@@ -27,3 +27,11 @@ Run `pnpm licenses:generate` after changing a runtime dependency. The script tra
 Generic UI is deliberately native where it fits: buttons, links, ranges, textarea, checkbox, number input. React manages the scene, Motion handles transition mechanics, and SVG carries Timempathy's own visual idea. A large UI kit, WebGL engine, AI SDK or date library would add cost without solving a demonstrated need. SQLite now solves an actual requirement: keeping shared hopes available to a second visitor and deleting them reliably.
 
 The dependency audit on 2026-09-10 reported no known vulnerabilities in the installed dependency tree. This is a registry advisory check, not a security certification.
+
+## Cloudflare deployment
+
+Hono 4.13.7 (MIT) provides Workers-compatible HTTP routing and bounded request-body middleware. Cloudflare Workers supplies static hosting and native short-lived rate counters; D1 supplies managed SQLite with transactional batches. These replace the Node/Fastify transport only for hosted deployment. Zod and Obscenity rules are shared between both backends.
+
+Wrangler 4.130.0 (MIT OR Apache-2.0) and @cloudflare/workers-types 5.20260908.1 are development-only. Wrangler includes Cloudflare's local Workers runtime and test harness. Its declared esbuild and workerd install scripts are allowed explicitly in pnpm-workspace.yaml; arbitrary package build scripts are not enabled. No GPU, new UI library, or analytics dependency was added. Runtime notices now include Hono.
+
+The local Miniflare dependency is constrained to sharp 0.35.4 through a narrow pnpm override, fixing [GHSA-rgj7-g3m4-5g8c](https://github.com/advisories/GHSA-rgj7-g3m4-5g8c) in its bundled image decoder. The public site does not process uploaded images or ship sharp.

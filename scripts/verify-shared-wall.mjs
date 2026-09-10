@@ -5,21 +5,30 @@ import { resolve } from 'node:path'
 import { mkdir } from 'node:fs/promises'
 import { createWallApp } from '../server/wall.ts'
 
-// Every contribution in this check lives in an isolated, in-memory test database.
-const origin = 'http://127.0.0.1:4180'
-const app = await createWallApp({ database: ':memory:', origins: [origin], limits: false })
-await app.register(serveStatic, { root: resolve('dist'), dotfiles: 'deny' })
-await app.listen({ host: '127.0.0.1', port: 4180 })
+// Only isolated local services are permitted: never seed a deployed Wall.
+const origin = process.env.WALL_TEST_ORIGIN ?? 'http://127.0.0.1:4180'
+if (!['localhost', '127.0.0.1'].includes(new URL(origin).hostname))
+  throw Error('Tests require an isolated loopback Wall')
+let app
+if (!process.env.WALL_TEST_ORIGIN) {
+  app = await createWallApp({ database: ':memory:', origins: [origin], limits: false })
+  await app.register(serveStatic, { root: resolve('dist'), dotfiles: 'deny' })
+  await app.listen({ host: '127.0.0.1', port: 4180 })
+}
 let browser
 try {
   browser = await chromium.launch()
   const errors = [],
     external = [],
     violations = []
+  let visitor = 0
   const createVisitor = async (mobile = false) => {
     const context = await browser.newContext({
       ...(mobile ? devices['Pixel 7'] : { viewport: { width: 1440, height: 960 } }),
       reducedMotion: 'reduce',
+      ...(process.env.WALL_TEST_ORIGIN
+        ? { extraHTTPHeaders: { 'CF-Connecting-IP': `198.51.100.${++visitor}` } }
+        : {}),
     })
     const page = await context.newPage()
     page.on('pageerror', (e) => errors.push(e.message))
@@ -56,6 +65,10 @@ try {
     )
   }
   const first = await createVisitor()
+  if (process.env.WALL_TEST_ORIGIN) {
+    await expect(first.locator('#privacy')).toContainText('Cloudflare')
+    await expect(first.locator('#privacy')).not.toContainText('No external service')
+  }
   let sent = 0
   first.on('request', (r) => {
     if (r.url() === origin + '/api/wall' && r.method() === 'POST') sent++
@@ -63,6 +76,10 @@ try {
   await privateThought(first, 'A warm cup, and enough time to finish the story.', 72)
   expect(sent).toBe(0)
   await offer(first)
+  if (process.env.WALL_TEST_ORIGIN) {
+    await expect(first.locator('.share-form')).toContainText('Anyone on the internet')
+    await expect(first.locator('.share-form')).toContainText('seven more days')
+  }
   await share(first)
   expect(sent).toBe(0)
   await expect(first.getByRole('alert')).toContainText('Choose whether')
@@ -212,5 +229,5 @@ try {
   )
 } finally {
   await browser?.close()
-  await app.close()
+  await app?.close()
 }

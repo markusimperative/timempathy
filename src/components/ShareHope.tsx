@@ -182,14 +182,22 @@ export default function ShareHope({
         <form onSubmit={submit} className="share-form" noValidate aria-busy={busy}>
           <h3>Let your hope meet another.</h3>
           <p>
-            Your words and age will appear on this local prototype after automated checks. Anyone
-            using it can read them. They stay for up to {feed?.retentionDays ?? 7} days, or until
-            you withdraw.
+            {feed?.mode === 'public'
+              ? 'Your words and age will be public. Anyone on the internet can read and copy them.'
+              : 'Your words and age will appear on this local prototype. Anyone using it can read them.'}{' '}
+            They appear after automated checks and stay for up to {feed?.retentionDays ?? 7} days,
+            or until you withdraw.
           </p>
           <p className="small-note">
             Leave out names, locations, and identifying details. No accounts. No manual review.
             Automated checks can miss things.
           </p>
+          {feed?.mode === 'public' && (
+            <p className="small-note">
+              Cloudflare hosts this Wall. Deleted words may remain in its recovery backups for seven
+              more days. <a href="#privacy">About your words</a>
+            </p>
+          )}
           <label className="share-age" htmlFor="share-age">
             Your age
             <input

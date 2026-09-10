@@ -115,17 +115,20 @@ export default function App() {
               <em>Room for your own experience.</em>
             </h2>
             <div className="about-columns">
-              <div>
+              <div id="privacy">
                 <h3>Your words, your choice</h3>
                 <p>
                   Your reflection stays private unless you choose to share its words and your age.
-                  This local prototype keeps shared hopes for up to seven days. A removal key lets
-                  you withdraw yours earlier. Imagined examples are labelled separately.
+                  Shared hopes stay on the Wall for up to seven days. A removal key lets you
+                  withdraw yours earlier. Imagined examples are labelled separately.
                 </p>
                 <p>
-                  No accounts, trackers, or analytics. Shared hopes appear after automated checks,
-                  with no manual review at this stage. These checks are limited; flagging a hope
-                  removes it from the Wall. No external service receives your words.
+                  No accounts or tracking added by Timempathy. Shared hopes appear after automated
+                  checks, with no manual review at this stage. These checks are limited; flagging a
+                  hope removes it from the Wall. The public Wall is hosted by Cloudflare, which
+                  processes shared words and connection information to deliver and protect the
+                  service. Deleted words may remain in its recovery backups for seven more days.
+                  Keeping a thought private sends none of its words there.
                 </p>
               </div>
               <div id="research">

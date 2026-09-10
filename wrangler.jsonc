@@ -1,0 +1,50 @@
+// Set the D1 ID and PUBLIC_ORIGIN after creating the project resources.
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "timempathy",
+  "main": "worker/index.ts",
+  "compatibility_date": "2026-09-10",
+  "workers_dev": true,
+  "preview_urls": false,
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "run_worker_first": ["/api/*"],
+    "not_found_handling": "404-page",
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "timempathy-wall",
+      "database_id": "00000000-0000-0000-0000-000000000000",
+      "migrations_dir": "migrations",
+    },
+  ],
+  "vars": {
+    "PUBLIC_ORIGIN": "",
+  },
+  "ratelimits": [
+    {
+      "name": "READ_LIMIT",
+      "namespace_id": "987410001",
+      "simple": {
+        "limit": 90,
+        "period": 60,
+      },
+    },
+    {
+      "name": "WRITE_LIMIT",
+      "namespace_id": "987410002",
+      "simple": {
+        "limit": 5,
+        "period": 60,
+      },
+    },
+  ],
+  "triggers": {
+    "crons": ["17 * * * *"],
+  },
+  "observability": {
+    "enabled": false,
+  },
+}

@@ -2,7 +2,7 @@
 
 **We share the same clock, but not the same experience of time.**
 
-A contemplative, interactive journey through the weight of a year, the texture of memory, and the ordinary hopes that connect people across ages. This is a working **local prototype** with private reflection and an optional shared Wall. A visitor can offer a hope, encounter another age, and borrow the clock beside those words. Sharing uses a local server; keeping a thought private never sends it there.
+A contemplative, interactive journey through the weight of a year, the texture of memory, and the ordinary hopes that connect people across ages. The experience supports private reflection and an optional shared Wall, with a Cloudflare Workers + D1 deployment path. A visitor can offer a hope, encounter another age, and borrow the clock beside those words. Only explicitly shared hopes reach the server; keeping a thought private sends none of its words there.
 
 ## Current clock experience
 
@@ -22,7 +22,7 @@ Native range and button controls support keyboard input. On narrow screens the w
 
 ## Current Wall experience
 
-A reflection begins privately. **Offer it to the Wall** opens a separate choice explaining who can read it, the seven-day lifetime, and removal. After the visitor supplies an age and explicitly agrees, their original words appear immediately following local automated checks. Anyone using the prototype may participate; there is no account, invitation, or manual review queue.
+A reflection begins privately. **Offer it to the Wall** opens a separate choice explaining who can read it, the seven-day lifetime, and removal. After the visitor supplies an age and explicitly agrees, their original words appear immediately following automated checks. Anyone may participate; there is no account, invitation, or manual review queue.
 
 **Meet another tomorrow** brings two hopes together, favouring another age without interpreting either person's words. **Borrow this person's clock** takes that age into the existing clock comparison while preserving the elapsed months. Returning brings the visitor back to the words. The encounter temporarily replaces the list, giving one pair room to be read.
 
@@ -62,6 +62,23 @@ pnpm.cmd dev
 
 No account, environment variables, or cloud service are needed. The server creates `.local/wall/prototype.sqlite` automatically. This local database is ignored by Git; development and the local production preview use the same file. A contribution removal key is generated only when opening the sharing choice. Browser persistence is tied to the exact origin; `localhost`, `127.0.0.1`, and a production origin have separate saved thoughts.
 
+## Cloudflare deployment
+
+The React experience runs unchanged on Cloudflare Workers, with D1 for the shared Wall. Static files bypass the API Worker. A fresh public Wall starts empty; local development data is never uploaded. Stay on Workers Free to avoid usage charges; when its quotas are reached the Wall can become unavailable while static assets continue to load.
+
+See [DEPLOYMENT.md](DEPLOYMENT.md) for the project-specific login, database migration, secret setup, deployment, and recovery instructions. A build is not a live deployment; that requires Cloudflare account authorization and the public address to be configured.
+
+To test Cloudflare locally:
+
+```sh
+pnpm build
+# Copy .dev.vars.example to .dev.vars once.
+pnpm cf:migrate:local
+pnpm cf:dev
+```
+
+This serves the Cloudflare runtime on port 8787 with its own local D1 store. The existing `pnpm dev` and `pnpm preview` remain available without Cloudflare credentials.
+
 ## Verify
 
 ```sh
@@ -73,6 +90,8 @@ pnpm exec playwright install chromium
 pnpm test:e2e
 pnpm test:production
 pnpm test:shared
+pnpm cf:check
+pnpm test:worker
 pnpm format:check
 pnpm audit
 ```
@@ -85,7 +104,7 @@ Firefox is an optional additional target: install it with `pnpm exec playwright 
 
 ## Architecture
 
-React + TypeScript, built with Vite, with a small Fastify service and SQLite storage for explicitly shared hopes. Component state handles interaction; fragment links handle navigation. No service worker. Assets and fonts are hosted with the app. The client requests only its same-origin Wall API; research links remain deliberate outbound navigation. Development mounts Fastify in Vite; `pnpm preview` serves the built app and API together at port 4173, bound to loopback. A static-only host supports private reflection and imagined wishes but cannot publish contributions.
+React + TypeScript, built with Vite. Cloudflare Workers serves a Hono API backed by D1 for explicitly shared hopes. The local Vite workflow retains Fastify and Node SQLite; both backends share validation and automated word checks. Component state handles interaction; fragment links handle navigation. No service worker. Assets and fonts are hosted with the app. The client requests only its same-origin Wall API; research links remain deliberate outbound navigation. Development mounts Fastify in Vite; `pnpm preview` serves the built app and API together at port 4173, bound to loopback. A static-only host supports private reflection and imagined wishes but cannot publish contributions.
 
 | Location                            | Responsibility                                                         |
 | ----------------------------------- | ---------------------------------------------------------------------- |
@@ -102,6 +121,9 @@ React + TypeScript, built with Vite, with a small Fastify service and SQLite sto
 | `src/components/ShareHope.tsx`      | Consent, submission recovery and removal receipt                       |
 | `src/components/CommunityWall.tsx`  | Shared hopes, age encounters, borrowing and reporting                  |
 | `src/lib/wall.ts`                   | Validated client API, refresh and age-based encounter selection        |
+| `worker/index.ts`                   | Hosted API, atomic D1 writes, rate limits and scheduled expiry         |
+| `migrations/`                       | Versioned D1 schema                                                    |
+| `server/wall-policy.ts`             | Shared validation and automated checks                                 |
 | `server/wall.ts`                    | Validation, automatic checks, rate limits, SQLite and deletion         |
 | `src/content/en.ts`                 | Narrative copy and explicitly fictional hopes                          |
 | `src/lib/model.ts`                  | Proportions, validation, and one private storage record                |
