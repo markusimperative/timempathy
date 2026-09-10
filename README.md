@@ -34,11 +34,17 @@ The shared Wall starts empty. The original twelve fictional wishes remain in a s
 
 ## Current visual direction
 
-The original paper / forest / copper design is restored following creator review. The [Taste Skill experiment](docs/TASTE_REVIEW.md) remains in Git history; its shared clock animation, local font preloads, native accessible button names, and improved placeholder contrast are retained. The illustrated cards now resize continuously, so choosing or switching a moment keeps the artwork in proportion instead of stretching it while its crop jumps.
+The paper, forest, and copper palette gives the experience a quiet, tactile identity. Iterative design review refined the shared clock animation, local font loading, accessible controls, and text contrast. The illustrated cards now resize continuously, so choosing or switching a moment keeps the artwork in proportion instead of stretching it while its crop jumps.
 
 ## Run
 
-Requires Node.js 24.15+ (tested on 24.19.0) and pnpm 11.19.0.
+Requires a standard Node.js 24.15+ installation (tested on 24.19.0) and pnpm 11.19.0. If pnpm is not installed, install the pinned version first:
+
+```sh
+npm install --global pnpm@11.19.0
+```
+
+Then, from the project directory:
 
 ```sh
 pnpm install --frozen-lockfile
@@ -47,11 +53,11 @@ pnpm dev
 
 Open [localhost:5173](http://127.0.0.1:5173). The server binds to loopback only.
 
-On the dedicated Windows workstation, Node and pnpm are supplied by the Codex runtime. Node is on PATH; use the local launcher when pnpm is not:
+On Windows, the same commands work with a standard Node.js installation. If PowerShell blocks the package manager's script, use its command launcher:
 
 ```powershell
-.\scripts\pnpm.ps1 install --frozen-lockfile
-.\scripts\pnpm.ps1 dev
+pnpm.cmd install --frozen-lockfile
+pnpm.cmd dev
 ```
 
 No account, environment variables, or cloud service are needed. The server creates `.local/wall/prototype.sqlite` automatically. This local database is ignored by Git; development and the local production preview use the same file. A contribution removal key is generated only when opening the sharing choice. Browser persistence is tied to the exact origin; `localhost`, `127.0.0.1`, and a production origin have separate saved thoughts.
@@ -107,8 +113,7 @@ The application separates the central narrative from presentation. A full locali
 ## Project record
 
 - [PROJECT.md](PROJECT.md): the original creative brief, preserved unchanged.
-- [PRODUCT.md](PRODUCT.md): confirmed product context for Impeccable, grounded in the brief and creator feedback.
-- [Impeccable setup](docs/IMPECCABLE.md): pinned skill installation and local live-mode configuration.
+- [PRODUCT.md](PRODUCT.md): product purpose, design constraints, and confirmed behavior.
 - [DECISIONS.md](DECISIONS.md): why this interpretation and architecture were chosen.
 - [RESEARCH.md](RESEARCH.md): primary sources, limitations, and design hypotheses.
 - [PRIVACY_AND_MODERATION.md](PRIVACY_AND_MODERATION.md): actual data behavior, automatic publication and deletion.
@@ -119,6 +124,6 @@ The application separates the central narrative from presentation. A full locali
 
 The complete sharing flow runs locally. Public hosting has not been selected or deployed. The creator explicitly chose open participation and no manual review at this stage; the earlier pending-first proposal is superseded. The local Wall expires hopes after seven days, holds at most 200 records (including removal receipts), and does not upload its database to GitHub.
 
-The imagined examples are invented and are not evidence about any age group. The time model is a visual analogy, never a scientific law. There is no life expectancy calculation, social ranking, analytics or AI interpretation. Technical checks cannot establish whether visitors actually experience greater empathy.
+The imagined examples are invented and are not evidence about any age group. The time model is a visual analogy, never a scientific law. There is no life expectancy calculation, social ranking, or analytics. The meaning of each contribution belongs to its author and readers. Technical checks cannot establish whether visitors actually experience greater empathy.
 
 The code remains private/unlicensed pending the creator's choice of a project license. Third-party software retains its own licenses; runtime notices ship in `public/third-party-notices.txt` and are copied into the production build.

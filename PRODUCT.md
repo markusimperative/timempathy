@@ -2,7 +2,7 @@
 
 <!-- impeccable:product-schema 1 -->
 
-This record captures product truth for Impeccable from the creator's original [PROJECT.md](PROJECT.md), subsequent instructions, and the verified implementation. The original brief remains intact. Later explicit creator instructions take precedence; implementation evidence does not authorize a new product direction.
+This record captures the product purpose and constraints from the creator's original [PROJECT.md](PROJECT.md), subsequent instructions, and the verified implementation. The original brief remains intact. Later explicit creator instructions take precedence; implementation evidence does not authorize a new product direction.
 
 ## Platform
 
@@ -38,13 +38,15 @@ The central question is **How would you like to remember tomorrow?** It invites 
 - **Memory:** seven authored ordinary-life scenes can fold into a shorter paper week. Explicitly opened days contract more gently and remain visually clear during recollection; the currently held day stays expanded. Opening every day must not make the fold slider inert. A currently held moment can carry its drawing into tomorrow. These are authored interaction rules, not a test or measurement of the visitor's memory or attention.
 - **Private reflection:** one short thought with an optional age stays in this visit by default. A separate explicit choice permits local browser storage, with a removal action. Keeping it private sends nothing to the server. A separate sharing choice requires an age and explicit agreement before submitting it to the Wall.
 - **Wall of Tomorrows:** consented hopes appear immediately after local automated checks, with age beside the original words. Visitors can encounter another age and borrow that person’s clock. Their own hope is excluded from automatic encounters; no semantic similarity or emotional conclusion is assigned. The original twelve fictional wishes and six authored pairings remain separately labelled and available. Age serves recognition, never ranking or generational stereotypes. Authors can withdraw using a removal key; reader flags remove words immediately. Shared hopes expire after seven days.
-- No accounts, public profiles, social competition, analytics, tracking, dwell measurement, mortality countdowns, productivity scoring, or AI interpretation. Do not add conventional features merely to expand the product.
+- No accounts, public profiles, social competition, analytics, tracking, dwell measurement, mortality countdowns, productivity scoring, or assigned interpretations of personal contributions. Do not add conventional features merely to expand the product.
 - Fonts and assets ship locally. English is currently implemented; the architecture must leave room for localization without making the concept depend on English wordplay.
 - The creator’s open-participation/no-manual-review instruction supersedes the previous pending-first architecture. The local implementation uses automated checks and direct removal, not a review queue. Its actual boundaries are recorded in [PRIVACY_AND_MODERATION.md](PRIVACY_AND_MODERATION.md). Public hosting and any future external processors need authorization for a concrete destination; none have been selected or connected.
 
 ## Brand Commitments
 
 Preserve the name Timempathy, the existing visual identity, original illustrations, and emotional language. The creator explicitly preferred the restored design and asked for deeper experience without adding conventional features. This is a binding preservation constraint, not a request for a new visual direction.
+
+Project-facing descriptions should focus on the experience and standard design and development methods, without assistant attribution or workstation-specific branding.
 
 The voice is humane, contemplative, curious, quiet, hopeful, slightly poetic, accessible, and non-preachy. Plain ordinary wishes belong alongside lyrical language. Avoid urgency, guilt, death anxiety, life coaching, motivational slogans, forced significance, and sentimentality without substance. Let visitors notice rather than tell them what life should mean.
 
